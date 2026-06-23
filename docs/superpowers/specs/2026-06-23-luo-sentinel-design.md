@@ -23,6 +23,8 @@ agent or operator takes an on-chain action.
 - A real Injective testnet transaction that records a non-sensitive receipt
   commitment.
 - A transaction hash and explorer link shown after confirmation.
+- A deployed demo, public GitHub repository with a complete README, a
+  three-minute demo-video script, and a pitch-deck outline.
 
 ### Out of scope
 
@@ -75,15 +77,20 @@ The app is a small TypeScript web application with four isolated units:
   request into a displayable preflight result.
 - `receipt` — a pure canonicalization and hashing module. It accepts only the
   public request summary, selected decision, preflight version, and timestamp.
-- `wallet` — an Injective testnet adapter. It builds the minimal receipt
-  transaction and passes it to the user's connected wallet; it never receives
-  a private key.
+- `agent` — an Injective Agent SDK integration that owns the agent-facing
+  request and builds the minimal testnet receipt action. It must use the
+  official SDK rather than present Injective as a decorative network label.
+- `wallet` — a narrow user-confirmation adapter. It passes the SDK-prepared
+  testnet action to the user's connected wallet and never receives a private
+  key.
 - `ui` — stage-based components that render the preflight and wallet state.
 
-The first implementation will choose the smallest Injective-supported testnet
-transaction suitable for a public commitment. The receipt payload must not
-include legal source text, personal data, or a legal conclusion. The app stores
-only the returned transaction hash in client state for the demo session.
+The first implementation will select the smallest official Agent SDK-supported
+testnet action suitable for a public commitment. This choice must be verified
+against the official AI developer documentation before implementation. The
+receipt payload must not include legal source text, personal data, or a legal
+conclusion. The app stores only the returned transaction hash in client state
+for the demo session.
 
 ## Error handling
 
@@ -111,3 +118,31 @@ uncertainty, and human authorization. Injective is not a decorative badge: the
 human decision is independently verifiable through a testnet receipt.
 
 Official program reference: <https://injective.com/zh/blog/injective-nova-program-cn>
+
+## Required hackathon artifacts
+
+The submission package must contain:
+
+- A publicly accessible GitHub repository and README with local setup,
+  architecture, Injective integration explanation, safety boundaries, and
+  testnet verification steps.
+- A deployed public demo URL.
+- A demo video of at most three minutes. The video shows the request,
+  preflight, explicit human decision, Agent SDK-backed testnet receipt, and
+  transaction verification.
+- A pitch deck covering the problem, target user, product loop, technical
+  architecture, Injective integration, market direction, and roadmap.
+
+The project will be judged against the published Nova dimensions: innovation,
+technical integration, application value, product experience, and ecosystem
+fit. The MVP prioritizes a complete visible loop over additional legal domains
+or automation.
+
+## Official technical references
+
+- Injective documentation: <https://docs.injective.network>
+- Injective AI developer documentation:
+  <https://docs.injective.network/developers-ai/index>
+- Injective Agent SDK:
+  <https://github.com/InjectiveLabs/injective-agent-sdk>
+- Injective Build: <https://injective.com/build>
