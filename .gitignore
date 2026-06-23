@@ -1,0 +1,10 @@
+# Local build and dependency artifacts
+app/node_modules/
+app/dist/
+app/.npm-cache/
+
+# Product Design exploration artifacts
+.superpowers/
+
+# OS files
+.DS_Store

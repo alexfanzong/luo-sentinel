@@ -85,12 +85,17 @@ The app is a small TypeScript web application with four isolated units:
   key.
 - `ui` — stage-based components that render the preflight and wallet state.
 
-The first implementation will select the smallest official Agent SDK-supported
-testnet action suitable for a public commitment. This choice must be verified
-against the official AI developer documentation before implementation. The
-receipt payload must not include legal source text, personal data, or a legal
-conclusion. The app stores only the returned transaction hash in client state
-for the demo session.
+The first implementation ships the preflight and human-decision experience
+without a signing dependency. The current official Agent SDK write client
+requires a raw private key, so it is not permitted inside the browser app,
+server, repository, or deployment. The app may use the SDK's read-only client
+after the package identity is independently reconciled. A real testnet
+transaction is deferred to a user-operated test-only wallet and an official
+browser-wallet path that does not expose a private key.
+
+The receipt payload must not include legal source text, personal data, or a
+legal conclusion. The app stores only the returned transaction hash in client
+state for the demo session.
 
 ## Error handling
 

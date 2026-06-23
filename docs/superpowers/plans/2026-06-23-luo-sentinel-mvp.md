@@ -2,11 +2,11 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build and deploy a public-safe LUO Sentinel demo that produces an RWA compliance preflight and records a user-approved receipt on Injective testnet through an official Injective integration.
+**Goal:** Build and deploy a public-safe LUO Sentinel demo that produces an RWA compliance preflight and supports a future user-operated Injective testnet receipt through an official integration.
 
 **Architecture:** A React single-page application keeps legal-risk presentation, receipt canonicalization, and Injective interaction separate. The UI works end-to-end with a deterministic local preflight engine; an `InjectiveReceiptClient` interface keeps the official SDK adapter isolated and makes wallet/testnet integration verifiable without exposing a key.
 
-**Tech Stack:** React, TypeScript, Vite, Vitest, Testing Library, official `@injectivelabs` packages selected only after official-documentation review, Injective testnet, browser wallet.
+**Tech Stack:** Standards-based HTML, CSS, JavaScript, Node.js built-in test runner, official `@injectivelabs` packages selected only after official-documentation review, Injective testnet, browser wallet.
 
 ---
 
@@ -14,9 +14,8 @@
 
 ```text
 src/
-  app/
-    App.tsx                         # stage orchestration and user decisions
-    App.test.tsx                    # end-to-end UI-state tests
+  app.js                             # stage orchestration and user decisions
+  app.test.js                        # end-to-end state tests
   domain/
     preflight.ts                    # deterministic RWA preflight result
     preflight.test.ts               # preflight behaviour tests
@@ -27,13 +26,12 @@ src/
     injectiveReceiptClient.ts       # stable SDK adapter contract
     demoReceiptClient.ts            # explicit local-demo implementation
     injectiveReceiptClient.test.ts  # SDK-adapter boundary tests
-  components/
-    ActionRequest.tsx               # agent request card
-    EvidencePreflight.tsx           # jurisdictional evidence cards
-    DecisionPanel.tsx               # approve/hold actions
-    ReceiptPanel.tsx                # receipt and explorer state
   styles.css                         # visual system
-  main.tsx
+  domain/
+    preflight.js                    # deterministic preflight result
+    preflight.test.js               # preflight behaviour tests
+    receipt.js                      # canonical public receipt payload
+    receipt.test.js                 # receipt validation tests
 docs/
   INJECTIVE_INTEGRATION.md          # SDK decision and tested network path
   DEMO_SCRIPT.md                    # ≤3 minute recording script
@@ -105,71 +103,49 @@ git commit -m "docs: record Injective SDK integration decision"
 **Files:**
 - Create: `package.json`
 - Create: `index.html`
-- Create: `vite.config.ts`
-- Create: `tsconfig.json`
-- Create: `src/main.tsx`
+- Create: `src/app.js`
 - Create: `src/styles.css`
 
 - [ ] **Step 1: Write the first failing render test**
 
-Create `src/app/App.test.tsx`:
+Create `src/app.test.js`:
 
 ```tsx
-import { render, screen } from '@testing-library/react';
-import { App } from './App';
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { initialState } from './app.js';
 
-test('introduces LUO Sentinel as an RWA preflight', () => {
-  render(<App />);
-  expect(screen.getByRole('heading', { name: /LUO Sentinel/i })).toBeVisible();
-  expect(screen.getByText(/evidence-bound compliance preflight/i)).toBeVisible();
+test('starts with an actionable preflight state', () => {
+  assert.equal(initialState.receiptState, 'IDLE');
 });
 ```
 
 - [ ] **Step 2: Run the test to verify it fails**
 
-Run: `npm test -- --run src/app/App.test.tsx`
+Run: `node --test src/app.test.js`
 
-Expected: FAIL because `src/app/App.tsx` is absent.
+Expected: FAIL because `src/app.js` is absent.
 
 - [ ] **Step 3: Add the minimum app shell**
 
-Create `src/app/App.tsx`:
+Create `src/app.js`:
 
 ```tsx
-export function App() {
-  return (
-    <main>
-      <p>RWA / INJECTIVE TESTNET</p>
-      <h1>LUO Sentinel</h1>
-      <p>Evidence-bound compliance preflight for AI-initiated RWA actions.</p>
-    </main>
-  );
-}
+export const initialState = { receiptState: 'IDLE' };
 ```
 
-Create `src/main.tsx`:
-
-```tsx
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import { App } from './app/App';
-import './styles.css';
-
-createRoot(document.getElementById('root')!).render(
-  <StrictMode><App /></StrictMode>,
-);
-```
+Create `index.html` as the static page and load `src/app.js` as a module.
 
 - [ ] **Step 4: Run the test to verify it passes**
 
-Run: `npm test -- --run src/app/App.test.tsx`
+Run: `node --test src/app.test.js`
 
 Expected: PASS.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add package.json package-lock.json index.html vite.config.ts tsconfig.json src
+git add package.json index.html src
 git commit -m "feat: scaffold LUO Sentinel app"
 ```
 
