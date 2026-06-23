@@ -8,9 +8,9 @@ not turn uncertainty into invented certainty.
 
 ## 0:20–1:10 — The map
 
-Open the Atlas Canvas. Click the United States, Switzerland, and Hong Kong to
-show that each signal remains separately anchored. Explain that `Cross-border`
-names the decision context, not a jurisdiction.
+Open the Atlas Canvas. Click the United States, Hong Kong, Singapore, and
+European Union to show that each RWA signal remains separately anchored.
+Explain that `Cross-border` names the decision context, not a jurisdiction.
 
 ## 1:10–1:45 — The human gate
 

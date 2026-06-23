@@ -11,8 +11,11 @@ When implementing from a selected generated mock, treat that image as the source
 - The selected visual direction is the Atlas Canvas map-first screen.
 - The map represents cross-jurisdiction information relationships only; it must
   not imply authoritative boundaries, sovereignty, or legal conclusions.
-- The primary demo jurisdictions are United States, Switzerland, and Hong Kong.
-  `Cross-border` is the problem context, never a fourth jurisdiction label.
+- The primary demo uses LUO's reviewed Ondo OUSG RWA sample: United States,
+  Hong Kong, Singapore, and European Union. `Cross-border` is the problem
+  context, never a fifth jurisdiction label.
+- Do not reuse Tornado Cash jurisdictions, source IDs, or risk labels on this
+  RWA screen. Source anchors must come from the reviewed RWA mini-corpus.
 - Keep the header minimal: LUO logo, LUO Sentinel, concise product descriptor,
   and Injective testnet status only.
 - Keep the right decision rail sparse: selected signal, human-review boundary,

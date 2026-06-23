@@ -1,3 +1,5 @@
+import { RWA_EVIDENCE } from '../app/src/lib/rwaEvidence.js';
+
 export function createRwaPreflight() {
   return {
     request: {
@@ -7,25 +9,11 @@ export function createRwaPreflight() {
     },
     disposition: 'HUMAN_REVIEW_REQUIRED',
     version: '0.1',
-    evidence: [
-      {
-        jurisdiction: 'United States',
-        sourceId: 'US-RWA-001',
-        signal: 'RESTRICTIVE',
-        summary: 'Eligibility and distribution constraints require a separate review.',
-      },
-      {
-        jurisdiction: 'Hong Kong',
-        sourceId: 'HK-RWA-002',
-        signal: 'EVOLVING',
-        summary: 'The market route depends on jurisdiction-specific interpretation.',
-      },
-      {
-        jurisdiction: 'Switzerland',
-        sourceId: 'CH-RWA-003',
-        signal: 'UNRESOLVED',
-        summary: 'No universal eligibility conclusion is produced from this preflight.',
-      },
-    ],
+    evidence: RWA_EVIDENCE.map((item) => ({
+      jurisdiction: item.title,
+      sourceId: item.id,
+      signal: item.signal.toUpperCase(),
+      summary: item.detail,
+    })),
   };
 }

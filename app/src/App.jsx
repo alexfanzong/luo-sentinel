@@ -1,39 +1,15 @@
 import { useMemo, useState } from "react";
 import { connectToInjectiveEvmTestnet } from "./lib/injectiveEvm.js";
-
-const evidence = [
-  {
-    id: "US-RWA-001",
-    title: "United States",
-    signal: "Restrictive",
-    detail: "Eligibility and distribution structure need a separate review.",
-    tone: "coral",
-    className: "marker marker--us",
-  },
-  {
-    id: "HK-RWA-002",
-    title: "Hong Kong",
-    signal: "Evolving",
-    detail: "The market route depends on jurisdiction-specific interpretation.",
-    tone: "gold",
-    className: "marker marker--hk",
-  },
-  {
-    id: "CH-RWA-003",
-    title: "Switzerland",
-    signal: "Unresolved",
-    detail: "The available signal does not establish a single RWA distribution conclusion.",
-    tone: "blue",
-    className: "marker marker--switzerland",
-  },
-];
+import { createReceiptCommitment } from "./lib/receiptCommitment.js";
+import { RWA_EVIDENCE } from "./lib/rwaEvidence.js";
 
 export function App() {
-  const [selectedId, setSelectedId] = useState("US-RWA-001");
+  const [selectedId, setSelectedId] = useState(RWA_EVIDENCE[0].id);
   const [decision, setDecision] = useState("review");
+  const [receipt, setReceipt] = useState(null);
   const [wallet, setWallet] = useState({ status: "disconnected", address: null, message: null });
   const selectedEvidence = useMemo(
-    () => evidence.find((item) => item.id === selectedId),
+    () => RWA_EVIDENCE.find((item) => item.id === selectedId),
     [selectedId],
   );
 
@@ -48,8 +24,26 @@ export function App() {
     }
   }
 
-  function prepareReceiptDraft() {
-    setDecision("draft");
+  async function prepareReceiptDraft() {
+    setDecision("preparing");
+
+    try {
+      const nextReceipt = await createReceiptCommitment({
+        sourceAnchorId: selectedEvidence.id,
+        timestamp: new Date().toISOString(),
+      });
+      setReceipt(nextReceipt);
+      setDecision("draft");
+    } catch {
+      setReceipt(null);
+      setDecision("error");
+    }
+  }
+
+  function selectEvidence(id) {
+    setSelectedId(id);
+    setReceipt(null);
+    setDecision("review");
   }
 
   return (
@@ -91,11 +85,11 @@ export function App() {
           <img className="atlas-map" src="/atlas-map.png" alt="Abstract world map with cross-border connection lines" />
 
           <div className="markers" aria-label="Jurisdiction signals">
-            {evidence.map((item) => (
+            {RWA_EVIDENCE.map((item) => (
               <button
                 key={item.id}
                 className={`${item.className} ${selectedId === item.id ? "is-selected" : ""}`}
-                onClick={() => setSelectedId(item.id)}
+                onClick={() => selectEvidence(item.id)}
                 aria-pressed={selectedId === item.id}
               >
                 <span className={`marker-dot marker-dot--${item.tone}`} />
@@ -128,16 +122,26 @@ export function App() {
           <div className="rail-actions">
             <p className="human-gate">Human review required</p>
             <button className="decision-button decision-button--quiet" onClick={() => setDecision("hold")}>Hold for counsel</button>
-            <button className="decision-button" onClick={prepareReceiptDraft}>Prepare testnet receipt</button>
+            <button className="decision-button" onClick={prepareReceiptDraft} disabled={decision === "preparing"}>
+              {decision === "preparing" ? "Preparing commitment…" : "Prepare testnet receipt"}
+            </button>
           </div>
 
           <div className={`decision-state decision-state--${decision}`}>
             {decision === "review" && "No legal conclusion is produced."}
             {decision === "hold" && "Held. No receipt created."}
+            {decision === "preparing" && "Creating a local public commitment."}
             {decision === "draft" && (wallet.status === "connected"
-              ? "Draft ready. Wallet signing remains disabled."
-              : "Draft ready. Connect a test wallet before a future signing step.")}
+              ? "Commitment ready. Wallet signing remains disabled."
+              : "Commitment ready. Connect a test wallet before a future signing step.")}
+            {decision === "error" && "Receipt could not be prepared. No wallet action occurred."}
           </div>
+          {receipt && (
+            <div className="receipt-commitment">
+              <span>Public commitment · local only</span>
+              <code>{receipt.commitment.slice(0, 18)}…{receipt.commitment.slice(-8)}</code>
+            </div>
+          )}
         </aside>
       </main>
 

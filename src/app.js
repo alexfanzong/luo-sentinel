@@ -49,7 +49,7 @@ export function getAppMarkup(state) {
         <div><p class="eyebrow">AGENT REQUEST</p><h2>${preflight.request.action}</h2><p>${preflight.request.target}</p></div>
         <span class="chip">${preflight.disposition.replaceAll('_', ' ')}</span>
       </section>
-      <section class="section-head"><p class="eyebrow">01 / EVIDENCE PREFLIGHT</p><h2>Three signals. No fabricated consensus.</h2></section>
+      <section class="section-head"><p class="eyebrow">01 / EVIDENCE PREFLIGHT</p><h2>Four signals. No fabricated consensus.</h2></section>
       <section class="evidence-grid">${evidenceCards}</section>
       <section class="decision-panel">
         <div><p class="eyebrow">02 / HUMAN AUTHORIZATION</p><h2>The decision stays with a person.</h2><p>Approve only a future testnet receipt—not asset movement, eligibility, or legal advice.</p></div>

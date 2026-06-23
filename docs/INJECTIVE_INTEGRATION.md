@@ -31,6 +31,12 @@ The current prototype therefore uses a **local testnet receipt draft** only.
 It deliberately does not claim that a transaction was sent. A wallet is shown
 as connected only after the operator completes the browser-wallet approval.
 
+Each local draft now generates a SHA-256 public commitment over the receipt
+version, decision label, reviewed RWA source anchor, and timestamp. It contains
+no source text, wallet address, private data, or legal conclusion. It is shown
+as `local only` until a separately reviewed and user-confirmed testnet action
+records it.
+
 ## Implemented browser-wallet connection
 
 `app/src/lib/injectiveEvm.js` provides a small, dependency-free connection

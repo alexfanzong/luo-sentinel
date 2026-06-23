@@ -36,8 +36,9 @@ button { font: inherit; }
 .marker { position: absolute; display: flex; gap: 12px; align-items: flex-start; padding: 7px 9px; color: #eef2fb; text-align: left; border: 0; background: rgba(4, 17, 38, .24); cursor: pointer; transition: background .2s, transform .2s; }
 .marker:hover, .marker.is-selected { background: rgba(25, 45, 81, .76); transform: translateY(-2px); }
 .marker--us { top: 60%; left: 20%; }
-.marker--hk { top: 63%; left: 75%; }
-.marker--switzerland { top: 56%; left: 53%; }
+.marker--hong-kong { top: 60%; left: 75%; }
+.marker--singapore { top: 72%; left: 70%; }
+.marker--european-union { top: 52%; left: 51%; }
 .marker-dot { display: block; width: 18px; height: 18px; flex: 0 0 18px; border: 3px solid #0b1d38; border-radius: 50%; box-shadow: 0 0 0 2px currentColor, 0 0 20px currentColor; }
 .marker-dot--coral { color: #ff827a; background: #ff827a; }
 .marker-dot--gold { color: #ffc756; background: #ffc756; }
@@ -45,7 +46,7 @@ button { font: inherit; }
 .marker-copy { display: grid; gap: 2px; }
 .marker-copy strong { font: 400 21px/1.05 'Libre Baskerville', Georgia, serif; }
 .marker-copy em { font-style: normal; font-size: 13px; }
-.marker--us em { color: #ff9b96; }.marker--hk em { color: #ffd475; }.marker--switzerland em { color: #a6ceff; }
+.marker--us em { color: #ff9b96; }.marker--hong-kong em, .marker--singapore em { color: #ffd475; }.marker--european-union em { color: #a6ceff; }
 .marker-copy small { color: #8d9bb6; font: 10px 'DM Mono', monospace; }
 .map-note { position: absolute; left: clamp(28px, 5.5vw, 84px); bottom: 26px; z-index: 2; max-width: 500px; color: #8391ad; font-size: 11px; line-height: 1.6; }
 .map-note span { color: #c6cfdf; font-family: 'DM Mono', monospace; margin-right: 8px; text-transform: uppercase; font-size: 10px; }
@@ -60,11 +61,12 @@ button { font: inherit; }
 .selected-evidence small { color: #8593ae; font: 10px 'DM Mono', monospace; }
 .rail-actions { display: grid; gap: 10px; margin-top: 28px; }
 .human-gate { margin: 0 0 5px; color: #f1f3f8; font: 400 19px/1.25 'Libre Baskerville', Georgia, serif; }
-.decision-button { width: 100%; padding: 13px 14px; color: #0c1730; border: 1px solid #b9b4ff; border-radius: 6px; background: #b9b4ff; cursor: pointer; font-size: 13px; font-weight: 700; text-align: left; }.decision-button:hover { background: #d1ceff; }
+.decision-button { width: 100%; padding: 13px 14px; color: #0c1730; border: 1px solid #b9b4ff; border-radius: 6px; background: #b9b4ff; cursor: pointer; font-size: 13px; font-weight: 700; text-align: left; }.decision-button:hover { background: #d1ceff; }.decision-button:disabled { cursor: wait; opacity: .7; }
 .decision-button--quiet { color: #dfe4f1; border-color: rgba(194, 207, 235, .4); background: transparent; }.decision-button--quiet:hover { background: rgba(194, 207, 235, .1); }
 .decision-state { min-height: 0; margin-top: 20px; padding: 0; color: #9eabc2; background: transparent; font-size: 11px; line-height: 1.6; }.decision-state--hold { color: #f2ada8; }.decision-state--draft { color: #c4bcff; }
+.receipt-commitment { display: grid; gap: 6px; margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(194, 207, 235, .18); color: #8f9db7; font-size: 10px; }.receipt-commitment span { font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: .06em; }.receipt-commitment code { overflow: hidden; color: #cbd4e8; font: 10px 'DM Mono', monospace; text-overflow: ellipsis; white-space: nowrap; }
 
 .footer { padding: 20px clamp(24px, 5vw, 76px); display: flex; justify-content: space-between; gap: 18px; color: #98a5bc; border-top: 1px solid rgba(191, 205, 238, .18); background: #041126; font-size: 11px; }
 
 @media (max-width: 960px) { .atlas-layout { grid-template-columns: 1fr; }.atlas-stage { border-right: 0; min-height: 650px; }.decision-rail { padding-top: 44px; }.rail-lede { margin-bottom: 28px; }.decision-rail h2 { font-size: 36px; } }
-@media (max-width: 620px) { .topbar { height: auto; min-height: 76px; padding: 12px 20px; }.topbar-divider, .identity div span { display: none; }.testnet-status { padding: 8px 10px; }.atlas-stage { min-height: 690px; padding: 58px 24px 40px; }.atlas-intro h1 { font-size: 48px; }.atlas-map { width: 150%; left: -25%; bottom: 12%; }.marker--us { top: 58%; left: 12%; }.marker--hk { top: 65%; left: 55%; }.marker--switzerland { top: 56%; left: 45%; }.marker-copy strong { font-size: 16px; }.marker-copy small { display: none; }.map-note { left: 24px; right: 24px; }.decision-rail { padding: 44px 24px; }.footer { flex-direction: column; padding: 18px 24px; } }
+@media (max-width: 620px) { .topbar { height: auto; min-height: 76px; padding: 12px 20px; }.topbar-divider, .identity div span { display: none; }.testnet-status { padding: 8px 10px; }.atlas-stage { min-height: 690px; padding: 58px 24px 40px; }.atlas-intro h1 { font-size: 48px; }.atlas-map { width: 150%; left: -25%; bottom: 12%; }.marker--us { top: 58%; left: 12%; }.marker--hong-kong { top: 62%; left: 55%; }.marker--singapore { top: 70%; left: 54%; }.marker--european-union { top: 53%; left: 43%; }.marker-copy strong { font-size: 16px; }.marker-copy small { display: none; }.map-note { left: 24px; right: 24px; }.decision-rail { padding: 44px 24px; }.footer { flex-direction: column; padding: 18px 24px; } }

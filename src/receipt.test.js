@@ -15,5 +15,5 @@ test('creates a public receipt draft without embedding evidence text', () => {
     receipt.canonical,
     'APPROVE_TESTNET_RECEIPT|0.1|Tokenized treasury distribution|2026-06-23T12:00:00.000Z',
   );
-  assert.equal(receipt.canonical.includes('US-RWA-001'), false);
+  assert.equal(receipt.canonical.includes('Accredited-investor verification'), false);
 });

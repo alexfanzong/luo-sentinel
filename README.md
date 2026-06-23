@@ -4,8 +4,10 @@
 
 LUO Sentinel makes jurisdictional divergence visible before an AI agent or
 operator proceeds with a tokenized-asset action. The demo preserves distinct
-signals for the United States, Switzerland, and Hong Kong, then requires a
-human decision rather than manufacturing a universal legal conclusion.
+signals for the United States, Hong Kong, Singapore, and European Union, then
+requires a human decision rather than manufacturing a universal legal
+conclusion. These are scoped Ondo OUSG RWA sample signals, not jurisdiction-wide
+legal conclusions.
 
 ## Prototype
 

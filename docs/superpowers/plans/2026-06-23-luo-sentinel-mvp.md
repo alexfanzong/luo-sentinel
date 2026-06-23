@@ -4,6 +4,11 @@
 
 **Goal:** Build and deploy a public-safe LUO Sentinel demo that produces an RWA compliance preflight and supports a future user-operated Injective testnet receipt through an official integration.
 
+> **Current data note (2026-06-24):** The implementation uses LUO's reviewed
+> Ondo OUSG RWA sample: United States, Hong Kong, Singapore, and European
+> Union. Earlier placeholder references to Switzerland, `US-RWA-001`, or a
+> `Cross-border` evidence card are superseded and must not be used in the demo.
+
 **Architecture:** A React single-page application keeps legal-risk presentation, receipt canonicalization, and Injective interaction separate. The UI works end-to-end with a deterministic local preflight engine; an `InjectiveReceiptClient` interface keeps the official SDK adapter isolated and makes wallet/testnet integration verifiable without exposing a key.
 
 **Tech Stack:** Standards-based HTML, CSS, JavaScript, Node.js built-in test runner, official `@injectivelabs` packages selected only after official-documentation review, Injective testnet, browser wallet.
@@ -211,9 +216,10 @@ export function createTreasuryDistributionPreflight(): PreflightResult {
     disposition: 'HUMAN_REVIEW_REQUIRED',
     version: '1.0',
     evidence: [
-      { jurisdiction: 'United States', sourceId: 'US-RWA-001', title: 'Distribution constraints', signal: 'RESTRICTIVE', summary: 'Treat eligibility as a distinct review question.' },
-      { jurisdiction: 'Hong Kong', sourceId: 'HK-RWA-002', title: 'Virtual-asset policy signal', signal: 'EVOLVING', summary: 'The route requires jurisdiction-specific interpretation.' },
-      { jurisdiction: 'Cross-border', sourceId: 'XB-RWA-003', title: 'Transfer and marketing boundary', signal: 'UNRESOLVED', summary: 'No universal eligibility conclusion is produced.' },
+      { jurisdiction: 'United States', sourceId: 'US-CLAIM-01', title: 'Accredited-investor verification', signal: 'RESTRICTED', summary: 'The Rule 506(c) frame requires accredited-investor verification.' },
+      { jurisdiction: 'Hong Kong', sourceId: 'HK-CLAIM-01', title: 'Licensed secondary-trading channel', signal: 'CONDITIONAL', summary: 'Retail secondary trading depends on a licensed channel and controls.' },
+      { jurisdiction: 'Singapore', sourceId: 'SG-CLAIM-01', title: 'Restricted-CIS context', signal: 'CONDITIONAL', summary: 'The current source pack supports only a narrow restricted-CIS context.' },
+      { jurisdiction: 'European Union', sourceId: 'EU-CLAIM-02', title: 'OUSG classification boundary', signal: 'UNRESOLVED', summary: 'The current source pack does not establish an OUSG-specific classification.' },
     ],
   };
 }
@@ -252,7 +258,7 @@ test('creates a canonical receipt without evidence text', () => {
   });
 
   expect(payload.canonical).toBe('APPROVE_TESTNET_RECEIPT|1.0|Tokenized treasury distribution|2026-06-23T12:00:00.000Z');
-  expect(payload.canonical).not.toContain('US-RWA-001');
+  expect(payload.canonical).not.toContain('Accredited-investor verification');
 });
 ```
 
