@@ -19,8 +19,11 @@ button { font: inherit; }
 .identity div { display: grid; gap: 3px; }
 .identity strong { font-size: 16px; letter-spacing: .01em; }
 .identity span { font-size: 12px; color: #6c7890; }
-.testnet-status { padding: 10px 14px; display: flex; align-items: center; gap: 9px; border: 1px solid #dfe1e6; border-radius: 999px; font-size: 12px; white-space: nowrap; }
+.testnet-status { padding: 10px 14px; display: flex; align-items: center; gap: 9px; color: #062142; border: 1px solid #dfe1e6; border-radius: 999px; background: transparent; cursor: pointer; font-size: 12px; white-space: nowrap; transition: border-color .2s, background .2s; }
+.testnet-status:hover { border-color: #9aa7ba; background: #f0f2f4; }
+.testnet-status:disabled { cursor: wait; opacity: .72; }
 .testnet-status span { width: 7px; height: 7px; background: #43b585; border-radius: 50%; }
+.testnet-status--error span { background: #ef756f; }
 
 .atlas-layout { width: 100%; flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) minmax(300px, 27%); }
 .atlas-stage { min-height: 760px; position: relative; overflow: hidden; padding: 76px clamp(28px, 5.5vw, 84px) 48px; border-right: 1px solid rgba(191, 205, 238, .18); background: radial-gradient(circle at 38% 42%, rgba(38, 91, 151, .18), transparent 44%), #041126; }
