@@ -22,12 +22,12 @@ contract LUOReceiptAnchorTest {
     address private constant BROWSER_VECTOR_REVIEWER = 0x00000000000000000000000000000000000A11cE;
     uint64 private constant BROWSER_VECTOR_DECISION_TIME = 1_782_087_000;
     bytes32 private constant BROWSER_VECTOR_EVIDENCE_HASH =
-        0xca5dccebece8efc19059b681fab04f4b2f9465d74907df73a3f2aae0b9a3734d;
+        0xd3f1445b3056ff6df2ff807470a73de05a954f6f0b3a6e84514174f8406c1feb;
     bytes32 private constant BROWSER_VECTOR_PRODUCT_REF_HASH =
         0x0e2a67482db97d22a92681869a6cc6c3e8a2efd19d51cd49c239539a7006c841;
     bytes32 private constant BROWSER_VECTOR_NONCE = bytes32(uint256(42));
     bytes32 private constant BROWSER_VECTOR_RECEIPT_HASH =
-        0xe6de73d7431ac4d0f0519630daa438a9ae54080f7ba2059bee8938e71331e591;
+        0x62a3ba15af26a092095f1580b084d0142b6c551b57bdf74b97c98b7d1949bc15;
 
     function setUp() public {
         anchor = new LUOReceiptAnchor();

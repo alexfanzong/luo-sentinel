@@ -17,6 +17,7 @@ const RECEIPT = createProceedReceiptDraft({
   reviewerWallet: REVIEWER,
   decidedAt: 1782086940,
   nonce: "0x000000000000000000000000000000000000000000000000000000000000002a",
+  caseRef: "RWA-DEMO-001",
 });
 
 test("creates a zero-value Injective deployment preview without prompting a wallet", () => {

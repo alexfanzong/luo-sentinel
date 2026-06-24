@@ -19,6 +19,10 @@ When implementing from a selected generated mock, treat that image as the source
 - `Hold for counsel` is local-only and never uses gas. A future on-chain
   receipt may record only an explicit Proceed decision, with no cleartext legal
   content or reviewer identity on-chain.
+- Each Proceed receipt covers the full four-jurisdiction RWA review scope. Map
+  selection is only a reading focus, not a single-jurisdiction decision or an
+  implied Hold for the other jurisdictions. A receipt may bind one non-sensitive
+  cross-border scenario reference, never free-form legal or personal data.
 - Testnet deployment and receipt anchoring must remain a two-step flow: show
   the target, `0 INJ` value, and fresh gas estimate first; request wallet
   confirmation only from a separately labelled action.

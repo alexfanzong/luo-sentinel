@@ -50,6 +50,12 @@ receipt format locally, using JSON Canonicalization Scheme serialization and
 Keccak-256. It remains labelled `local only` because preparing a hash is not a
 transaction and does not demonstrate an on-chain record.
 
+For this demo, the evidence manifest contains the full reviewed scope — United
+States, Hong Kong, Singapore, and European Union — plus one non-sensitive
+`caseRef` such as `RWA-DEMO-001`. The marker selected in the Atlas UI is a
+reading focus only. It does not make a single-jurisdiction decision, and a
+jurisdiction outside a future scope must never be inferred to be a `Hold`.
+
 The browser implementation uses reviewed, pinned dependencies: `canonicalize`
 `3.0.0` for canonical JSON and `ethers` `6.17.0` for Ethereum-compatible
 Keccak hashing and ABI encoding. The lockfile records their exact resolved

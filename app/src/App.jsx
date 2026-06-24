@@ -6,6 +6,7 @@ import { RWA_EVIDENCE } from "./lib/rwaEvidence.js";
 
 export function App() {
   const [selectedId, setSelectedId] = useState(RWA_EVIDENCE[0].id);
+  const [caseRef, setCaseRef] = useState("RWA-DEMO-001");
   const [decision, setDecision] = useState("review");
   const [receipt, setReceipt] = useState(null);
   const [wallet, setWallet] = useState({ status: "disconnected", address: null, message: null });
@@ -48,6 +49,7 @@ export function App() {
         reviewerWallet: wallet.address,
         decidedAt: getSafeDecisionTimestamp(Math.floor(Date.now() / 1000)),
         nonce: hexlify(randomBytes(32)),
+        caseRef,
       });
       setReceipt(nextReceipt);
       setDecision("draft");
@@ -67,6 +69,10 @@ export function App() {
 
   function selectEvidence(id) {
     setSelectedId(id);
+  }
+
+  function changeCaseRef(value) {
+    setCaseRef(value);
     setReceipt(null);
     setDecision("review");
     setAnchor((current) => ({
@@ -298,6 +304,18 @@ export function App() {
             <small>Source anchor · {selectedEvidence.id}</small>
           </section>
 
+          <label className="scenario-ref-field">
+            <span>Scenario reference</span>
+            <input
+              value={caseRef}
+              onChange={(event) => changeCaseRef(event.target.value)}
+              maxLength={64}
+              pattern="[A-Za-z0-9._-]+"
+              aria-describedby="scenario-reference-help"
+            />
+            <small id="scenario-reference-help">One cross-border decision · all 4 reviewed signals</small>
+          </label>
+
           <div className="rail-actions">
             <p className="human-gate">Human review required</p>
             <button className="decision-button decision-button--quiet" onClick={() => setDecision("hold")}>Hold for counsel</button>
@@ -320,6 +338,7 @@ export function App() {
             <div className="receipt-commitment">
               <span>Proceed receipt · local only</span>
               <code>{receipt.receiptHash.slice(0, 18)}…{receipt.receiptHash.slice(-8)}</code>
+              <small>{receipt.evidenceSet.decision.caseRef} · 4-jurisdiction review scope</small>
             </div>
           )}
           {receipt && !anchor.contractAddress && anchor.status !== "deployment-reviewed" && anchor.status !== "submitting-deployment" && (

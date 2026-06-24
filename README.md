@@ -9,6 +9,11 @@ requires a human decision rather than manufacturing a universal legal
 conclusion. These are scoped Ondo OUSG RWA sample signals, not jurisdiction-wide
 legal conclusions.
 
+Each `Proceed` receipt binds one non-sensitive cross-border scenario reference
+to the complete four-jurisdiction evidence snapshot. Clicking a map marker only
+changes the reading focus; it does not turn the decision into a single-country
+approval or imply a Hold for another jurisdiction.
+
 ## Prototype
 
 The current Atlas Canvas prototype lives in [`app/`](./app). It uses a map-first
