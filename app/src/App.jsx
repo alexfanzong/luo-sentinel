@@ -13,6 +13,7 @@ export function App() {
   const [anchor, setAnchor] = useState({
     status: "idle",
     contractAddress: null,
+    unverifiedContractAddress: null,
     preview: null,
     estimate: null,
     txHash: null,
@@ -58,6 +59,7 @@ export function App() {
         status: current.contractAddress ? "ready-to-anchor" : "idle",
         preview: null,
         estimate: null,
+        unverifiedContractAddress: null,
         txHash: null,
         message: null,
       }));
@@ -80,6 +82,7 @@ export function App() {
       status: current.contractAddress ? "ready-to-anchor" : "idle",
       preview: null,
       estimate: null,
+      unverifiedContractAddress: null,
       txHash: null,
       message: null,
     }));
@@ -141,8 +144,9 @@ export function App() {
     setAnchor((current) => ({ ...current, status: "submitting-deployment", message: null }));
     try {
       const receiptAnchorClient = await getReceiptAnchorClient();
+      const provider = await getBrowserProvider();
       const transaction = await receiptAnchorClient.submitConfirmedTestnetTransaction({
-        provider: await getBrowserProvider(),
+        provider,
         walletAddress: wallet.address,
         preview: anchor.preview,
         gasLimit: anchor.estimate.gasLimit,
@@ -152,13 +156,31 @@ export function App() {
       if (!mined?.contractAddress) {
         throw new Error("The deployment was mined without a contract address.");
       }
+      try {
+        await receiptAnchorClient.verifyDeployedRuntimeBytecode({
+          provider,
+          contractAddress: mined.contractAddress,
+        });
+      } catch (error) {
+        setAnchor({
+          status: "error",
+          contractAddress: null,
+          unverifiedContractAddress: mined.contractAddress,
+          preview: null,
+          estimate: null,
+          txHash: transaction.hash,
+          message: `Deployment was mined but its runtime was not verified. It will not be used: ${getErrorMessage(error)}`,
+        });
+        return;
+      }
       setAnchor({
         status: "deployed",
         contractAddress: mined.contractAddress,
+        unverifiedContractAddress: null,
         preview: null,
         estimate: null,
         txHash: transaction.hash,
-        message: "Receipt anchor deployed. Prepare a fresh Proceed receipt before anchoring it.",
+        message: "Receipt anchor deployed and runtime verified. Prepare a fresh Proceed receipt before anchoring it.",
       });
       setReceipt(null);
       setDecision("review");
@@ -239,7 +261,7 @@ export function App() {
           <span className="topbar-divider" />
           <div>
             <strong>LUO Sentinel</strong>
-            <span>Compliance preflight for tokenized RWA actions on Injective testnet</span>
+            <span>Evidence-bound decision record for tokenized RWA actions · Injective testnet demo</span>
           </div>
         </div>
         <button
@@ -264,7 +286,7 @@ export function App() {
           <div className="atlas-intro">
             <p>Evidence map</p>
             <h1>Cross-border<br />jurisdiction</h1>
-            <span>Map regulatory divergence before a tokenized asset action proceeds.</span>
+            <span>Review regulatory divergence before a human records the next step.</span>
           </div>
 
           <img className="atlas-map" src="/atlas-map.png" alt="Abstract world map with cross-border connection lines" />
@@ -310,22 +332,23 @@ export function App() {
               value={caseRef}
               onChange={(event) => changeCaseRef(event.target.value)}
               maxLength={64}
-              pattern="[A-Za-z0-9._-]+"
+              pattern="[A-Za-z0-9][A-Za-z0-9._-]{2,63}"
+              title="Use 3–64 letters, numbers, dots, hyphens, or underscores; start with a letter or number."
               aria-describedby="scenario-reference-help"
             />
-            <small id="scenario-reference-help">One cross-border decision · all 4 reviewed signals</small>
+            <small id="scenario-reference-help">All 4 reviewed signals · uppercase on receipt · non-sensitive only</small>
           </label>
 
           <div className="rail-actions">
             <p className="human-gate">Human review required</p>
             <button className="decision-button decision-button--quiet" onClick={() => setDecision("hold")}>Hold for counsel</button>
             <button className="decision-button" onClick={prepareReceiptDraft} disabled={decision === "preparing"}>
-              {decision === "preparing" ? "Preparing commitment…" : "Prepare testnet receipt"}
+              {decision === "preparing" ? "Preparing commitment…" : "Prepare testnet decision receipt"}
             </button>
           </div>
 
           <div className={`decision-state decision-state--${decision}`}>
-            {decision === "review" && "No legal conclusion is produced."}
+            {decision === "review" && "No legal conclusion, compliance determination, or asset authorization is produced."}
             {decision === "hold" && "Held. No receipt created."}
             {decision === "preparing" && "Creating a local public commitment."}
             {decision === "draft" && (wallet.status === "connected"
@@ -379,6 +402,12 @@ export function App() {
               <code>{anchor.contractAddress.slice(0, 12)}…{anchor.contractAddress.slice(-8)}</code>
             </div>
           )}
+          {anchor.unverifiedContractAddress && (
+            <div className="testnet-result">
+              <span>Unverified deployment · not used</span>
+              <code>{anchor.unverifiedContractAddress.slice(0, 12)}…{anchor.unverifiedContractAddress.slice(-8)}</code>
+            </div>
+          )}
           {anchor.message && <p className={`testnet-message testnet-message--${anchor.status}`}>{anchor.message}</p>}
           {anchor.txHash && (
             <a className="explorer-link" href={`${INJECTIVE_EVM_TESTNET.blockExplorerUrl}tx/${anchor.txHash}`} target="_blank" rel="noreferrer">
@@ -390,7 +419,7 @@ export function App() {
 
       <footer className="footer">
         <span>Evidence-first · Jurisdiction-aware · Human-in-the-loop</span>
-        <span>Private keys never enter this application · no signature or transfer is initiated.</span>
+        <span>Testnet decision record · not legal advice · does not establish compliance or authorize an asset transaction.</span>
       </footer>
     </div>
   );

@@ -26,6 +26,9 @@ When implementing from a selected generated mock, treat that image as the source
 - Testnet deployment and receipt anchoring must remain a two-step flow: show
   the target, `0 INJ` value, and fresh gas estimate first; request wallet
   confirmation only from a separately labelled action.
+- After any contract deployment is mined, read its runtime bytecode and compare
+  its Keccak-256 hash with the committed, locally compiled artifact before the
+  address can be used to anchor a receipt. A mismatch is unverified and unusable.
 - Keep the header minimal: LUO logo, LUO Sentinel, concise product descriptor,
   and Injective testnet status only.
 - Keep the right decision rail sparse: selected signal, human-review boundary,

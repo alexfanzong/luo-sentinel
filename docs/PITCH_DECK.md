@@ -1,14 +1,14 @@
 # LUO Sentinel — Pitch Deck Outline
 
-1. **Title** — LUO Sentinel: evidence-bound compliance preflight for RWA on
-   Injective.
+1. **Title** — LUO Sentinel: evidence-bound decision record for RWA on
+   Injective Testnet.
 2. **Failure mode** — AI agents can compress cross-border legal divergence into
    false certainty.
 3. **User and trigger** — an agent proposes a tokenized treasury distribution.
 4. **Product** — Atlas Canvas preserves United States, Hong Kong, Singapore,
    and European Union as distinct, scoped RWA evidence signals.
-5. **Human decision** — a person holds for counsel or authorizes a safe
-   testnet receipt draft.
+5. **Human decision** — a person holds for counsel or prepares a safe,
+   non-value-moving testnet decision receipt.
 6. **Injective path** — agent identity and testnet receipt integration, with
    no private key in the product.
 7. **Why now** — RWA, stablecoins, custody, and cross-border payments require

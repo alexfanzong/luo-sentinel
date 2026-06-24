@@ -53,6 +53,9 @@ prepare a contract-deployment or `anchorProceed` transaction preview, estimate
 its fee from the connected testnet wallet, and request the browser wallet to
 submit it only after an explicit confirmation click. The preview enforces zero
 value transfer and Injective EVM Testnet (`1439`) before it can open the wallet.
+After a deployment is mined, the app reads the deployed runtime bytecode and
+compares its Keccak-256 hash with the reviewed local Forge artifact. A mismatch
+is visibly marked as unverified and cannot be used for receipt anchoring.
 No contract has been deployed, and no test INJ has been spent.
 
 ## Implemented browser-wallet connection
