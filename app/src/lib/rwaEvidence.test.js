@@ -17,3 +17,13 @@ test("keeps each RWA homepage signal tied to its reviewed source anchor", () => 
     ["US-CLAIM-01", "HK-CLAIM-01", "SG-CLAIM-01", "EU-CLAIM-02"],
   );
 });
+
+test("keeps the evidence copy scoped to the cited source instead of asserting a universal offer path", () => {
+  const [unitedStates, hongKong, singapore, europeanUnion] = RWA_EVIDENCE;
+
+  assert.doesNotMatch(unitedStates.summary, /No retail distribution without further registration/i);
+  assert.doesNotMatch(hongKong.summary, /possible only through/i);
+  assert.match(singapore.sourceLabel, /specific provision required/i);
+  assert.equal(europeanUnion.secondarySourceLabel, "EU · MiFID II 2014/65/EU");
+  assert.equal(europeanUnion.secondarySourceUrl, "https://eur-lex.europa.eu/eli/dir/2014/65/oj");
+});

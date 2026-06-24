@@ -19,29 +19,26 @@ function evaluateAgentCoverage(question) {
 }
 
 // Deterministic, human-reviewed triage for the OUSG cross-border scenario.
-// This is the "~60%" brief a project team takes to local counsel — it stays
-// off-chain; only the receipt hash is anchored.
-const RECOMMENDATION = {
-  lead: "United States",
-  leadPath: "Rule 506(c) private placement to verified accredited investors",
-  ranking: [
-    { title: "United States", level: "Most actionable", why: "Defined private-placement path (Rule 506(c)) — proceed to verified accredited investors. Highest path clarity." },
-    { title: "Hong Kong", level: "Conditional", why: "Feasible via an SFC-licensed channel with tokenised-product controls; needs a licensed distribution partner." },
-    { title: "Singapore", level: "Narrow", why: "Only a restricted collective-investment-scheme context is supported; broader retail needs further MAS authorisation." },
-    { title: "European Union", level: "Hold", why: "OUSG classification unresolved under MiCA / MiFID; hold pending clarification or a counsel opinion." },
-  ],
+// The local agent translates a bounded evidence pack into preparation work; it
+// does not select a market or determine an offer path.
+const ACTION_PLAN = {
+  startHere: {
+    text: "Assess whether a Rule 506(c) private-placement route could fit the reviewed U.S. source. This is a scoped research starting point, not an eligibility or offering finding.",
+    url: "https://www.ecfr.gov/current/title-17/section-230.506",
+    label: "17 CFR §230.506",
+  },
   materials: {
     need: [
-      { text: "Accredited-investor verification process / vendor", url: "https://www.investor.gov/introduction-investing/investing-basics/glossary/accredited-investors", label: "SEC definition" },
-      { text: "Form D filing with the SEC (within 15 days of first sale)", url: "https://www.law.cornell.edu/cfr/text/17/239.500", label: "Form D rule" },
-      { text: "Offering documents (PPM / subscription agreement)" },
+      { text: "Accredited-investor verification design" },
+      { text: "Form D filing workflow (if counsel confirms an exempt path)" },
+      { text: "Offering and subscription materials" },
       { text: "Rule 506(d) bad-actor checks", url: "https://www.ecfr.gov/current/title-17/section-230.506", label: "17 CFR §230.506" },
     ],
-    have: ["Token & product documentation", "Cap table", "Entity formation documents"],
-    gaps: [
-      "506(c) vs Reg S treatment for non-US buyers",
-      "State blue-sky notice filings",
-      "Secondary-transfer restrictions",
+    likelyHave: ["Product rights and token terms", "Entity and cap-table materials", "Intended jurisdictions and investor profile"],
+    counsel: [
+      "Whether Rule 506(c) or another route is available for the actual product",
+      "Non-U.S. buyer treatment, state notices and secondary-transfer controls",
+      "Hong Kong, Singapore and EU conditions or source gaps",
     ],
   },
 };
@@ -159,10 +156,10 @@ export function App() {
       "## Constraints for the downstream agent",
       "Act only within this human-verified scope. Do not exceed it or infer coverage for an `Unresolved` jurisdiction.",
       "",
-      "- **United States** — Rule 506(c): accredited-investor verification required; no general retail.",
-      "- **Hong Kong** — retail only via an SFC-licensed channel; otherwise professional-investor only.",
-      "- **Singapore** — restricted collective-investment-scheme context only; broader retail needs further MAS authorisation.",
-      "- **European Union** — classification unresolved; do not offer to EU retail.",
+      "- **United States** — candidate Rule 506(c) workstream; counsel confirms availability and scope.",
+      "- **Hong Kong** — licensed-intermediary and product-control questions remain conditionally scoped.",
+      "- **Singapore** — current source pack has no specific provision supporting a broader path.",
+      "- **European Union** — classification remains unresolved in the current pack.",
     ].join("\n");
   }
 
@@ -308,27 +305,25 @@ export function App() {
         operatorConfirmed: true,
       });
       const reader = await getTestnetReceiptReader();
-      const mined = await receiptAnchorClient.waitForConfirmedTestnetTransaction({
-        reader,
-        transactionHash: transaction.hash,
+      const contractAddress = await receiptAnchorClient.waitForDeployedContract({
+        provider: reader,
+        deployer: wallet.address,
+        nonce: transaction.nonce,
       });
-      if (!mined?.contractAddress) {
-        throw new Error("The deployment was mined without a contract address.");
-      }
       try {
         await receiptAnchorClient.verifyDeployedRuntimeBytecode({
           provider: reader,
-          contractAddress: mined.contractAddress,
+          contractAddress,
         });
       } catch (error) {
         setAnchor({
           status: "error",
           contractAddress: null,
-          unverifiedContractAddress: mined.contractAddress,
+          unverifiedContractAddress: contractAddress,
           preview: null,
           estimate: null,
           txHash: transaction.hash,
-          message: `Deployment was mined but its runtime was not verified. It will not be used: ${getErrorMessage(error)}`,
+          message: `Deployment is visible on-chain but its runtime was not verified. It will not be used: ${getErrorMessage(error)}`,
         });
         return;
       }
@@ -339,7 +334,7 @@ export function App() {
         preview: null,
         estimate: null,
         txHash: transaction.hash,
-        message: "Receipt anchor deployed and runtime verified. Prepare a fresh Proceed receipt before anchoring it.",
+        message: "Receipt anchor is visible on-chain and runtime verified. Prepare a fresh Proceed receipt before anchoring it.",
       });
       setReceipt(null);
       setDecision("review");
@@ -416,11 +411,7 @@ export function App() {
         operatorConfirmed: true,
       });
       const reader = await getTestnetReceiptReader();
-      await receiptAnchorClient.waitForConfirmedTestnetTransaction({
-        reader,
-        transactionHash: transaction.hash,
-      });
-      const record = await receiptAnchorClient.readAnchoredReceipt({
+      const record = await receiptAnchorClient.waitForAnchoredReceipt({
         provider: reader,
         contractAddress: anchor.contractAddress,
         receiptHash: receipt.receiptHash,
@@ -586,6 +577,11 @@ export function App() {
                   <a href={openItem.sourceUrl} target="_blank" rel="noreferrer">
                     {openItem.sourceLabel} ↗
                   </a>
+                  {openItem.secondarySourceUrl && (
+                    <a href={openItem.secondarySourceUrl} target="_blank" rel="noreferrer">
+                      {openItem.secondarySourceLabel} ↗
+                    </a>
+                  )}
                 </div>
               </div>
             </div>
@@ -612,7 +608,7 @@ export function App() {
             <button type="button" className="rail-close" onClick={() => setRailOpen(false)} aria-label="Close">✕</button>
             <div className="sheet-inner">
               <nav className="sheet-stepper" aria-label="Workflow steps">
-                {[["1", "Brief"], ["2", "Decision"], ["3", "Anchor"], ["4", "Handoff"]].map(([n, label]) => (
+                {[["1", "Action plan"], ["2", "Decision"], ["3", "Anchor"], ["4", "Handoff"]].map(([n, label]) => (
                   <button
                     key={n}
                     type="button"
@@ -627,22 +623,22 @@ export function App() {
 
               {step === 1 && (
                 <div className="sheet-step-panel">
-                  <p className="sheet-kicker">Step 1 · Recommendation &amp; readiness — off-chain brief</p>
-                  <h2>Where is this most actionable?</h2>
-                  <ol className="reco-list">
-                    {RECOMMENDATION.ranking.map((r) => (
-                      <li key={r.title}>
-                        <div className="reco-head"><strong>{r.title}</strong><span className="reco-level">{r.level}</span></div>
-                        <p>{r.why}</p>
-                      </li>
-                    ))}
-                  </ol>
-                  <p className="reco-lead">Suggested lead market: <strong>{RECOMMENDATION.lead}</strong> — {RECOMMENDATION.leadPath}.</p>
+                  <p className="sheet-kicker">Step 1 · Source-bounded action plan</p>
+                  <h2>What to do next</h2>
+                  <div className="action-start">
+                    <h3>Start here</h3>
+                    <p>
+                      {ACTION_PLAN.startHere.text}{" "}
+                      <a className="template-link" href={ACTION_PLAN.startHere.url} target="_blank" rel="noreferrer">
+                        {ACTION_PLAN.startHere.label} ↗
+                      </a>
+                    </p>
+                  </div>
                   <div className="reco-materials">
                     <div>
                       <h4>Need</h4>
                       <ul>
-                        {RECOMMENDATION.materials.need.map((m) => (
+                        {ACTION_PLAN.materials.need.map((m) => (
                           <li key={m.text}>
                             {m.text}
                             {m.url && (
@@ -654,14 +650,14 @@ export function App() {
                     </div>
                     <div>
                       <h4>Likely have</h4>
-                      <ul>{RECOMMENDATION.materials.have.map((m) => <li key={m}>{m}</li>)}</ul>
+                      <ul>{ACTION_PLAN.materials.likelyHave.map((m) => <li key={m}>{m}</li>)}</ul>
                     </div>
                     <div>
                       <h4>Take to local counsel</h4>
-                      <ul>{RECOMMENDATION.materials.gaps.map((m) => <li key={m}>{m}</li>)}</ul>
+                      <ul>{ACTION_PLAN.materials.counsel.map((m) => <li key={m}>{m}</li>)}</ul>
                     </div>
                   </div>
-                  <p className="reco-disclaimer">Not legal advice — take this brief and the linked sources to qualified local counsel.</p>
+                  <p className="reco-disclaimer">This narrows the next work; it does not determine where an asset may be offered or transferred. Take this brief and the linked sources to qualified local counsel.</p>
                   <div className="sheet-nav">
                     <button className="decision-button" onClick={() => setStep(2)}>Continue to decision →</button>
                   </div>

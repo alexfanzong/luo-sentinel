@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { Interface } from "ethers";
+import { getCreateAddress, Interface } from "ethers";
 
 import { createProceedReceiptDraft } from "./onchainReceipt.js";
 import {
@@ -9,8 +9,8 @@ import {
   estimateTestnetTransaction,
   readAnchoredReceipt,
   submitConfirmedTestnetTransaction,
-  waitForConfirmedTestnetTransaction,
 } from "./receiptAnchorClient.js";
+import * as receiptAnchorClient from "./receiptAnchorClient.js";
 
 const REVIEWER = "0x00000000000000000000000000000000000A11cE";
 const CONTRACT = "0x000000000000000000000000000000000000c0de";
@@ -110,29 +110,58 @@ test("will not send a transaction without an explicit confirmation flag", async 
   assert.equal(signerRequested, false);
 });
 
-test("confirms a deployment from an independent Injective receipt reader", async () => {
-  const transactionHash = "0x000000000000000000000000000000000000000000000000000000000000002a";
-  const receipt = await waitForConfirmedTestnetTransaction({
-    transactionHash,
-    reader: {
-      getTransactionReceipt: async (hash) => {
-        assert.equal(hash, transactionHash);
-        return { status: 1, contractAddress: CONTRACT };
+test("confirms a deployment from code at its deterministic create address without reading a receipt", async () => {
+  assert.equal(typeof receiptAnchorClient.waitForDeployedContract, "function");
+
+  const expectedAddress = getCreateAddress({ from: REVIEWER, nonce: 0 });
+  const deployed = await receiptAnchorClient.waitForDeployedContract({
+    deployer: REVIEWER,
+    nonce: 0,
+    attempts: 1,
+    pollIntervalMs: 0,
+    provider: {
+      getCode: async (address) => {
+        assert.equal(address, expectedAddress);
+        return "0x6000";
+      },
+      getTransactionReceipt: async () => {
+        throw new Error("receipt polling must not be used to confirm deployment");
       },
     },
   });
 
-  assert.deepEqual(receipt, { status: 1, contractAddress: CONTRACT });
+  assert.equal(deployed, expectedAddress);
 });
 
-test("rejects an independently confirmed failed transaction", async () => {
-  await assert.rejects(
-    waitForConfirmedTestnetTransaction({
-      transactionHash: "0x000000000000000000000000000000000000000000000000000000000000002a",
-      reader: { getTransactionReceipt: async () => ({ status: 0, contractAddress: null }) },
-    }),
-    /execution failed/i,
-  );
+test("confirms an anchored receipt from contract state without reading a transaction receipt", async () => {
+  assert.equal(typeof receiptAnchorClient.waitForAnchoredReceipt, "function");
+
+  const contractInterface = new Interface([
+    "function getRecord(bytes32 receiptHash) view returns (address submitter, uint64 anchoredAt, uint64 decidedAt, bytes32 evidenceHash, bytes32 productRefHash)",
+  ]);
+  const returnedRecord = contractInterface.encodeFunctionResult("getRecord", [
+    REVIEWER,
+    1782087060n,
+    BigInt(RECEIPT.decidedAt),
+    RECEIPT.evidenceHash,
+    RECEIPT.productRefHash,
+  ]);
+
+  const record = await receiptAnchorClient.waitForAnchoredReceipt({
+    contractAddress: CONTRACT,
+    receiptHash: RECEIPT.receiptHash,
+    attempts: 1,
+    pollIntervalMs: 0,
+    provider: {
+      call: async () => returnedRecord,
+      getTransactionReceipt: async () => {
+        throw new Error("receipt polling must not be used to confirm anchoring");
+      },
+    },
+  });
+
+  assert.equal(record.submitter, REVIEWER);
+  assert.equal(record.evidenceHash, RECEIPT.evidenceHash);
 });
 
 test("reads and decodes an anchored receipt after its transaction is mined", async () => {

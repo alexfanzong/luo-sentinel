@@ -1,4 +1,4 @@
-import { getAddress, Interface, isHexString, keccak256 } from "ethers";
+import { getAddress, getCreateAddress, Interface, isHexString, keccak256 } from "ethers";
 
 import { INJECTIVE_EVM_TESTNET } from "./injectiveEvm.js";
 
@@ -131,31 +131,38 @@ export async function submitConfirmedTestnetTransaction({
   });
 }
 
-export async function waitForConfirmedTestnetTransaction({
-  reader,
-  transactionHash,
-  attempts = 20,
-  pollIntervalMs = 1500,
+function wait(pollIntervalMs) {
+  return new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
+}
+
+// Injective EVM Testnet can expose a transaction-hash / receipt mismatch to
+// wallets. Contract code appearing at the CREATE address is the authoritative
+// deployment signal, so receipt polling is deliberately not used here.
+export async function waitForDeployedContract({
+  provider,
+  deployer,
+  nonce,
+  attempts = 30,
+  pollIntervalMs = 1000,
 }) {
-  if (!isHexString(transactionHash, 32)) {
-    throw new Error("A valid testnet transaction hash is required.");
+  let normalizedDeployer;
+  try {
+    normalizedDeployer = getAddress(deployer);
+  } catch {
+    throw new Error("A valid deployer wallet address is required.");
+  }
+  if (!Number.isSafeInteger(nonce) || nonce < 0) {
+    throw new Error("A valid deployment nonce is required.");
   }
 
+  const contractAddress = getCreateAddress({ from: normalizedDeployer, nonce });
   for (let attempt = 0; attempt < attempts; attempt += 1) {
-    const receipt = await reader.getTransactionReceipt(transactionHash);
-    if (receipt) {
-      if (Number(receipt.status) !== 1) {
-        throw new Error("The Injective testnet transaction execution failed.");
-      }
-      return receipt;
-    }
-
-    if (attempt + 1 < attempts) {
-      await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
-    }
+    const code = await provider.getCode(contractAddress);
+    if (isHexString(code) && code.length > 2) return contractAddress;
+    if (attempt + 1 < attempts) await wait(pollIntervalMs);
   }
 
-  throw new Error("The Injective testnet transaction is not confirmed yet. Check the explorer before retrying.");
+  throw new Error("Deployment not visible on-chain yet. Check the explorer, then paste the contract address to continue.");
 }
 
 export async function verifyDeployedRuntimeBytecode({ provider, contractAddress }) {
@@ -207,4 +214,35 @@ export async function readAnchoredReceipt({ provider, contractAddress, receiptHa
     evidenceHash: result.evidenceHash,
     productRefHash: result.productRefHash,
   };
+}
+
+// A successful getRecord call is the authoritative anchor signal. The
+// transaction hash remains useful for an explorer link, but is not a success
+// criterion on this testnet.
+export async function waitForAnchoredReceipt({
+  provider,
+  contractAddress,
+  receiptHash,
+  attempts = 30,
+  pollIntervalMs = 1000,
+}) {
+  try {
+    getAddress(contractAddress);
+  } catch {
+    throw new Error("A valid receipt-anchor contract address is required.");
+  }
+  if (!isHexString(receiptHash, 32)) {
+    throw new Error("A valid receipt hash is required.");
+  }
+
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    try {
+      return await readAnchoredReceipt({ provider, contractAddress, receiptHash });
+    } catch (error) {
+      if (attempt + 1 >= attempts) break;
+      await wait(pollIntervalMs);
+    }
+  }
+
+  throw new Error("Receipt not yet confirmed on-chain. Check the explorer before retrying.");
 }
