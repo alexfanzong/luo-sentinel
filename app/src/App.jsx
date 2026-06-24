@@ -4,9 +4,25 @@ import { connectToInjectiveEvmTestnet, INJECTIVE_EVM_TESTNET } from "./lib/injec
 import { createProceedReceiptDraft, getSafeDecisionTimestamp } from "./lib/onchainReceipt.js";
 import { RWA_EVIDENCE } from "./lib/rwaEvidence.js";
 
+// The reviewed evidence pack the local agent is allowed to route to. The agent
+// never answers freely: it either maps a question onto these human-verified
+// source signals, or it refuses instead of fabricating a map.
+const SUPPORTED_SCENARIO_QUESTION =
+  "Can our OUSG-linked treasury product be offered and transferred across four jurisdictions?";
+
+function evaluateAgentCoverage(question) {
+  const q = (question || "").trim().toLowerCase();
+  if (q.length === 0) return false;
+  const mentionsReviewedAsset = /(ousg|tokeniz(?:ed|ed)? treasury|treasury product|\brwa\b)/.test(q);
+  const mentionsCrossBorder = /(jurisdiction|cross[ -]?border|offer|transfer|four|abroad)/.test(q);
+  return mentionsReviewedAsset && mentionsCrossBorder;
+}
+
 export function App() {
   const [selectedId, setSelectedId] = useState(RWA_EVIDENCE[0].id);
   const [caseRef, setCaseRef] = useState("RWA-DEMO-001");
+  const [agentQuestion, setAgentQuestion] = useState(SUPPORTED_SCENARIO_QUESTION);
+  const [agentStatus, setAgentStatus] = useState("idle"); // idle | running | matched | refused | covered
   const [decision, setDecision] = useState("review");
   const [receipt, setReceipt] = useState(null);
   const [existingDeploymentAddress, setExistingDeploymentAddress] = useState("");
@@ -35,6 +51,20 @@ export function App() {
     } catch (error) {
       setWallet({ status: "error", address: null, message: error.message });
     }
+  }
+
+  function runAgentAnalysis() {
+    if (agentStatus === "running") return;
+    setAgentStatus("running");
+    // Deterministic, offline routing. The short delay only makes the trace
+    // readable on screen; the outcome never depends on a network or an LLM.
+    setTimeout(() => {
+      setAgentStatus(evaluateAgentCoverage(agentQuestion) ? "matched" : "refused");
+    }, 700);
+  }
+
+  function editAgentQuestion() {
+    setAgentStatus("idle");
   }
 
   async function prepareReceiptDraft() {
@@ -330,6 +360,9 @@ export function App() {
             <p>Evidence map</p>
             <h1>Cross-border<br />jurisdiction</h1>
             <span>Review regulatory divergence before a human records the next step.</span>
+            {agentStatus === "covered" && (
+              <span className="agent-routed-badge">✓ Agent-routed · 4 human-reviewed sources</span>
+            )}
           </div>
 
           <img className="atlas-map" src="/atlas-map.png" alt="Abstract world map with cross-border connection lines" />
@@ -356,6 +389,61 @@ export function App() {
             <span>Demo map</span>
             Information relationships only · not a representation of jurisdictional boundaries.
           </div>
+
+          {agentStatus !== "covered" && (
+            <div className="agent-gate" aria-label="LUO agent evidence intake">
+              <div className="agent-gate-card">
+                <p className="agent-gate-kicker">LUO Agent · evidence intake</p>
+                <h2>Where should the agent begin?</h2>
+                <p className="agent-gate-lede">
+                  Ask the cross-border question. The agent routes it to human-reviewed source
+                  answers — and refuses to draw a map if the question falls outside the verified
+                  evidence pack.
+                </p>
+                <textarea
+                  className="agent-gate-input"
+                  value={agentQuestion}
+                  onChange={(event) => setAgentQuestion(event.target.value)}
+                  rows={3}
+                  disabled={agentStatus === "running"}
+                  aria-label="Project question for the agent"
+                />
+
+                {agentStatus === "idle" && (
+                  <button className="decision-button" onClick={runAgentAnalysis}>Run agent analysis</button>
+                )}
+
+                {agentStatus === "running" && (
+                  <p className="agent-gate-status">Routing to verified sources…</p>
+                )}
+
+                {agentStatus === "matched" && (
+                  <div className="agent-trace">
+                    <p className="agent-trace-title">Agent trace</p>
+                    <ol>
+                      <li>Parse action → tokenized treasury offering + secondary transfer</li>
+                      <li>Retrieve reviewed source answers → US · HK · SG · EU <em>(4 verified)</em></li>
+                      <li>Preserve divergence → no merged legal conclusion</li>
+                    </ol>
+                    <button className="decision-button" onClick={() => setAgentStatus("covered")}>
+                      Reveal evidence map
+                    </button>
+                  </div>
+                )}
+
+                {agentStatus === "refused" && (
+                  <div className="agent-refusal">
+                    <p className="agent-refusal-title">No verified coverage</p>
+                    <p>
+                      This question falls outside the reviewed OUSG evidence pack. The agent will
+                      not fabricate a map.
+                    </p>
+                    <button className="testnet-review-button" onClick={editAgentQuestion}>Edit question</button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </section>
 
         <aside className="decision-rail" aria-label="Human decision">
@@ -384,8 +472,11 @@ export function App() {
 
           <div className="rail-actions">
             <p className="human-gate">Human review required</p>
-            <button className="decision-button decision-button--quiet" onClick={() => setDecision("hold")}>Hold for counsel</button>
-            <button className="decision-button" onClick={prepareReceiptDraft} disabled={decision === "preparing"}>
+            {agentStatus !== "covered" && (
+              <p className="agent-gate-hint">Run the agent analysis first to unlock the decision.</p>
+            )}
+            <button className="decision-button decision-button--quiet" onClick={() => setDecision("hold")} disabled={agentStatus !== "covered"}>Hold for counsel</button>
+            <button className="decision-button" onClick={prepareReceiptDraft} disabled={decision === "preparing" || agentStatus !== "covered"}>
               {decision === "preparing" ? "Preparing commitment…" : "Prepare testnet decision receipt"}
             </button>
           </div>
