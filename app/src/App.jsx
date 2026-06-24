@@ -9,6 +9,7 @@ export function App() {
   const [caseRef, setCaseRef] = useState("RWA-DEMO-001");
   const [decision, setDecision] = useState("review");
   const [receipt, setReceipt] = useState(null);
+  const [existingDeploymentAddress, setExistingDeploymentAddress] = useState("");
   const [wallet, setWallet] = useState({ status: "disconnected", address: null, message: null });
   const [anchor, setAnchor] = useState({
     status: "idle",
@@ -96,6 +97,15 @@ export function App() {
     return new BrowserProvider(window.ethereum);
   }
 
+  async function getTestnetReceiptReader() {
+    const { JsonRpcProvider } = await import("ethers");
+    return new JsonRpcProvider(
+      INJECTIVE_EVM_TESTNET.rpcUrl,
+      INJECTIVE_EVM_TESTNET.chainId,
+      { staticNetwork: true },
+    );
+  }
+
   async function getReceiptAnchorClient() {
     return import("./lib/receiptAnchorClient.js");
   }
@@ -152,13 +162,17 @@ export function App() {
         gasLimit: anchor.estimate.gasLimit,
         operatorConfirmed: true,
       });
-      const mined = await transaction.wait();
+      const reader = await getTestnetReceiptReader();
+      const mined = await receiptAnchorClient.waitForConfirmedTestnetTransaction({
+        reader,
+        transactionHash: transaction.hash,
+      });
       if (!mined?.contractAddress) {
         throw new Error("The deployment was mined without a contract address.");
       }
       try {
         await receiptAnchorClient.verifyDeployedRuntimeBytecode({
-          provider,
+          provider: reader,
           contractAddress: mined.contractAddress,
         });
       } catch (error) {
@@ -182,6 +196,31 @@ export function App() {
         txHash: transaction.hash,
         message: "Receipt anchor deployed and runtime verified. Prepare a fresh Proceed receipt before anchoring it.",
       });
+      setReceipt(null);
+      setDecision("review");
+    } catch (error) {
+      setAnchor((current) => ({ ...current, status: "error", message: getErrorMessage(error) }));
+    }
+  }
+
+  async function recoverExistingDeployment() {
+    setAnchor((current) => ({ ...current, status: "verifying-deployment", message: null }));
+    try {
+      const receiptAnchorClient = await getReceiptAnchorClient();
+      const verification = await receiptAnchorClient.verifyDeployedRuntimeBytecode({
+        provider: await getTestnetReceiptReader(),
+        contractAddress: existingDeploymentAddress,
+      });
+      setAnchor({
+        status: "deployed",
+        contractAddress: verification.contractAddress,
+        unverifiedContractAddress: null,
+        preview: null,
+        estimate: null,
+        txHash: null,
+        message: "Existing receipt anchor verified. Prepare a fresh Proceed receipt before anchoring it.",
+      });
+      setExistingDeploymentAddress("");
       setReceipt(null);
       setDecision("review");
     } catch (error) {
@@ -231,9 +270,13 @@ export function App() {
         gasLimit: anchor.estimate.gasLimit,
         operatorConfirmed: true,
       });
-      await transaction.wait();
+      const reader = await getTestnetReceiptReader();
+      await receiptAnchorClient.waitForConfirmedTestnetTransaction({
+        reader,
+        transactionHash: transaction.hash,
+      });
       const record = await receiptAnchorClient.readAnchoredReceipt({
-        provider,
+        provider: reader,
         contractAddress: anchor.contractAddress,
         receiptHash: receipt.receiptHash,
       });
@@ -368,6 +411,24 @@ export function App() {
             <button className="testnet-review-button" onClick={reviewDeployment} disabled={anchor.status === "estimating"}>
               {anchor.status === "estimating" ? "Estimating testnet fee…" : "Review contract deployment"}
             </button>
+          )}
+          {receipt && !anchor.contractAddress && anchor.status !== "submitting-deployment" && (
+            <section className="deployment-recovery" aria-label="Recover deployed receipt anchor">
+              <span>Already deployed?</span>
+              <input
+                value={existingDeploymentAddress}
+                onChange={(event) => setExistingDeploymentAddress(event.target.value)}
+                placeholder="Verify deployed contract address"
+                aria-label="Deployed receipt-anchor contract address"
+              />
+              <button
+                className="testnet-review-button"
+                onClick={recoverExistingDeployment}
+                disabled={anchor.status === "verifying-deployment"}
+              >
+                {anchor.status === "verifying-deployment" ? "Verifying deployed contract…" : "Verify deployed contract"}
+              </button>
+            </section>
           )}
           {anchor.preview && anchor.estimate && (
             <section className="transaction-preview" aria-label="Testnet transaction preview">

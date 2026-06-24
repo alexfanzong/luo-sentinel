@@ -9,6 +9,7 @@ import {
   estimateTestnetTransaction,
   readAnchoredReceipt,
   submitConfirmedTestnetTransaction,
+  waitForConfirmedTestnetTransaction,
 } from "./receiptAnchorClient.js";
 
 const REVIEWER = "0x00000000000000000000000000000000000A11cE";
@@ -107,6 +108,31 @@ test("will not send a transaction without an explicit confirmation flag", async 
   );
 
   assert.equal(signerRequested, false);
+});
+
+test("confirms a deployment from an independent Injective receipt reader", async () => {
+  const transactionHash = "0x000000000000000000000000000000000000000000000000000000000000002a";
+  const receipt = await waitForConfirmedTestnetTransaction({
+    transactionHash,
+    reader: {
+      getTransactionReceipt: async (hash) => {
+        assert.equal(hash, transactionHash);
+        return { status: 1, contractAddress: CONTRACT };
+      },
+    },
+  });
+
+  assert.deepEqual(receipt, { status: 1, contractAddress: CONTRACT });
+});
+
+test("rejects an independently confirmed failed transaction", async () => {
+  await assert.rejects(
+    waitForConfirmedTestnetTransaction({
+      transactionHash: "0x000000000000000000000000000000000000000000000000000000000000002a",
+      reader: { getTransactionReceipt: async () => ({ status: 0, contractAddress: null }) },
+    }),
+    /execution failed/i,
+  );
 });
 
 test("reads and decodes an anchored receipt after its transaction is mined", async () => {

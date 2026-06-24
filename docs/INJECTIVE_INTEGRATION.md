@@ -87,5 +87,8 @@ sources:
 Those conditions are implemented in the browser-only testnet path. The next
 live action still requires the operator to review the displayed destination,
 `0 INJ` transfer value, and fresh estimated fee, then explicitly confirm the
-transaction inside their own wallet. The app shows the resulting transaction
-hash and explorer link only after the wallet returns it.
+transaction inside their own wallet. After a transaction is broadcast, the app
+confirms its receipt through Injective's public testnet RPC rather than relying
+on the browser wallet's receipt waiter. This keeps the UI tied to the chain's
+actual status if a wallet or explorer display is stale. A previously deployed
+receipt-anchor address can also be re-verified through the same read-only path.

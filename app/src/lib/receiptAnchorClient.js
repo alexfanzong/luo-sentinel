@@ -131,6 +131,33 @@ export async function submitConfirmedTestnetTransaction({
   });
 }
 
+export async function waitForConfirmedTestnetTransaction({
+  reader,
+  transactionHash,
+  attempts = 20,
+  pollIntervalMs = 1500,
+}) {
+  if (!isHexString(transactionHash, 32)) {
+    throw new Error("A valid testnet transaction hash is required.");
+  }
+
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    const receipt = await reader.getTransactionReceipt(transactionHash);
+    if (receipt) {
+      if (Number(receipt.status) !== 1) {
+        throw new Error("The Injective testnet transaction execution failed.");
+      }
+      return receipt;
+    }
+
+    if (attempt + 1 < attempts) {
+      await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
+    }
+  }
+
+  throw new Error("The Injective testnet transaction is not confirmed yet. Check the explorer before retrying.");
+}
+
 export async function verifyDeployedRuntimeBytecode({ provider, contractAddress }) {
   let normalizedContract;
   try {
