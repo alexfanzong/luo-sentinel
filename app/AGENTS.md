@@ -16,6 +16,12 @@ When implementing from a selected generated mock, treat that image as the source
   context, never a fifth jurisdiction label.
 - Do not reuse Tornado Cash jurisdictions, source IDs, or risk labels on this
   RWA screen. Source anchors must come from the reviewed RWA mini-corpus.
+- `Hold for counsel` is local-only and never uses gas. A future on-chain
+  receipt may record only an explicit Proceed decision, with no cleartext legal
+  content or reviewer identity on-chain.
+- Testnet deployment and receipt anchoring must remain a two-step flow: show
+  the target, `0 INJ` value, and fresh gas estimate first; request wallet
+  confirmation only from a separately labelled action.
 - Keep the header minimal: LUO logo, LUO Sentinel, concise product descriptor,
   and Injective testnet status only.
 - Keep the right decision rail sparse: selected signal, human-review boundary,

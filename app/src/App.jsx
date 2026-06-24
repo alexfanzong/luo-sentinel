@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
-import { connectToInjectiveEvmTestnet } from "./lib/injectiveEvm.js";
-import { createReceiptCommitment } from "./lib/receiptCommitment.js";
+import { hexlify, randomBytes } from "ethers";
+import { connectToInjectiveEvmTestnet, INJECTIVE_EVM_TESTNET } from "./lib/injectiveEvm.js";
+import { createProceedReceiptDraft, getSafeDecisionTimestamp } from "./lib/onchainReceipt.js";
 import { RWA_EVIDENCE } from "./lib/rwaEvidence.js";
 
 export function App() {
@@ -8,10 +9,19 @@ export function App() {
   const [decision, setDecision] = useState("review");
   const [receipt, setReceipt] = useState(null);
   const [wallet, setWallet] = useState({ status: "disconnected", address: null, message: null });
+  const [anchor, setAnchor] = useState({
+    status: "idle",
+    contractAddress: null,
+    preview: null,
+    estimate: null,
+    txHash: null,
+    message: null,
+  });
   const selectedEvidence = useMemo(
     () => RWA_EVIDENCE.find((item) => item.id === selectedId),
     [selectedId],
   );
+  const isDeploymentPreview = anchor.preview?.kind === "contract-deployment";
 
   async function connectTestWallet() {
     setWallet({ status: "connecting", address: null, message: null });
@@ -25,15 +35,30 @@ export function App() {
   }
 
   async function prepareReceiptDraft() {
+    if (wallet.status !== "connected") {
+      setReceipt(null);
+      setDecision("wallet-required");
+      return;
+    }
+
     setDecision("preparing");
 
     try {
-      const nextReceipt = await createReceiptCommitment({
-        sourceAnchorId: selectedEvidence.id,
-        timestamp: new Date().toISOString(),
+      const nextReceipt = createProceedReceiptDraft({
+        reviewerWallet: wallet.address,
+        decidedAt: getSafeDecisionTimestamp(Math.floor(Date.now() / 1000)),
+        nonce: hexlify(randomBytes(32)),
       });
       setReceipt(nextReceipt);
       setDecision("draft");
+      setAnchor((current) => ({
+        ...current,
+        status: current.contractAddress ? "ready-to-anchor" : "idle",
+        preview: null,
+        estimate: null,
+        txHash: null,
+        message: null,
+      }));
     } catch {
       setReceipt(null);
       setDecision("error");
@@ -44,6 +69,160 @@ export function App() {
     setSelectedId(id);
     setReceipt(null);
     setDecision("review");
+    setAnchor((current) => ({
+      ...current,
+      status: current.contractAddress ? "ready-to-anchor" : "idle",
+      preview: null,
+      estimate: null,
+      txHash: null,
+      message: null,
+    }));
+  }
+
+  async function getBrowserProvider() {
+    if (!window.ethereum) {
+      throw new Error("Compatible browser wallet not found.");
+    }
+    const { BrowserProvider } = await import("ethers");
+    return new BrowserProvider(window.ethereum);
+  }
+
+  async function getReceiptAnchorClient() {
+    return import("./lib/receiptAnchorClient.js");
+  }
+
+  async function displayFee(estimate) {
+    if (estimate.maxFeeWei === null) return null;
+    const { formatEther } = await import("ethers");
+    return formatEther(estimate.maxFeeWei);
+  }
+
+  function getErrorMessage(error) {
+    return error?.shortMessage || error?.reason || error?.message || "The testnet action could not be completed.";
+  }
+
+  async function reviewDeployment() {
+    if (wallet.status !== "connected") {
+      setAnchor((current) => ({ ...current, status: "error", message: "Connect a test wallet first." }));
+      return;
+    }
+
+    setAnchor((current) => ({ ...current, status: "estimating", message: null }));
+    try {
+      const receiptAnchorClient = await getReceiptAnchorClient();
+      const preview = receiptAnchorClient.createDeploymentTransactionPreview();
+      const estimate = await receiptAnchorClient.estimateTestnetTransaction({
+        provider: await getBrowserProvider(),
+        walletAddress: wallet.address,
+        preview,
+      });
+      const fee = await displayFee(estimate);
+      setAnchor((current) => ({
+        ...current,
+        status: "deployment-reviewed",
+        preview,
+        estimate: { ...estimate, displayFee: fee },
+        message: null,
+      }));
+    } catch (error) {
+      setAnchor((current) => ({ ...current, status: "error", message: getErrorMessage(error) }));
+    }
+  }
+
+  async function confirmDeployment() {
+    if (!anchor.preview || !anchor.estimate) return;
+
+    setAnchor((current) => ({ ...current, status: "submitting-deployment", message: null }));
+    try {
+      const receiptAnchorClient = await getReceiptAnchorClient();
+      const transaction = await receiptAnchorClient.submitConfirmedTestnetTransaction({
+        provider: await getBrowserProvider(),
+        walletAddress: wallet.address,
+        preview: anchor.preview,
+        gasLimit: anchor.estimate.gasLimit,
+        operatorConfirmed: true,
+      });
+      const mined = await transaction.wait();
+      if (!mined?.contractAddress) {
+        throw new Error("The deployment was mined without a contract address.");
+      }
+      setAnchor({
+        status: "deployed",
+        contractAddress: mined.contractAddress,
+        preview: null,
+        estimate: null,
+        txHash: transaction.hash,
+        message: "Receipt anchor deployed. Prepare a fresh Proceed receipt before anchoring it.",
+      });
+      setReceipt(null);
+      setDecision("review");
+    } catch (error) {
+      setAnchor((current) => ({ ...current, status: "error", message: getErrorMessage(error) }));
+    }
+  }
+
+  async function reviewReceiptAnchor() {
+    if (!receipt || !anchor.contractAddress || wallet.status !== "connected") return;
+
+    setAnchor((current) => ({ ...current, status: "estimating", message: null }));
+    try {
+      const receiptAnchorClient = await getReceiptAnchorClient();
+      const preview = receiptAnchorClient.createAnchorProceedTransactionPreview({
+        contractAddress: anchor.contractAddress,
+        receipt,
+      });
+      const estimate = await receiptAnchorClient.estimateTestnetTransaction({
+        provider: await getBrowserProvider(),
+        walletAddress: wallet.address,
+        preview,
+      });
+      const fee = await displayFee(estimate);
+      setAnchor((current) => ({
+        ...current,
+        status: "anchor-reviewed",
+        preview,
+        estimate: { ...estimate, displayFee: fee },
+        message: null,
+      }));
+    } catch (error) {
+      setAnchor((current) => ({ ...current, status: "error", message: getErrorMessage(error) }));
+    }
+  }
+
+  async function confirmReceiptAnchor() {
+    if (!anchor.preview || !anchor.estimate || !receipt) return;
+
+    setAnchor((current) => ({ ...current, status: "submitting-anchor", message: null }));
+    try {
+      const receiptAnchorClient = await getReceiptAnchorClient();
+      const provider = await getBrowserProvider();
+      const transaction = await receiptAnchorClient.submitConfirmedTestnetTransaction({
+        provider,
+        walletAddress: wallet.address,
+        preview: anchor.preview,
+        gasLimit: anchor.estimate.gasLimit,
+        operatorConfirmed: true,
+      });
+      await transaction.wait();
+      const record = await receiptAnchorClient.readAnchoredReceipt({
+        provider,
+        contractAddress: anchor.contractAddress,
+        receiptHash: receipt.receiptHash,
+      });
+      if (record.submitter.toLowerCase() !== wallet.address.toLowerCase() || record.evidenceHash !== receipt.evidenceHash) {
+        throw new Error("The confirmed record does not match the reviewed receipt.");
+      }
+      setAnchor((current) => ({
+        ...current,
+        status: "anchored",
+        preview: null,
+        estimate: null,
+        txHash: transaction.hash,
+        message: "Proceed receipt is confirmed on Injective EVM Testnet.",
+      }));
+    } catch (error) {
+      setAnchor((current) => ({ ...current, status: "error", message: getErrorMessage(error) }));
+    }
   }
 
   return (
@@ -132,15 +311,60 @@ export function App() {
             {decision === "hold" && "Held. No receipt created."}
             {decision === "preparing" && "Creating a local public commitment."}
             {decision === "draft" && (wallet.status === "connected"
-              ? "Commitment ready. Wallet signing remains disabled."
-              : "Commitment ready. Connect a test wallet before a future signing step.")}
+              ? "Proceed receipt ready. No transaction has been submitted."
+              : "Receipt draft ready. Connect a test wallet before a future signing step.")}
+            {decision === "wallet-required" && "Connect a test wallet before preparing a Proceed receipt."}
             {decision === "error" && "Receipt could not be prepared. No wallet action occurred."}
           </div>
           {receipt && (
             <div className="receipt-commitment">
-              <span>Public commitment · local only</span>
-              <code>{receipt.commitment.slice(0, 18)}…{receipt.commitment.slice(-8)}</code>
+              <span>Proceed receipt · local only</span>
+              <code>{receipt.receiptHash.slice(0, 18)}…{receipt.receiptHash.slice(-8)}</code>
             </div>
+          )}
+          {receipt && !anchor.contractAddress && anchor.status !== "deployment-reviewed" && anchor.status !== "submitting-deployment" && (
+            <button className="testnet-review-button" onClick={reviewDeployment} disabled={anchor.status === "estimating"}>
+              {anchor.status === "estimating" ? "Estimating testnet fee…" : "Review contract deployment"}
+            </button>
+          )}
+          {anchor.preview && anchor.estimate && (
+            <section className="transaction-preview" aria-label="Testnet transaction preview">
+              <span>Testnet transaction preview</span>
+              <dl>
+                <div><dt>Action</dt><dd>{anchor.preview.label}</dd></div>
+                <div><dt>Target</dt><dd>{anchor.preview.to || "Create new contract"}</dd></div>
+                <div><dt>Transfer</dt><dd>0 INJ</dd></div>
+                <div><dt>Maximum fee</dt><dd>{anchor.estimate.displayFee === null ? "Unavailable" : `${anchor.estimate.displayFee} INJ`}</dd></div>
+              </dl>
+              <button
+                className="decision-button"
+                onClick={isDeploymentPreview ? confirmDeployment : confirmReceiptAnchor}
+                disabled={anchor.status === "submitting-deployment" || anchor.status === "submitting-anchor"}
+              >
+                {anchor.status === "submitting-deployment"
+                  ? "Waiting for deployment confirmation…"
+                  : anchor.status === "submitting-anchor"
+                    ? "Waiting for receipt confirmation…"
+                    : isDeploymentPreview
+                      ? "Confirm deployment in wallet"
+                      : "Confirm receipt anchor in wallet"}
+              </button>
+            </section>
+          )}
+          {receipt && anchor.contractAddress && (anchor.status === "ready-to-anchor" || anchor.status === "error") && (
+            <button className="testnet-review-button" onClick={reviewReceiptAnchor}>Review receipt anchor</button>
+          )}
+          {anchor.status === "deployed" && (
+            <div className="testnet-result">
+              <span>Contract deployed</span>
+              <code>{anchor.contractAddress.slice(0, 12)}…{anchor.contractAddress.slice(-8)}</code>
+            </div>
+          )}
+          {anchor.message && <p className={`testnet-message testnet-message--${anchor.status}`}>{anchor.message}</p>}
+          {anchor.txHash && (
+            <a className="explorer-link" href={`${INJECTIVE_EVM_TESTNET.blockExplorerUrl}tx/${anchor.txHash}`} target="_blank" rel="noreferrer">
+              View testnet transaction ↗
+            </a>
           )}
         </aside>
       </main>

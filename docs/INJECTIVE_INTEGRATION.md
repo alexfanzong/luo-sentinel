@@ -27,15 +27,33 @@ LUO Sentinel will not place a private key, seed phrase, or signing secret in:
 - the public repository; or
 - an instruction sent to a user.
 
-The current prototype therefore uses a **local testnet receipt draft** only.
+The current prototype therefore creates a **local testnet receipt draft** only.
 It deliberately does not claim that a transaction was sent. A wallet is shown
 as connected only after the operator completes the browser-wallet approval.
 
-Each local draft now generates a SHA-256 public commitment over the receipt
-version, decision label, reviewed RWA source anchor, and timestamp. It contains
-no source text, wallet address, private data, or legal conclusion. It is shown
-as `local only` until a separately reviewed and user-confirmed testnet action
-records it.
+The local `Proceed` draft uses the same Keccak-256 and ABI-encoding format as
+the reviewed contract. It commits to a canonical RWA evidence manifest, product
+reference, connected wallet, decision timestamp, and a one-time nonce. It
+contains no source text, private key, email address, or legal conclusion. It
+is shown as `local only` until a separately reviewed and user-confirmed testnet
+action records it.
+
+## Local contract, not yet deployed
+
+The repository now contains a locally tested `LUOReceiptAnchor` contract for a
+future `Proceed` receipt. It binds the receipt hash to the submitting wallet,
+uses no value transfer, and keeps `Hold for counsel` off-chain. Its exact
+privacy and verification boundary is documented in
+[ONCHAIN_RECEIPT_SPEC.md](./ONCHAIN_RECEIPT_SPEC.md).
+
+The browser-side Keccak evidence-manifest implementation uses reviewed, pinned
+dependencies: `ethers` `6.17.0` for ABI-compatible hashing and `canonicalize`
+`3.0.0` for JSON Canonicalization Scheme serialization. The app can separately
+prepare a contract-deployment or `anchorProceed` transaction preview, estimate
+its fee from the connected testnet wallet, and request the browser wallet to
+submit it only after an explicit confirmation click. The preview enforces zero
+value transfer and Injective EVM Testnet (`1439`) before it can open the wallet.
+No contract has been deployed, and no test INJ has been spent.
 
 ## Implemented browser-wallet connection
 
@@ -63,8 +81,8 @@ sources:
 3. The selected testnet message is non-value-moving and contains only a public
    receipt commitment.
 
-When those conditions are met, replace the `Prepare testnet receipt` local
-draft with a user-confirmed browser-wallet action and show the returned
-transaction hash plus explorer link. Before that change, the exact message,
-destination, fee, and whether it moves any value must be shown to the operator
-and explicitly approved.
+Those conditions are implemented in the browser-only testnet path. The next
+live action still requires the operator to review the displayed destination,
+`0 INJ` transfer value, and fresh estimated fee, then explicitly confirm the
+transaction inside their own wallet. The app shows the resulting transaction
+hash and explorer link only after the wallet returns it.
