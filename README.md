@@ -1,195 +1,297 @@
 # LUO Sentinel
 
-Evidence-bound AI handoffs for RWA compliance workflows.
+> Evidence-bound AI handoffs for RWA compliance workflows.
 
-[Live Demo](https://luo-sentinel.vercel.app) · [Repository](https://github.com/alexfanzong/luo-sentinel) · [Demo Script](docs/DEMO_SCRIPT.md) · [Pitch Deck Outline](docs/PITCH_DECK.md)
+<p align="center">
+  <img src="app/public/luo-logo.png" alt="LUO Sentinel logo" width="170" />
+</p>
 
-## Table of Contents
+<p align="center">
+  <a href="https://luo-sentinel.vercel.app">Live Demo</a> ·
+  <a href="docs/DEMO_SCRIPT.md">Demo Script</a> ·
+  <a href="docs/PITCH_DECK.md">Pitch Deck Outline</a> ·
+  <a href="docs/ONCHAIN_RECEIPT_SPEC.md">Receipt Spec</a>
+</p>
 
-- [About The Project](#about-the-project)
-- [Built With](#built-with)
-- [Getting Started](#getting-started)
-- [Usage](#usage)
-- [How The Evidence Map Works](#how-the-evidence-map-works)
-- [Safety Boundary](#safety-boundary)
-- [Roadmap](#roadmap)
-- [License](#license)
-- [Contact](#contact)
-- [Acknowledgments](#acknowledgments)
+<p align="center">
+  <a href="#english">English</a> / <a href="#中文">中文</a>
+</p>
 
-## About The Project
+## Bilingual Overview
 
-LUO Sentinel turns reviewed regulatory source anchors into scoped, auditable AI
-action handoffs for tokenized RWA workflows. The demo shows how an AI-facing
-system can refuse unsupported scope, preserve jurisdictional divergence, require
-human review, and anchor a non-sensitive Proceed receipt before any downstream
-agent acts.
+| English | 中文 |
+| --- | --- |
+| LUO Sentinel is an AI agent trust-layer demo for RWA compliance workflows. It turns reviewed regulatory source anchors into a visual evidence map, then requires scope review, a human gate, and a verifiable receipt before any downstream agent acts. | LUO Sentinel 是一个面向 RWA 合规工作流的 AI agent trust layer demo。它把经过审核的监管 source anchors 组织成可视化 evidence map，并在任何下游 agent 行动前加入 scope review、human gate 和可验证 receipt。 |
+| The project is not about asking AI to produce a legal conclusion such as "this asset can be issued or transferred here." It demonstrates a safer path: verify the source and its boundary first, then decide what an AI agent is allowed to do. | 本项目的重点不是让 AI 直接给出“某地可以发行/转让”的法律结论，而是展示一条更安全的链路：先确认资料来源和适用边界，再决定 AI 被允许做什么。 |
+| The map is not a live legal conclusion. It is a snapshot of a reviewed evidence pack. When regulatory sources change, affected signals must be reviewed again. | 地图不是实时法律结论，而是 reviewed evidence pack 的当前快照。监管来源变化后，相关 signal 必须重新审核。 |
 
-The map is not a live legal conclusion. It is a snapshot of a reviewed evidence
-pack that can be refreshed as primary legal and regulatory sources change.
+## Screenshots
 
-Key ideas:
+<p align="center">
+  <img src="app/public/atlas-map.png" alt="LUO Sentinel evidence map" width="760" />
+</p>
 
-- **Verified evidence first** — the app starts from reviewed source anchors, not
-  open-ended model output.
-- **Scope before action** — the Review Council checks whether a source is being
-  interpreted too broadly before a human can proceed.
-- **Human-gated receipts** — a Proceed decision creates a local commitment that
-  can be anchored as a zero-value testnet receipt hash.
-- **Bounded handoff** — downstream agents receive only the approved scope,
-  reviewer objections, and receipt proof.
+## English
 
-## Built With
+### About The Project
 
-- [React](https://react.dev/)
-- [Vite](https://vite.dev/)
-- [ethers.js](https://docs.ethers.org/)
-- [Foundry](https://book.getfoundry.sh/)
-- [Vercel](https://vercel.com/)
+LUO Sentinel demonstrates a minimal AI x Web3 compliance loop:
 
-## Getting Started
+1. A user asks an RWA compliance question.
+2. The system routes only into reviewed evidence scopes.
+3. The map shows jurisdiction-specific source anchors and risk boundaries.
+4. The Review Council checks whether a source is being over-interpreted.
+5. A human gate decides whether to Proceed.
+6. A Proceed receipt can be anchored on testnet.
+7. A downstream agent can only produce a counsel-preparation checklist within the approved scope.
 
-### Prerequisites
+### Demo
 
-- Node.js 22+
-- npm
-- Foundry, for Solidity build and bytecode verification tests
-- A MetaMask-compatible browser wallet for the optional testnet flow
+- Live app: [https://luo-sentinel.vercel.app](https://luo-sentinel.vercel.app)
+- HK-only query: `Can we launch OUSG in Hong Kong only?`
+- Cross-border query: `We're launching a tokenized US Treasury (OUSG) product, where can we legally offer and transfer it?`
 
-### Installation
+### Core Features
 
-1. Clone the repository.
+- **Reviewed evidence map**  
+  The map comes from reviewed source anchors, not live model-generated legal conclusions.
 
-   ```bash
-   git clone https://github.com/alexfanzong/luo-sentinel.git
-   cd luo-sentinel
-   ```
+- **Cross-border / single-jurisdiction scope**  
+  The demo can preserve differences across the United States, Hong Kong, Singapore, and the European Union, or narrow to a Hong Kong-only scope.
 
-2. Install the app dependencies.
+- **Agent Review Council**  
+  Three reviewers check scope, source fit, claim support, and action risk. Scores are audit weights, not LLM confidence.
 
-   ```bash
-   cd app
-   npm install --ignore-scripts
-   ```
+- **Human-gated receipt**  
+  The Proceed receipt binds evidence hash, product reference hash, reviewer wallet, and timestamp.
 
-3. Start the local app.
+- **Zero-value testnet anchoring**  
+  Wallet confirmation is real for contract deployment and receipt anchoring, but no asset is moved.
 
-   ```bash
-   npm run dev
-   ```
+- **Bounded downstream agent**  
+  The downstream agent can only generate a counsel-preparation checklist inside the approved scope.
 
-4. Run the test suite.
+### How The Evidence Map Is Built
 
-   ```bash
-   npm test
-   ```
-
-5. Build the production bundle.
-
-   ```bash
-   npm run build
-   ```
-
-## Usage
-
-Use the default RWA scenario or ask a scoped OUSG question from the landing
-search. The app routes only to reviewed evidence scopes; unsupported questions
-are refused or narrowed to a known source scope.
-
-Demo path:
-
-1. Open the [live demo](https://luo-sentinel.vercel.app).
-2. Run the default cross-border OUSG query, or ask `Can we launch OUSG in Hong Kong only?` and choose the Hong Kong scope.
-3. Inspect the evidence map and source anchors.
-4. Open the workflow rail and review the action plan.
-5. Continue to the Review Council to see scope, source-fit, and claim-support checks.
-6. Connect a test-only wallet and prepare a Proceed receipt.
-7. Review and confirm the zero-value testnet contract deployment, then review and confirm the receipt anchor.
-8. Run the bounded downstream agent to produce a counsel-preparation checklist.
-
-## How The Evidence Map Works
-
-The current map is derived from a reviewed OUSG sample evidence pack last
-reviewed on `2026-06-07`.
+The current demo map is derived from a reviewed OUSG sample evidence pack last reviewed on `2026-06-07`.
 
 Each jurisdiction signal contains:
 
-- a source anchor;
-- a scoped signal, such as Restricted, Conditional, or Unresolved;
-- a summary of what the source supports;
-- a boundary for what the source does not prove.
+- source anchor;
+- signal status, such as Restricted, Conditional, or Unresolved;
+- what the source supports;
+- what the source does not prove.
 
-In production, the evidence layer would refresh from primary legal and
-regulatory sources such as regulator websites, official legal databases, or
-trusted MCP connectors. LLMs can help extract candidate claims, but those claims
-should become map signals only after expert or human verification. When source
-materials change, stale signals should be marked for re-review before they are
-used in a new handoff.
+In production, the evidence layer can connect to regulator websites, official legal databases, or trusted MCP connectors. LLMs can help extract candidate claims, but those claims should become map signals only after expert or human verification. When regulatory sources change, stale signals should be marked for re-review.
 
-The Review Council does not check whether an official database is "real." It
-checks whether the selected source is being applied too broadly, whether the
-claim is supported, and whether the downstream agent must remain limited to
-counsel-preparation work.
+### Tech Stack
 
-## Safety Boundary
+| Layer | Technology |
+| --- | --- |
+| Frontend | React, Vite, CSS |
+| Wallet / Testnet | ethers.js, MetaMask-compatible wallet |
+| Smart Contract | Solidity, Foundry |
+| Deployment | Vercel |
+
+### Quick Start
+
+```bash
+git clone https://github.com/alexfanzong/luo-sentinel.git
+cd luo-sentinel/app
+npm install --ignore-scripts
+npm run dev
+```
+
+Run tests:
+
+```bash
+npm test
+```
+
+Build:
+
+```bash
+npm run build
+```
+
+### Project Structure
+
+```text
+.
+├── app/
+│   ├── public/                  # Logo and map assets
+│   ├── src/
+│   │   ├── lib/                 # Evidence, receipts, review council, wallet helpers
+│   │   ├── App.jsx              # Main demo flow
+│   │   └── styles.css           # UI styles
+│   └── package.json
+├── contracts/
+│   └── LUOReceiptAnchor.sol     # Receipt-anchor contract
+├── docs/
+│   ├── DEMO_SCRIPT.md
+│   ├── INJECTIVE_INTEGRATION.md
+│   ├── ONCHAIN_RECEIPT_SPEC.md
+│   └── PITCH_DECK.md
+├── test/
+│   └── LUOReceiptAnchor.t.sol
+└── vercel.json
+```
+
+### Safety Boundary
 
 LUO Sentinel does not:
 
 - move assets;
 - make legal determinations;
 - establish compliance;
-- authorize an asset transaction;
-- transmit private keys, seed phrases, or legal source text on-chain.
+- authorize token issuance or transfer;
+- put private keys, seed phrases, or legal text on-chain.
 
 On-chain, the demo anchors only:
 
 - receipt hash;
 - evidence manifest hash;
 - product reference hash;
-- reviewer-controlled submitting wallet;
+- reviewer wallet;
 - decision timestamp.
 
-Off-chain, the app keeps:
+Off-chain, the app keeps legal source text, action-plan narrative, reviewer scorecards, downstream handoff brief, and counsel-preparation checklist.
 
-- legal source text;
-- action-plan narrative;
-- reviewer scorecards;
-- downstream handoff brief;
-- counsel-preparation checklist.
+### Roadmap
 
-The browser wallet remains the final confirmation authority for every testnet
-transaction. The app verifies deployed runtime bytecode before accepting a
-receipt-anchor contract. The full integration boundary is documented in
-[docs/INJECTIVE_INTEGRATION.md](docs/INJECTIVE_INTEGRATION.md).
+#### Phase 1: Demo Closed Loop
 
-## Roadmap
-
-- [x] Public-safe project frame and deployed app
-- [x] Reviewed RWA evidence map with jurisdiction-specific source anchors
-- [x] Single-jurisdiction and cross-border review scopes
-- [x] Review Council with deterministic scope, source-fit, and risk checks
-- [x] Wallet-gated Proceed receipt flow
-- [x] Zero-value testnet contract deployment and receipt anchoring
+- [x] Reviewed RWA evidence map
+- [x] Single-jurisdiction and cross-border scopes
+- [x] Review Council
+- [x] Human Proceed receipt
+- [x] Testnet contract deployment and receipt anchoring
 - [x] Bounded downstream agent checklist
-- [x] Demo script and pitch deck outline
+
+#### Phase 2: Submission Assets
+
+- [x] Live demo
+- [x] README
+- [x] Demo script
+- [x] Pitch deck outline
 - [ ] Three-minute demo video
 - [ ] Final designed pitch deck
-- [ ] Live LLM/legal reviewer agent integration
-- [ ] Refresh pipeline for primary legal and regulatory sources
+
+#### Phase 3: Production Direction
+
+- [ ] Live LLM/legal reviewer agents
+- [ ] Evidence refresh pipeline
+- [ ] Source-change detection and stale-signal review
+- [ ] Reviewer reputation and evaluation records
+- [ ] Multi-source evidence graph beyond OUSG sample data
+
+## 中文
+
+### 项目简介
+
+LUO Sentinel 展示了一个 AI x Web3 合规工作流的最小闭环：
+
+1. 用户提出 RWA 合规问题。
+2. 系统只允许进入已审核的 evidence scope。
+3. 地图展示不同司法辖区的 source anchors 和风险边界。
+4. Review Council 检查 source 是否被过度解释。
+5. Human gate 决定是否 Proceed。
+6. Proceed receipt 可以被锚定到 testnet。
+7. Downstream agent 只能在批准范围内生成律师准备清单。
+
+### Demo
+
+- Live app: [https://luo-sentinel.vercel.app](https://luo-sentinel.vercel.app)
+- HK-only query: `Can we launch OUSG in Hong Kong only?`
+- Cross-border query: `We're launching a tokenized US Treasury (OUSG) product, where can we legally offer and transfer it?`
+
+### 核心特性
+
+- **Reviewed evidence map**  
+  地图来自已审核的 source anchors，不是 LLM 现场生成的法律判断。
+
+- **Cross-border / single-jurisdiction scope**  
+  可以保留 US、Hong Kong、Singapore、EU 的差异，也可以缩小到 Hong Kong-only。
+
+- **Agent Review Council**  
+  三个 reviewer 检查 scope、source fit、claim support 和 action risk。分数是审核权重，不是 LLM confidence。
+
+- **Human-gated receipt**  
+  Proceed receipt 绑定 evidence hash、product reference hash、reviewer wallet 和 timestamp。
+
+- **Zero-value testnet anchoring**  
+  钱包真实确认合约部署和 receipt anchor，但不移动资产。
+
+- **Bounded downstream agent**  
+  下游 agent 只能基于已批准范围生成 counsel-preparation checklist。
+
+### Evidence Map 是怎么来的
+
+当前 demo map 来自一个 reviewed OUSG sample evidence pack，最后审核日期为 `2026-06-07`。
+
+每个 jurisdiction signal 包含：
+
+- source anchor；
+- signal status，例如 Restricted、Conditional、Unresolved；
+- source 支持什么；
+- source 不能推出什么。
+
+在生产环境中，evidence layer 可以连接监管官网、官方法律数据库或可信 MCP connector。LLM 可以帮助抽取 candidate claims，但只有经过专家或人工验证后，claim 才能成为 map signal。监管来源变化时，旧 signal 应标记为 stale 并重新审核。
+
+### 技术栈
+
+| 层 | 技术 |
+| --- | --- |
+| Frontend | React, Vite, CSS |
+| Wallet / Testnet | ethers.js, MetaMask-compatible wallet |
+| Smart Contract | Solidity, Foundry |
+| Deployment | Vercel |
+
+### 快速开始
+
+```bash
+git clone https://github.com/alexfanzong/luo-sentinel.git
+cd luo-sentinel/app
+npm install --ignore-scripts
+npm run dev
+```
+
+运行测试：
+
+```bash
+npm test
+```
+
+生产构建：
+
+```bash
+npm run build
+```
+
+### 安全边界
+
+LUO Sentinel 不会：
+
+- 移动资产；
+- 给出法律结论；
+- 建立合规结论；
+- 授权 token 发行或转让；
+- 将私钥、助记词或法律文本上传链上。
+
+链上只锚定：
+
+- receipt hash；
+- evidence manifest hash；
+- product reference hash；
+- reviewer wallet；
+- decision timestamp。
 
 ## License
 
 No license has been declared yet.
 
-## Contact
-
-Project Link: [https://github.com/alexfanzong/luo-sentinel](https://github.com/alexfanzong/luo-sentinel)
-
-Live Demo: [https://luo-sentinel.vercel.app](https://luo-sentinel.vercel.app)
-
 ## Acknowledgments
 
-- The README structure follows the public layout pattern from
-  [othneildrew/Best-README-Template](https://github.com/othneildrew/Best-README-Template).
-- Regulatory source anchors in this demo are scoped sample signals, not
-  jurisdiction-wide legal conclusions.
+- README presentation style was inspired by [web3-awesome-solana-market](https://github.com/aiyoudiao/web3-awesome-solana-market) and [Best-README-Template](https://github.com/othneildrew/Best-README-Template).
+- Regulatory source anchors in this demo are scoped sample signals, not jurisdiction-wide legal conclusions.
+
