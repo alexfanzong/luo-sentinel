@@ -9,17 +9,16 @@
 <p align="center">
   <a href="README.zh-CN.md">中文</a> ·
   <a href="https://luo-sentinel.vercel.app">Live Demo</a> ·
-  <a href="docs/DEMO_SCRIPT.md">Demo Script</a> ·
-  <a href="docs/PITCH_DECK.md">Pitch Deck Outline</a> ·
-  <a href="docs/ONCHAIN_RECEIPT_SPEC.md">Receipt Spec</a>
+  <a href="docs/ONCHAIN_RECEIPT_SPEC.md">Receipt Spec</a> ·
+  <a href="docs/PITCH_DECK.md">Pitch Deck Outline</a>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/RWA-Compliance-111827?style=for-the-badge" alt="RWA Compliance" />
+  <img src="https://img.shields.io/badge/AI-Agent%20Handoff-0f766e?style=for-the-badge" alt="AI Agent Handoff" />
   <img src="https://img.shields.io/badge/React-19-149eca?style=for-the-badge&logo=react&logoColor=white" alt="React 19" />
-  <img src="https://img.shields.io/badge/Vite-6-646cff?style=for-the-badge&logo=vite&logoColor=white" alt="Vite 6" />
   <img src="https://img.shields.io/badge/Solidity-0.8.33-363636?style=for-the-badge&logo=solidity&logoColor=white" alt="Solidity 0.8.33" />
-  <img src="https://img.shields.io/badge/License-Pending-6b7280?style=for-the-badge" alt="License pending" />
+  <img src="https://img.shields.io/badge/License-AGPLv3-5aa000?style=for-the-badge" alt="AGPLv3 license" />
 </p>
 
 LUO Sentinel is an AI agent trust-layer demo for RWA compliance workflows. It turns reviewed regulatory source anchors into a visual evidence map, then requires scope review, a human gate, and a verifiable receipt before any downstream agent acts.
@@ -34,6 +33,8 @@ The map is not a live legal conclusion. It is a snapshot of a reviewed evidence 
   <img src="app/public/readme-evidence-map.png" alt="LUO Sentinel four-jurisdiction evidence map" width="820" />
 </p>
 
+## Demo
+
 ## About The Project
 
 LUO Sentinel demonstrates a minimal AI x Web3 compliance loop:
@@ -45,12 +46,6 @@ LUO Sentinel demonstrates a minimal AI x Web3 compliance loop:
 5. A human gate decides whether to Proceed.
 6. A Proceed receipt can be anchored on testnet.
 7. A downstream agent can only produce a counsel-preparation checklist within the approved scope.
-
-## Demo
-
-- Live app: [https://luo-sentinel.vercel.app](https://luo-sentinel.vercel.app)
-- HK-only query: `Can we launch OUSG in Hong Kong only?`
-- Cross-border query: `We're launching a tokenized US Treasury (OUSG) product, where can we legally offer and transfer it?`
 
 ## Core Features
 
@@ -138,6 +133,12 @@ npm run build
 └── vercel.json
 ```
 
+## Not Legal Advice
+
+LUO Sentinel is a research and demo project. It does not provide legal advice, legal opinions, compliance determinations, investment advice, or authorization to issue, offer, sell, transfer, custody, or market any tokenized asset.
+
+The evidence map and agent handoff are designed to preserve source boundaries and prepare issues for qualified professional review. They should not be used as a substitute for advice from licensed counsel or regulated compliance professionals.
+
 ## Safety Boundary
 
 LUO Sentinel does not:
@@ -158,39 +159,36 @@ On-chain, the demo anchors only:
 
 Off-chain, the app keeps legal source text, action-plan narrative, reviewer scorecards, downstream handoff brief, and counsel-preparation checklist.
 
-## Roadmap
+## Builder
 
-### Phase 1: Demo Closed Loop
+Built by Alex Fan, working at the intersection of AI, Web3, and cross-border legal/compliance infrastructure, with a focus on building programmable compliance systems for agentic workflows.
 
-- [x] Reviewed RWA evidence map
-- [x] Single-jurisdiction and cross-border scopes
-- [x] Review Council
-- [x] Human Proceed receipt
-- [x] Testnet contract deployment and receipt anchoring
-- [x] Bounded downstream agent checklist
+## Product Roadmap
 
-### Phase 2: Submission Assets
+### 1. Evidence Infrastructure
 
-- [x] Live demo
-- [x] README
-- [x] Demo script
-- [x] Pitch deck outline
-- [ ] Three-minute demo video
-- [ ] Final designed pitch deck
+- Connect primary legal and regulatory sources through official databases, regulator websites, or trusted MCP connectors.
+- Add source-change detection, stale-signal marking, and re-review workflows.
+- Expand beyond the OUSG sample into reusable RWA evidence graphs.
 
-### Phase 3: Production Direction
+### 2. Agent Review Layer
 
-- [ ] Live LLM/legal reviewer agents
-- [ ] Evidence refresh pipeline
-- [ ] Source-change detection and stale-signal review
-- [ ] Reviewer reputation and evaluation records
-- [ ] Multi-source evidence graph beyond OUSG sample data
+- Replace deterministic demo reviewers with live LLM/legal reviewer agents.
+- Track reviewer reputation, evaluation records, and disagreement history.
+- Support multi-agent review for source fit, jurisdiction scope, claim support, and action risk.
+
+### 3. Handoff And Receipt Protocol
+
+- Standardize machine-readable handoff formats for downstream agents.
+- Add receipt verification endpoints and explorer-friendly receipt views.
+- Support policy-controlled agent execution after human-approved scope.
+
+### 4. Productization
+
+- Build workspace features for teams, counsel, and compliance reviewers.
+- Add case history, audit trails, and evidence refresh notifications.
+- Support enterprise deployment patterns for legal, compliance, and RWA operations teams.
 
 ## License
 
-No license has been declared yet.
-
-## Acknowledgments
-
-- README presentation style was inspired by [web3-awesome-solana-market](https://github.com/aiyoudiao/web3-awesome-solana-market) and [Best-README-Template](https://github.com/othneildrew/Best-README-Template).
-- Regulatory source anchors in this demo are scoped sample signals, not jurisdiction-wide legal conclusions.
+This project is licensed under the GNU Affero General Public License v3.0 (AGPLv3).

@@ -9,17 +9,16 @@
 <p align="center">
   <a href="README.md">English</a> ·
   <a href="https://luo-sentinel.vercel.app">Live Demo</a> ·
-  <a href="docs/DEMO_SCRIPT.md">Demo Script</a> ·
-  <a href="docs/PITCH_DECK.md">Pitch Deck Outline</a> ·
-  <a href="docs/ONCHAIN_RECEIPT_SPEC.md">Receipt Spec</a>
+  <a href="docs/ONCHAIN_RECEIPT_SPEC.md">Receipt Spec</a> ·
+  <a href="docs/PITCH_DECK.md">Pitch Deck Outline</a>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/RWA-Compliance-111827?style=for-the-badge" alt="RWA Compliance" />
+  <img src="https://img.shields.io/badge/AI-Agent%20Handoff-0f766e?style=for-the-badge" alt="AI Agent Handoff" />
   <img src="https://img.shields.io/badge/React-19-149eca?style=for-the-badge&logo=react&logoColor=white" alt="React 19" />
-  <img src="https://img.shields.io/badge/Vite-6-646cff?style=for-the-badge&logo=vite&logoColor=white" alt="Vite 6" />
   <img src="https://img.shields.io/badge/Solidity-0.8.33-363636?style=for-the-badge&logo=solidity&logoColor=white" alt="Solidity 0.8.33" />
-  <img src="https://img.shields.io/badge/License-Pending-6b7280?style=for-the-badge" alt="License pending" />
+  <img src="https://img.shields.io/badge/License-AGPLv3-5aa000?style=for-the-badge" alt="AGPLv3 license" />
 </p>
 
 LUO Sentinel 是一个面向 RWA 合规工作流的 AI agent trust layer demo。它把经过审核的监管 source anchors 组织成可视化 evidence map，并在任何下游 agent 行动前加入 scope review、human gate 和可验证 receipt。
@@ -34,6 +33,8 @@ LUO Sentinel 是一个面向 RWA 合规工作流的 AI agent trust layer demo。
   <img src="app/public/readme-evidence-map.png" alt="LUO Sentinel four-jurisdiction evidence map" width="820" />
 </p>
 
+## Demo
+
 ## 项目简介
 
 LUO Sentinel 展示了一个 AI x Web3 合规工作流的最小闭环：
@@ -45,12 +46,6 @@ LUO Sentinel 展示了一个 AI x Web3 合规工作流的最小闭环：
 5. Human gate 决定是否 Proceed。
 6. Proceed receipt 可以被锚定到 testnet。
 7. Downstream agent 只能在批准范围内生成律师准备清单。
-
-## Demo
-
-- Live app: [https://luo-sentinel.vercel.app](https://luo-sentinel.vercel.app)
-- HK-only query: `Can we launch OUSG in Hong Kong only?`
-- Cross-border query: `We're launching a tokenized US Treasury (OUSG) product, where can we legally offer and transfer it?`
 
 ## 核心特性
 
@@ -138,6 +133,12 @@ npm run build
 └── vercel.json
 ```
 
+## 非法律意见
+
+LUO Sentinel 是研究和演示项目。它不提供法律意见、法律结论、合规判断、投资建议，也不授权任何 tokenized asset 的发行、要约、销售、转让、托管或营销。
+
+Evidence map 和 agent handoff 的目的，是保留 source boundary，并把问题整理给合格专业人士审核。它不能替代持牌律师或受监管合规专业人士的意见。
+
 ## 安全边界
 
 LUO Sentinel 不会：
@@ -158,39 +159,36 @@ LUO Sentinel 不会：
 
 链下保留 legal source text、action-plan narrative、reviewer scorecards、downstream handoff brief 和 counsel-preparation checklist。
 
-## 路线图
+## 作者介绍
 
-### Phase 1: Demo Closed Loop
+Built by Alex Fan。长期关注 AI、Web3 与跨境法律/合规基础设施的交叉方向，重点是 building programmable compliance systems for agentic workflows。
 
-- [x] Reviewed RWA evidence map
-- [x] Single-jurisdiction and cross-border scopes
-- [x] Review Council
-- [x] Human Proceed receipt
-- [x] Testnet contract deployment and receipt anchoring
-- [x] Bounded downstream agent checklist
+## 产品路线图
 
-### Phase 2: Submission Assets
+### 1. Evidence Infrastructure
 
-- [x] Live demo
-- [x] README
-- [x] Demo script
-- [x] Pitch deck outline
-- [ ] Three-minute demo video
-- [ ] Final designed pitch deck
+- 连接监管官网、官方法律数据库或可信 MCP connector。
+- 增加 source-change detection、stale-signal 标记和 re-review workflow。
+- 从 OUSG sample 扩展到可复用的 RWA evidence graph。
 
-### Phase 3: Production Direction
+### 2. Agent Review Layer
 
-- [ ] Live LLM/legal reviewer agents
-- [ ] Evidence refresh pipeline
-- [ ] Source-change detection and stale-signal review
-- [ ] Reviewer reputation and evaluation records
-- [ ] Multi-source evidence graph beyond OUSG sample data
+- 用 live LLM/legal reviewer agents 替换 deterministic demo reviewers。
+- 记录 reviewer reputation、evaluation records 和 disagreement history。
+- 支持 source fit、jurisdiction scope、claim support 和 action risk 的多 agent 审核。
 
-## License
+### 3. Handoff And Receipt Protocol
 
-No license has been declared yet.
+- 标准化 downstream agents 可读取的 machine-readable handoff 格式。
+- 增加 receipt verification endpoint 和更适合 explorer 展示的 receipt view。
+- 支持 human-approved scope 之后的 policy-controlled agent execution。
 
-## Acknowledgments
+### 4. Productization
 
-- README presentation style was inspired by [web3-awesome-solana-market](https://github.com/aiyoudiao/web3-awesome-solana-market) and [Best-README-Template](https://github.com/othneildrew/Best-README-Template).
-- Regulatory source anchors in this demo are scoped sample signals, not jurisdiction-wide legal conclusions.
+- 为团队、律师和合规 reviewer 增加 workspace 功能。
+- 增加 case history、audit trail 和 evidence refresh notification。
+- 支持 legal、compliance 和 RWA operations teams 的企业部署模式。
+
+## 开源协议
+
+This project is licensed under the GNU Affero General Public License v3.0 (AGPLv3).
