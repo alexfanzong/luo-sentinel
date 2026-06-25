@@ -2,7 +2,9 @@ import { useState } from "react";
 import { hexlify, randomBytes } from "ethers";
 import { connectToInjectiveEvmTestnet, INJECTIVE_EVM_TESTNET } from "./lib/injectiveEvm.js";
 import { createProceedReceiptDraft, getSafeDecisionTimestamp } from "./lib/onchainReceipt.js";
-import { RWA_EVIDENCE } from "./lib/rwaEvidence.js";
+import { runBoundedDownstreamAgent } from "./lib/downstreamAgent.js";
+import { buildReviewCouncil, createReviewScope } from "./lib/reviewCouncil.js";
+import { RWA_EVIDENCE, RWA_EVIDENCE_PROVENANCE } from "./lib/rwaEvidence.js";
 
 // The reviewed evidence pack the local agent is allowed to route to. The agent
 // never answers freely: it either maps a question onto these human-verified
@@ -43,6 +45,61 @@ const ACTION_PLAN = {
   },
 };
 
+const REVIEW_SCORE_LABELS = [
+  { key: "coverage", label: "Scope", title: "How much of the requested scope is covered by reviewed sources." },
+  { key: "authorityFit", label: "Source fit", title: "How closely the cited source fits the claim being reviewed." },
+  { key: "claimSupport", label: "Claim support", title: "How directly the source supports the next workstream." },
+];
+
+function getScopedActionPlan(reviewScope) {
+  if (reviewScope.scopeType !== "single-jurisdiction") return ACTION_PLAN;
+
+  const item = RWA_EVIDENCE.find((entry) => entry.id === reviewScope.evidenceIds[0]);
+  if (item?.id === "HK-CLAIM-01") {
+    return {
+      startHere: {
+        text: "Review the Hong Kong tokenised-securities source as an applicability question: licensed intermediary, product controls, suitability and custody are the first workstream.",
+        url: item.sourceUrl,
+        label: item.sourceLabel,
+      },
+      materials: {
+        need: [
+          { text: "Product token rights and redemption mechanics" },
+          { text: "Target client type and distribution channel" },
+          { text: "Licensed-intermediary, suitability and onboarding workflow" },
+          { text: "Custody, control and transfer-restriction design" },
+        ],
+        likelyHave: ["Product term sheet", "Issuer/operator structure", "Wallet and transfer-control design"],
+        counsel: [
+          "Whether the product is treated as a tokenised security in the actual facts",
+          "Which Hong Kong regulated activities may be triggered",
+          "Whether marketing, custody or secondary transfer needs additional controls",
+        ],
+      },
+    };
+  }
+
+  return {
+    startHere: {
+      text: `Review the selected ${item.title} source as a scoped local-counsel workstream. Do not infer cross-border coverage from this single signal.`,
+      url: item.sourceUrl,
+      label: item.sourceLabel,
+    },
+    materials: {
+      need: [
+        { text: "Product terms and token-holder rights" },
+        { text: "Target users, distribution channel and custody model" },
+        { text: "Local licensing and transfer-control analysis" },
+      ],
+      likelyHave: ["Product description", "Entity materials", "Intended user profile"],
+      counsel: [
+        `Whether the selected ${item.title} source supports the concrete product path`,
+        "Which facts remain missing before any compliance conclusion",
+      ],
+    },
+  };
+}
+
 export function App() {
   const [openMarkerId, setOpenMarkerId] = useState(null);
   const [caseRef, setCaseRef] = useState("RWA-DEMO-001");
@@ -50,14 +107,12 @@ export function App() {
   const [railOpen, setRailOpen] = useState(false);
   const [agentQuestion, setAgentQuestion] = useState(SUPPORTED_SCENARIO_QUESTION);
   const [searchStatus, setSearchStatus] = useState("idle"); // idle | running | refused
-  const [scopeLabel, setScopeLabel] = useState("Cross-border · US · HK · SG · EU");
+  const [reviewScope, setReviewScope] = useState(() => createReviewScope());
   const [handoffCopied, setHandoffCopied] = useState(false);
-  const [step, setStep] = useState(1); // 1 brief · 2 decision · 3 anchor · 4 handoff
+  const [step, setStep] = useState(1); // 1 brief · 2 agent review · 3 decision · 4 anchor · 5 handoff
   const [decision, setDecision] = useState("review");
   const [receipt, setReceipt] = useState(null);
-  const [existingDeploymentAddress, setExistingDeploymentAddress] = useState(
-    "0xc7AE2D5e83d5Fc3fC05e618E60807E05D5E57e15",
-  );
+  const [downstreamResult, setDownstreamResult] = useState(null);
   const [wallet, setWallet] = useState({ status: "disconnected", address: null, message: null });
   const [anchor, setAnchor] = useState({
     status: "idle",
@@ -69,6 +124,10 @@ export function App() {
     message: null,
   });
   const isDeploymentPreview = anchor.preview?.kind === "contract-deployment";
+  const scopeLabel = reviewScope.label;
+  const actionPlan = getScopedActionPlan(reviewScope);
+  const reviewCouncil = buildReviewCouncil(reviewScope);
+  const scopedEvidence = RWA_EVIDENCE.filter((item) => reviewScope.evidenceIds.includes(item.id));
   const openItem = openMarkerId ? RWA_EVIDENCE.find((item) => item.id === openMarkerId) : null;
 
   async function connectTestWallet() {
@@ -90,7 +149,7 @@ export function App() {
     // pack is refused instead of fabricating a map.
     setTimeout(() => {
       if (evaluateAgentCoverage(agentQuestion)) {
-        setScopeLabel("Cross-border · US · HK · SG · EU");
+        setReviewScope(createReviewScope());
         setStage("app");
         setSearchStatus("idle");
       } else {
@@ -107,12 +166,11 @@ export function App() {
   // database actually covers — the full cross-border map, or one jurisdiction.
   function openReviewedScope(jurisdictionId) {
     if (jurisdictionId) {
-      const item = RWA_EVIDENCE.find((entry) => entry.id === jurisdictionId);
       setOpenMarkerId(jurisdictionId);
-      setScopeLabel(`${item.title} · single jurisdiction`);
+      setReviewScope(createReviewScope(jurisdictionId));
     } else {
       setOpenMarkerId(null);
-      setScopeLabel("Cross-border · US · HK · SG · EU");
+      setReviewScope(createReviewScope());
     }
     setSearchStatus("idle");
     setStage("app");
@@ -120,16 +178,38 @@ export function App() {
 
   // After human review, emit a machine-actionable handoff a downstream agent can
   // run against — the verified scope, the human decision, and the receipt proof.
-  function buildAgentHandoff() {
-    if (!receipt) return "";
-    const signals = RWA_EVIDENCE.reduce((acc, item) => {
+  function buildScopeConstraints() {
+    if (reviewScope.scopeType === "single-jurisdiction") {
+      return scopedEvidence.map(
+        (item) => `- **${item.title}** — ${item.summary}`,
+      );
+    }
+
+    return [
+      "- **United States** — candidate Rule 506(c) workstream; counsel confirms availability and scope.",
+      "- **Hong Kong** — licensed-intermediary and product-control questions remain conditionally scoped.",
+      "- **Singapore** — current source pack has no specific provision supporting a broader path.",
+      "- **European Union** — classification remains unresolved in the current pack.",
+    ];
+  }
+
+  function buildHandoffFacts() {
+    if (!receipt) return null;
+    const signals = scopedEvidence.reduce((acc, item) => {
       acc[item.id] = item.signal;
       return acc;
     }, {});
-    const facts = {
+    return {
       caseRef: receipt.evidenceSet.decision.caseRef,
       reviewScope: scopeLabel,
+      reviewMode: reviewScope.reviewMode,
       signals,
+      agentReviews: reviewCouncil.scorecards.map((card) => ({
+        agentId: card.agentId,
+        verdict: card.verdict,
+        focus: card.focus,
+        objections: card.objections,
+      })),
       decision: "PROCEED",
       riskAcknowledged: true,
       reviewer: wallet.address || null,
@@ -145,6 +225,11 @@ export function App() {
             }
           : null,
     };
+  }
+
+  function buildAgentHandoff() {
+    const facts = buildHandoffFacts();
+    if (!facts) return "";
     return [
       "# LUO verified decision handoff",
       "",
@@ -154,12 +239,9 @@ export function App() {
       "```",
       "",
       "## Constraints for the downstream agent",
-      "Act only within this human-verified scope. Do not exceed it or infer coverage for an `Unresolved` jurisdiction.",
+      "Act only within this human-verified scope. Do not exceed it or infer coverage outside the reviewed source anchors.",
       "",
-      "- **United States** — candidate Rule 506(c) workstream; counsel confirms availability and scope.",
-      "- **Hong Kong** — licensed-intermediary and product-control questions remain conditionally scoped.",
-      "- **Singapore** — current source pack has no specific provision supporting a broader path.",
-      "- **European Union** — classification remains unresolved in the current pack.",
+      ...buildScopeConstraints(),
     ].join("\n");
   }
 
@@ -179,6 +261,10 @@ export function App() {
     URL.revokeObjectURL(url);
   }
 
+  function runDownstreamAgent() {
+    setDownstreamResult(runBoundedDownstreamAgent({ handoffFacts: buildHandoffFacts() }));
+  }
+
   async function prepareReceiptDraft() {
     if (wallet.status !== "connected") {
       setReceipt(null);
@@ -194,8 +280,11 @@ export function App() {
         decidedAt: getSafeDecisionTimestamp(Math.floor(Date.now() / 1000)),
         nonce: hexlify(randomBytes(32)),
         caseRef,
+        reviewScopeIds: reviewScope.evidenceIds,
+        agentReviews: reviewCouncil.scorecards,
       });
       setReceipt(nextReceipt);
+      setDownstreamResult(null);
       setDecision("draft");
       setAnchor((current) => ({
         ...current,
@@ -219,6 +308,7 @@ export function App() {
   function changeCaseRef(value) {
     setCaseRef(value);
     setReceipt(null);
+    setDownstreamResult(null);
     setDecision("review");
     setAnchor((current) => ({
       ...current,
@@ -260,6 +350,11 @@ export function App() {
 
   function getErrorMessage(error) {
     return error?.shortMessage || error?.reason || error?.message || "The testnet action could not be completed.";
+  }
+
+  function getTransactionTargetLabel(preview) {
+    if (preview.to === null) return "New receipt-anchor contract";
+    return `${preview.to.slice(0, 12)}…${preview.to.slice(-8)}`;
   }
 
   async function reviewDeployment() {
@@ -309,6 +404,12 @@ export function App() {
         provider: reader,
         deployer: wallet.address,
         nonce: transaction.nonce,
+        onAttempt: ({ attempt, attempts, contractAddress }) => {
+          setAnchor((current) => ({
+            ...current,
+            message: `Waiting for deployment visibility (${attempt}/${attempts}) at ${contractAddress.slice(0, 10)}…${contractAddress.slice(-6)}.`,
+          }));
+        },
       });
       try {
         await receiptAnchorClient.verifyDeployedRuntimeBytecode({
@@ -329,40 +430,13 @@ export function App() {
       }
       setAnchor({
         status: "deployed",
-        contractAddress: mined.contractAddress,
+        contractAddress,
         unverifiedContractAddress: null,
         preview: null,
         estimate: null,
         txHash: transaction.hash,
-        message: "Receipt anchor is visible on-chain and runtime verified. Prepare a fresh Proceed receipt before anchoring it.",
+        message: "Contract is visible on-chain and verified. Review the receipt anchor next.",
       });
-      setReceipt(null);
-      setDecision("review");
-    } catch (error) {
-      setAnchor((current) => ({ ...current, status: "error", message: getErrorMessage(error) }));
-    }
-  }
-
-  async function recoverExistingDeployment() {
-    setAnchor((current) => ({ ...current, status: "verifying-deployment", message: null }));
-    try {
-      const receiptAnchorClient = await getReceiptAnchorClient();
-      const verification = await receiptAnchorClient.verifyDeployedRuntimeBytecode({
-        provider: await getTestnetReceiptReader(),
-        contractAddress: existingDeploymentAddress,
-      });
-      setAnchor({
-        status: "deployed",
-        contractAddress: verification.contractAddress,
-        unverifiedContractAddress: null,
-        preview: null,
-        estimate: null,
-        txHash: null,
-        message: "Existing receipt anchor verified. Prepare a fresh Proceed receipt before anchoring it.",
-      });
-      setExistingDeploymentAddress("");
-      setReceipt(null);
-      setDecision("review");
     } catch (error) {
       setAnchor((current) => ({ ...current, status: "error", message: getErrorMessage(error) }));
     }
@@ -415,8 +489,14 @@ export function App() {
         provider: reader,
         contractAddress: anchor.contractAddress,
         receiptHash: receipt.receiptHash,
+        expectedReceipt: receipt,
       });
-      if (record.submitter.toLowerCase() !== wallet.address.toLowerCase() || record.evidenceHash !== receipt.evidenceHash) {
+      if (
+        record.submitter.toLowerCase() !== wallet.address.toLowerCase()
+        || record.evidenceHash !== receipt.evidenceHash
+        || record.decidedAt !== receipt.decidedAt
+        || record.productRefHash !== receipt.productRefHash
+      ) {
         throw new Error("The confirmed record does not match the reviewed receipt.");
       }
       setAnchor((current) => ({
@@ -425,7 +505,7 @@ export function App() {
         preview: null,
         estimate: null,
         txHash: transaction.hash,
-        message: "Proceed receipt is confirmed on Injective EVM Testnet.",
+        message: "Proceed receipt is confirmed on testnet.",
       }));
     } catch (error) {
       setAnchor((current) => ({ ...current, status: "error", message: getErrorMessage(error) }));
@@ -505,7 +585,7 @@ export function App() {
           <span className="topbar-divider" />
           <div>
             <strong>LUO Sentinel</strong>
-            <span>Evidence-bound decision record for tokenized RWA actions · Injective testnet demo</span>
+            <span>Evidence-bound decision record for tokenized RWA actions · testnet demo</span>
           </div>
         </div>
         <button
@@ -516,12 +596,12 @@ export function App() {
         >
           <span />
           {wallet.status === "connected"
-            ? `Injective Testnet · ${wallet.address.slice(0, 6)}…${wallet.address.slice(-4)}`
+            ? `Testnet · ${wallet.address.slice(0, 6)}…${wallet.address.slice(-4)}`
             : wallet.status === "connecting"
               ? "Connecting test wallet…"
               : wallet.status === "error"
                 ? "Wallet unavailable · retry"
-              : "Injective Testnet · connect wallet"}
+              : "Testnet · connect wallet"}
         </button>
       </header>
 
@@ -529,8 +609,14 @@ export function App() {
         <section className="atlas-stage" aria-label="Cross-border evidence map">
           <div className="atlas-intro">
             <p>Evidence map</p>
-            <h1>Cross-border<br />jurisdiction</h1>
+            <h1>{reviewScope.scopeType === "single-jurisdiction" ? "Single-source" : "Cross-border"}<br />review</h1>
             <span className="scope-line">Agent-routed across {scopeLabel.includes("single") ? "one human-verified source" : "four human-verified sources"}</span>
+            <div className="map-provenance" aria-label="Evidence map provenance">
+              <strong>{RWA_EVIDENCE_PROVENANCE.packLabel}</strong>
+              <small>
+                Last reviewed {RWA_EVIDENCE_PROVENANCE.reviewedAt} · {RWA_EVIDENCE_PROVENANCE.sourceType}. Refresh required when primary sources change.
+              </small>
+            </div>
           </div>
 
           <img className="atlas-map" src="/atlas-map.png" alt="Abstract world map with cross-border connection lines" />
@@ -539,7 +625,7 @@ export function App() {
             {RWA_EVIDENCE.map((item) => (
               <button
                 key={item.id}
-                className={`${item.className} ${openMarkerId === item.id ? "is-selected" : ""}`}
+                className={`${item.className} ${openMarkerId === item.id ? "is-selected" : ""} ${reviewScope.evidenceIds.includes(item.id) ? "" : "is-out-of-scope"}`}
                 onClick={() => selectEvidence(item.id)}
                 aria-pressed={openMarkerId === item.id}
               >
@@ -554,8 +640,8 @@ export function App() {
           </div>
 
           <div className="map-note">
-            <span>Demo map</span>
-            Information relationships only · not a representation of jurisdictional boundaries.
+            <span>Evidence snapshot</span>
+            Map signals come from reviewed source anchors, not a live legal conclusion. {RWA_EVIDENCE_PROVENANCE.refreshPolicy}
           </div>
 
           {openItem && (
@@ -608,7 +694,7 @@ export function App() {
             <button type="button" className="rail-close" onClick={() => setRailOpen(false)} aria-label="Close">✕</button>
             <div className="sheet-inner">
               <nav className="sheet-stepper" aria-label="Workflow steps">
-                {[["1", "Action plan"], ["2", "Decision"], ["3", "Anchor"], ["4", "Handoff"]].map(([n, label]) => (
+                {[["1", "Action plan"], ["2", "Agent review"], ["3", "Decision"], ["4", "Anchor"], ["5", "Handoff"]].map(([n, label]) => (
                   <button
                     key={n}
                     type="button"
@@ -628,9 +714,9 @@ export function App() {
                   <div className="action-start">
                     <h3>Start here</h3>
                     <p>
-                      {ACTION_PLAN.startHere.text}{" "}
-                      <a className="template-link" href={ACTION_PLAN.startHere.url} target="_blank" rel="noreferrer">
-                        {ACTION_PLAN.startHere.label} ↗
+                      {actionPlan.startHere.text}{" "}
+                      <a className="template-link" href={actionPlan.startHere.url} target="_blank" rel="noreferrer">
+                        {actionPlan.startHere.label} ↗
                       </a>
                     </p>
                   </div>
@@ -638,7 +724,7 @@ export function App() {
                     <div>
                       <h4>Need</h4>
                       <ul>
-                        {ACTION_PLAN.materials.need.map((m) => (
+                        {actionPlan.materials.need.map((m) => (
                           <li key={m.text}>
                             {m.text}
                             {m.url && (
@@ -650,23 +736,69 @@ export function App() {
                     </div>
                     <div>
                       <h4>Likely have</h4>
-                      <ul>{ACTION_PLAN.materials.likelyHave.map((m) => <li key={m}>{m}</li>)}</ul>
+                      <ul>{actionPlan.materials.likelyHave.map((m) => <li key={m}>{m}</li>)}</ul>
                     </div>
                     <div>
                       <h4>Take to local counsel</h4>
-                      <ul>{ACTION_PLAN.materials.counsel.map((m) => <li key={m}>{m}</li>)}</ul>
+                      <ul>{actionPlan.materials.counsel.map((m) => <li key={m}>{m}</li>)}</ul>
                     </div>
                   </div>
                   <p className="reco-disclaimer">This narrows the next work; it does not determine where an asset may be offered or transferred. Take this brief and the linked sources to qualified local counsel.</p>
                   <div className="sheet-nav">
-                    <button className="decision-button" onClick={() => setStep(2)}>Continue to decision →</button>
+                    <button className="decision-button" onClick={() => setStep(2)}>Continue to agent review →</button>
                   </div>
                 </div>
               )}
 
               {step === 2 && (
                 <div className="sheet-step-panel">
-                  <p className="sheet-kicker">Step 2 · Human decision</p>
+                  <p className="sheet-kicker">Step 2 · Agent Review Council</p>
+                  <h2>Three agents review the same evidence</h2>
+                  <span className="rail-lede">
+                    {reviewScope.scopeType === "single-jurisdiction"
+                      ? `Reviewing ${scopeLabel}: the council checks source correctness, authority coverage and applicability risk.`
+                      : "Reviewing the comparative map: the council checks jurisdiction coverage, source support and residual risk."}
+                  </span>
+                  <p className="score-guide">
+                    Scores are audit weights, not AI confidence. Each agent starts from 100 and deducts for missing scope, source limits, weak claim support, and unresolved counsel questions.
+                  </p>
+                  <div className="review-council" aria-label="Agent review council scorecards">
+                    {reviewCouncil.scorecards.map((card) => (
+                      <article className="review-card" key={card.agentId}>
+                        <div className="review-card-head">
+                          <div>
+                            <h3>{card.name}</h3>
+                            <span>{card.role}</span>
+                          </div>
+                          <strong>{card.verdict}</strong>
+                        </div>
+                        <p>{card.focus}</p>
+                        <div className="review-scores">
+                          {REVIEW_SCORE_LABELS.map((score) => (
+                            <span key={score.key} title={score.title}>
+                              {score.label} {card.scores[score.key]}/100
+                            </span>
+                          ))}
+                        </div>
+                        <small className="score-basis">Why: {card.scoringBasis}</small>
+                        <ul>
+                          {card.findings.map((finding) => <li key={finding}>{finding}</li>)}
+                        </ul>
+                      </article>
+                    ))}
+                  </div>
+                  <p className="reco-disclaimer">
+                    Gate: {reviewCouncil.aggregate.gate.replaceAll("-", " ")}. Audit weights only; human review stays required.
+                  </p>
+                  <div className="sheet-nav">
+                    <button className="decision-button" onClick={() => setStep(3)}>Continue to decision →</button>
+                  </div>
+                </div>
+              )}
+
+              {step === 3 && (
+                <div className="sheet-step-panel">
+                  <p className="sheet-kicker">Step 3 · Human decision</p>
                   <h2>Record the next step</h2>
                   <span className="rail-lede">Reviewing {scopeLabel}. A human decides what happens next.</span>
 
@@ -680,7 +812,7 @@ export function App() {
                       title="Use 3–64 letters, numbers, dots, hyphens, or underscores; start with a letter or number."
                       aria-describedby="scenario-reference-help"
                     />
-                    <small id="scenario-reference-help">All 4 reviewed signals · uppercase on receipt · non-sensitive only</small>
+                    <small id="scenario-reference-help">{reviewScope.evidenceIds.length} reviewed signal{reviewScope.evidenceIds.length === 1 ? "" : "s"} · uppercase on receipt · non-sensitive only</small>
                   </label>
 
                   {wallet.status !== "connected" ? (
@@ -719,43 +851,30 @@ export function App() {
                       <div className="receipt-commitment">
                         <span>Proceed receipt · local only</span>
                         <code>{receipt.receiptHash.slice(0, 18)}…{receipt.receiptHash.slice(-8)}</code>
-                        <small>{receipt.evidenceSet.decision.caseRef} · 4-jurisdiction review scope</small>
+                        <small>{receipt.evidenceSet.decision.caseRef} · {receipt.evidenceSet.decision.reviewScope.length} reviewed signal{receipt.evidenceSet.decision.reviewScope.length === 1 ? "" : "s"} · agent-reviewed</small>
                       </div>
                       <div className="sheet-nav">
-                        <button className="decision-button" onClick={() => setStep(3)}>Continue to anchoring →</button>
+                        <button className="decision-button" onClick={() => setStep(4)}>Continue to anchoring →</button>
                       </div>
                     </>
                   )}
                 </div>
               )}
 
-              {step === 3 && (
+              {step === 4 && (
                 <div className="sheet-step-panel">
-                  <p className="sheet-kicker">Step 3 · Anchor on Injective EVM testnet</p>
+                  <p className="sheet-kicker">Step 4 · Anchor on testnet</p>
                   <h2>Anchor the receipt</h2>
-                  {!receipt && <p className="sheet-hint">Complete the decision in step 2 first.</p>}
+                  {!receipt && <p className="sheet-hint">Complete the decision in step 3 first.</p>}
                   {receipt && (
                     <>
                       {wallet.status !== "connected" && (
                         <button className="testnet-review-button" onClick={connectTestWallet}>Connect wallet</button>
                       )}
-                      {!anchor.contractAddress && (
-                        <section className="deployment-recovery" aria-label="Verify receipt anchor contract">
-                          <span>Receipt-anchor contract</span>
-                          <input
-                            value={existingDeploymentAddress}
-                            onChange={(event) => setExistingDeploymentAddress(event.target.value)}
-                            placeholder="Receipt-anchor contract address"
-                            aria-label="Receipt-anchor contract address"
-                          />
-                          <button
-                            className="testnet-review-button"
-                            onClick={recoverExistingDeployment}
-                            disabled={anchor.status === "verifying-deployment"}
-                          >
-                            {anchor.status === "verifying-deployment" ? "Verifying contract…" : "Verify receipt-anchor contract"}
-                          </button>
-                        </section>
+                      {wallet.status === "connected" && !anchor.contractAddress && !anchor.preview && (
+                        <button className="testnet-review-button" onClick={reviewDeployment} disabled={anchor.status === "estimating"}>
+                          {anchor.status === "estimating" ? "Estimating deployment fee…" : "① Review contract deployment"}
+                        </button>
                       )}
                       {anchor.contractAddress && (
                         <div className="testnet-result">
@@ -770,22 +889,28 @@ export function App() {
                       )}
                       {anchor.preview && anchor.estimate && anchor.status !== "anchored" && (
                         <section className="transaction-preview" aria-label="Testnet transaction preview">
-                          <span>Testnet transaction preview</span>
+                          <span>{isDeploymentPreview ? "Contract deployment preview" : "Receipt anchor preview"}</span>
                           <dl>
                             <div><dt>Action</dt><dd>{anchor.preview.label}</dd></div>
-                            <div><dt>Target</dt><dd>{anchor.preview.to}</dd></div>
+                            <div><dt>Target</dt><dd>{getTransactionTargetLabel(anchor.preview)}</dd></div>
                             <div><dt>Transfer</dt><dd>0 INJ</dd></div>
                             <div><dt>Maximum fee</dt><dd>{anchor.estimate.displayFee === null ? "Unavailable" : `${anchor.estimate.displayFee} INJ`}</dd></div>
                           </dl>
-                          <button className="decision-button" onClick={confirmReceiptAnchor} disabled={anchor.status === "submitting-anchor"}>
-                            {anchor.status === "submitting-anchor" ? "Waiting for receipt confirmation…" : "Confirm anchor in wallet"}
+                          <button
+                            className="decision-button"
+                            onClick={isDeploymentPreview ? confirmDeployment : confirmReceiptAnchor}
+                            disabled={anchor.status === "submitting-deployment" || anchor.status === "submitting-anchor"}
+                          >
+                            {isDeploymentPreview
+                              ? anchor.status === "submitting-deployment" ? "Waiting for deployment confirmation…" : "② Confirm deployment in wallet"
+                              : anchor.status === "submitting-anchor" ? "Waiting for receipt confirmation…" : "③ Confirm receipt anchor in wallet"}
                           </button>
                         </section>
                       )}
                       {anchor.message && <p className={`testnet-message testnet-message--${anchor.status}`}>{anchor.message}</p>}
                       {anchor.status === "anchored" && (
                         <div className="sheet-nav">
-                          <button className="decision-button" onClick={() => setStep(4)}>Continue to handoff →</button>
+                          <button className="decision-button" onClick={() => setStep(5)}>Continue to handoff →</button>
                         </div>
                       )}
                     </>
@@ -793,9 +918,9 @@ export function App() {
                 </div>
               )}
 
-              {step === 4 && (
+              {step === 5 && (
                 <div className="sheet-step-panel">
-                  <p className="sheet-kicker">Step 4 · On-chain proof &amp; agent handoff</p>
+                  <p className="sheet-kicker">Step 5 · On-chain proof &amp; agent handoff</p>
                   <h2>Verifiable &amp; ready to hand off</h2>
                   {!receipt && <p className="sheet-hint">Complete the earlier steps first.</p>}
                   {receipt && (
@@ -817,9 +942,31 @@ export function App() {
                             {handoffCopied ? "Copied ✓" : "Copy handoff"}
                           </button>
                           <button type="button" className="testnet-review-button" onClick={downloadHandoff}>Download .md</button>
+                          <button type="button" className="testnet-review-button" onClick={runDownstreamAgent}>Run bounded downstream agent</button>
                         </div>
                         <p className="reco-disclaimer">This brief stays off-chain. Only the receipt hash is anchored on-chain.</p>
                       </section>
+                      {downstreamResult && (
+                        <section className="downstream-agent" aria-label="Bounded downstream agent output">
+                          <span>{downstreamResult.mode}</span>
+                          <h3>{downstreamResult.title}</h3>
+                          <p>{downstreamResult.summary}</p>
+                          <div className="downstream-grid">
+                            <div>
+                              <h4>Counsel preparation checklist</h4>
+                              <ol>
+                                {downstreamResult.checklist.map((item) => <li key={item}>{item}</li>)}
+                              </ol>
+                            </div>
+                            <div>
+                              <h4>Execution constraints</h4>
+                              <ul>
+                                {downstreamResult.constraints.map((item) => <li key={item}>{item}</li>)}
+                              </ul>
+                            </div>
+                          </div>
+                        </section>
+                      )}
                     </>
                   )}
                 </div>

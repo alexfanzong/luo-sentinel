@@ -6,6 +6,7 @@ import {
   createProceedReceiptDraft,
   getSafeDecisionTimestamp,
 } from "./onchainReceipt.js";
+import { buildReviewCouncil, createReviewScope } from "./reviewCouncil.js";
 
 test("backs the decision timestamp off by one minute to avoid testnet clock skew", () => {
   assert.equal(getSafeDecisionTimestamp(1782087000), 1782086940);
@@ -56,6 +57,32 @@ test("rejects a scenario reference that could contain free-form sensitive data",
     }),
     /scenario reference/i,
   );
+});
+
+test("binds a single-jurisdiction decision to only the selected source scope and reviewer scorecards", () => {
+  const scope = createReviewScope("HK-CLAIM-01");
+  const council = buildReviewCouncil(scope);
+  const evidenceSet = buildRwaEvidenceSet({
+    caseRef: "HK-ONLY-001",
+    reviewScopeIds: scope.evidenceIds,
+    agentReviews: council.scorecards,
+  });
+  const receipt = createProceedReceiptDraft({
+    reviewerWallet: "0x00000000000000000000000000000000000A11cE",
+    decidedAt: 1782087000,
+    nonce: "0x000000000000000000000000000000000000000000000000000000000000002a",
+    caseRef: "HK-ONLY-001",
+    reviewScopeIds: scope.evidenceIds,
+    agentReviews: council.scorecards,
+  });
+
+  assert.deepEqual(evidenceSet.signals.map((signal) => signal.sourceAnchor), ["HK-CLAIM-01"]);
+  assert.deepEqual(evidenceSet.decision.reviewScope, ["HK-CLAIM-01"]);
+  assert.equal(evidenceSet.agentReviews.length, 3);
+  assert.equal(evidenceSet.agentReviews[1].agentId, "source-agent");
+  assert.match(evidenceSet.agentReviews[1].findings.join(" "), /SFC circular/i);
+  assert.equal(receipt.evidenceSet.signals.length, 1);
+  assert.equal(receipt.evidenceSet.agentReviews.length, 3);
 });
 
 test("rejects a malformed reviewer wallet before a receipt can be prepared", () => {

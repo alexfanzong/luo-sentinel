@@ -1,0 +1,6 @@
+{
+  "installCommand": "cd app && npm ci --ignore-scripts",
+  "buildCommand": "cd app && npm run build",
+  "outputDirectory": "app/dist",
+  "framework": "vite"
+}

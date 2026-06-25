@@ -14,6 +14,11 @@
   - RPC: `https://k8s.testnet.json-rpc.injective.network/`
   - Native currency: `INJ`
   - Explorer: `https://testnet.blockscout.injective.network/`
+- A user-confirmed, zero-value testnet contract interaction has been recorded:
+  `0x17ae3d575955edb1c2e8d608641fb36d03a5c456dcacf0ca245bc0f9ed34c2eb`.
+  Read-only RPC verification returned `status: 0x1`, `value: 0x0`,
+  chain ID `0x59f`, and target
+  `0xc7AE2D5e83d5Fc3fC05e618E60807E05D5E57e15`.
 
 Official sources: [EVM network information](https://docs.injective.network/developers-evm/network-information)
 and [Connect with MetaMask](https://docs.injective.network/developers-evm/dapps/connect-with-metamask).
@@ -27,9 +32,9 @@ LUO Sentinel will not place a private key, seed phrase, or signing secret in:
 - the public repository; or
 - an instruction sent to a user.
 
-The current prototype therefore creates a **local testnet receipt draft** only.
-It deliberately does not claim that a transaction was sent. A wallet is shown
-as connected only after the operator completes the browser-wallet approval.
+The prototype creates a **local testnet receipt draft** first. A wallet is shown
+as connected only after the operator completes the browser-wallet approval. A
+separate review step is required before any testnet transaction can be sent.
 
 The local `Proceed` draft uses the same Keccak-256 and ABI-encoding format as
 the reviewed contract. It commits to a canonical RWA evidence manifest, product
@@ -38,13 +43,15 @@ contains no source text, private key, email address, or legal conclusion. It
 is shown as `local only` until a separately reviewed and user-confirmed testnet
 action records it.
 
-## Local contract, not yet deployed
+## Receipt-anchor contract and live receipt
 
-The repository now contains a locally tested `LUOReceiptAnchor` contract for a
-future `Proceed` receipt. It binds the receipt hash to the submitting wallet,
-uses no value transfer, and keeps `Hold for counsel` off-chain. Its exact
-privacy and verification boundary is documented in
-[ONCHAIN_RECEIPT_SPEC.md](./ONCHAIN_RECEIPT_SPEC.md).
+The repository contains a locally tested `LUOReceiptAnchor` contract for a
+`Proceed` receipt. It binds the receipt hash to the submitting wallet, uses no
+value transfer, and keeps `Hold for counsel` off-chain. Its exact privacy and
+verification boundary is documented in
+[ONCHAIN_RECEIPT_SPEC.md](./ONCHAIN_RECEIPT_SPEC.md). The current demo uses the
+verified testnet receipt-anchor contract at
+`0xc7AE2D5e83d5Fc3fC05e618E60807E05D5E57e15`.
 
 The browser-side Keccak evidence-manifest implementation uses reviewed, pinned
 dependencies: `ethers` `6.17.0` for ABI-compatible hashing and `canonicalize`
@@ -56,7 +63,8 @@ value transfer and Injective EVM Testnet (`1439`) before it can open the wallet.
 After a deployment is mined, the app reads the deployed runtime bytecode and
 compares its Keccak-256 hash with the reviewed local Forge artifact. A mismatch
 is visibly marked as unverified and cannot be used for receipt anchoring.
-No contract has been deployed, and no test INJ has been spent.
+The live receipt interaction transfers `0 INJ`; the user still pays normal
+testnet gas for the contract call.
 
 ## Implemented browser-wallet connection
 

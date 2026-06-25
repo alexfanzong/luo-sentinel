@@ -88,12 +88,25 @@ The result proves that the wallet anchored this specific commitment at the
 recorded block time. It does not prove legal compliance or independently prove
 who controlled the wallet.
 
-## Deployment boundary
+## Testnet proof boundary
 
-`contracts/LUOReceiptAnchor.sol` has only passed local Foundry tests. It has
-not been deployed to Injective EVM Testnet. Deployment and any later
-`anchorProceed` call require a fresh gas estimate, a visible transaction
-preview, and the operator's explicit confirmation at that time. The browser
-implementation enforces this in two separate steps: review first, then a
+`contracts/LUOReceiptAnchor.sol` has passed local Foundry tests. The current
+demo uses a verified Injective EVM Testnet receipt-anchor contract at
+`0xc7AE2D5e83d5Fc3fC05e618E60807E05D5E57e15`.
+
+The browser implementation enforces two separate steps: review first, then a
 separate wallet-confirmation click. It cannot submit a transaction during
-receipt preparation.
+receipt preparation. The user-confirmed testnet interaction below records a
+non-value-moving contract call:
+
+- Transaction:
+  `0x17ae3d575955edb1c2e8d608641fb36d03a5c456dcacf0ca245bc0f9ed34c2eb`
+- Explorer:
+  `https://testnet.blockscout.injective.network/tx/0x17ae3d575955edb1c2e8d608641fb36d03a5c456dcacf0ca245bc0f9ed34c2eb`
+- RPC receipt status: `0x1`
+- Transaction value: `0x0`
+- Chain ID: `0x59f`
+
+This proves that the wallet completed a zero-value receipt-anchor interaction
+on Injective EVM Testnet. It does not prove legal compliance or authorize an
+asset action.

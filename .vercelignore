@@ -1,0 +1,12 @@
+Claude给的文件/
+app/node_modules/
+app/dist/
+app/.npm-cache/
+cache/
+out/
+docs/CODEX-HANDOFF.md
+docs/superpowers/
+.env
+.env.*
+.vercel/
+*.log

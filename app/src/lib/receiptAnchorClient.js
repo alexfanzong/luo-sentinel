@@ -98,7 +98,7 @@ export async function estimateTestnetTransaction({ provider, walletAddress, prev
     provider.estimateGas(request),
     provider.getFeeData(),
   ]);
-  const gasPrice = feeData.gasPrice ?? feeData.maxFeePerGas ?? null;
+  const gasPrice = feeData.maxFeePerGas ?? feeData.gasPrice ?? null;
 
   return {
     ...preview,
@@ -144,6 +144,7 @@ export async function waitForDeployedContract({
   nonce,
   attempts = 30,
   pollIntervalMs = 1000,
+  onAttempt,
 }) {
   let normalizedDeployer;
   try {
@@ -157,6 +158,7 @@ export async function waitForDeployedContract({
 
   const contractAddress = getCreateAddress({ from: normalizedDeployer, nonce });
   for (let attempt = 0; attempt < attempts; attempt += 1) {
+    onAttempt?.({ attempt: attempt + 1, attempts, contractAddress });
     const code = await provider.getCode(contractAddress);
     if (isHexString(code) && code.length > 2) return contractAddress;
     if (attempt + 1 < attempts) await wait(pollIntervalMs);
@@ -223,6 +225,7 @@ export async function waitForAnchoredReceipt({
   provider,
   contractAddress,
   receiptHash,
+  expectedReceipt,
   attempts = 30,
   pollIntervalMs = 1000,
 }) {
@@ -237,8 +240,20 @@ export async function waitForAnchoredReceipt({
 
   for (let attempt = 0; attempt < attempts; attempt += 1) {
     try {
-      return await readAnchoredReceipt({ provider, contractAddress, receiptHash });
+      const record = await readAnchoredReceipt({ provider, contractAddress, receiptHash });
+      if (
+        expectedReceipt
+        && (
+          record.evidenceHash !== expectedReceipt.evidenceHash
+          || record.productRefHash !== expectedReceipt.productRefHash
+          || record.decidedAt !== expectedReceipt.decidedAt
+        )
+      ) {
+        throw new Error("The confirmed record does not match the reviewed receipt.");
+      }
+      return record;
     } catch (error) {
+      if (/does not match the reviewed receipt/i.test(error?.message || "")) throw error;
       if (attempt + 1 >= attempts) break;
       await wait(pollIntervalMs);
     }

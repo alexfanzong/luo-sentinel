@@ -12,3 +12,5 @@ out/
 
 # OS files
 .DS_Store
+.vercel
+.env*

@@ -74,6 +74,21 @@ test("estimates a zero-value transaction only on Injective EVM Testnet", async (
   assert.equal(estimate.maxFeeWei, 100666240000000n);
 });
 
+test("prefers EIP-1559 maxFeePerGas over legacy gasPrice when both are available", async () => {
+  const estimate = await estimateTestnetTransaction({
+    preview: createDeploymentTransactionPreview(),
+    walletAddress: REVIEWER,
+    provider: {
+      getNetwork: async () => ({ chainId: 1439n }),
+      estimateGas: async () => 10n,
+      getFeeData: async () => ({ gasPrice: 100n, maxFeePerGas: 250n }),
+    },
+  });
+
+  assert.equal(estimate.gasPrice, 250n);
+  assert.equal(estimate.maxFeeWei, 2500n);
+});
+
 test("refuses to estimate a transaction on the wrong network", async () => {
   await assert.rejects(
     () => estimateTestnetTransaction({
@@ -133,6 +148,26 @@ test("confirms a deployment from code at its deterministic create address withou
   assert.equal(deployed, expectedAddress);
 });
 
+test("reports deployment polling progress before code appears", async () => {
+  const progress = [];
+  const expectedAddress = getCreateAddress({ from: REVIEWER, nonce: 0 });
+  const deployed = await receiptAnchorClient.waitForDeployedContract({
+    deployer: REVIEWER,
+    nonce: 0,
+    attempts: 2,
+    pollIntervalMs: 0,
+    onAttempt: (state) => progress.push(state),
+    provider: {
+      getCode: async () => (progress.length === 1 ? "0x" : "0x6000"),
+    },
+  });
+
+  assert.equal(deployed, expectedAddress);
+  assert.deepEqual(progress.map((state) => state.attempt), [1, 2]);
+  assert.deepEqual(progress.map((state) => state.attempts), [2, 2]);
+  assert.equal(progress[0].contractAddress, expectedAddress);
+});
+
 test("confirms an anchored receipt from contract state without reading a transaction receipt", async () => {
   assert.equal(typeof receiptAnchorClient.waitForAnchoredReceipt, "function");
 
@@ -162,6 +197,33 @@ test("confirms an anchored receipt from contract state without reading a transac
 
   assert.equal(record.submitter, REVIEWER);
   assert.equal(record.evidenceHash, RECEIPT.evidenceHash);
+});
+
+test("rejects an anchored record that does not match the expected receipt fields", async () => {
+  const contractInterface = new Interface([
+    "function getRecord(bytes32 receiptHash) view returns (address submitter, uint64 anchoredAt, uint64 decidedAt, bytes32 evidenceHash, bytes32 productRefHash)",
+  ]);
+  const returnedRecord = contractInterface.encodeFunctionResult("getRecord", [
+    REVIEWER,
+    1782087060n,
+    BigInt(RECEIPT.decidedAt + 1),
+    RECEIPT.evidenceHash,
+    RECEIPT.productRefHash,
+  ]);
+
+  await assert.rejects(
+    () => receiptAnchorClient.waitForAnchoredReceipt({
+      contractAddress: CONTRACT,
+      receiptHash: RECEIPT.receiptHash,
+      expectedReceipt: RECEIPT,
+      attempts: 1,
+      pollIntervalMs: 0,
+      provider: {
+        call: async () => returnedRecord,
+      },
+    }),
+    /does not match the reviewed receipt/i,
+  );
 });
 
 test("reads and decodes an anchored receipt after its transaction is mined", async () => {
