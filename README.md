@@ -1,87 +1,147 @@
 # LUO Sentinel
 
-Website: [https://luo-sentinel.vercel.app](https://luo-sentinel.vercel.app)
+Evidence-bound AI handoffs for RWA compliance workflows.
+
+[Live Demo](https://luo-sentinel.vercel.app) · [Repository](https://github.com/alexfanzong/luo-sentinel) · [Demo Script](docs/DEMO_SCRIPT.md) · [Pitch Deck Outline](docs/PITCH_DECK.md)
+
+## Table of Contents
+
+- [About The Project](#about-the-project)
+- [Built With](#built-with)
+- [Getting Started](#getting-started)
+- [Usage](#usage)
+- [How The Evidence Map Works](#how-the-evidence-map-works)
+- [Safety Boundary](#safety-boundary)
+- [Roadmap](#roadmap)
+- [License](#license)
+- [Contact](#contact)
+- [Acknowledgments](#acknowledgments)
+
+## About The Project
 
 LUO Sentinel turns reviewed regulatory source anchors into scoped, auditable AI
-action handoffs for RWA compliance workflows. The map is a current evidence
-snapshot, not a live legal conclusion; every Proceed decision is bounded by
-human review and a verifiable receipt.
+action handoffs for tokenized RWA workflows. The demo shows how an AI-facing
+system can refuse unsupported scope, preserve jurisdictional divergence, require
+human review, and anchor a non-sensitive Proceed receipt before any downstream
+agent acts.
 
-LUO Sentinel makes jurisdictional divergence visible before a human records a
-next step for a tokenized-asset scenario. The demo can preserve distinct
-signals for the United States, Hong Kong, Singapore, and European Union, or
-shrink to a single jurisdiction such as Hong Kong. In either mode, the product
-requires a review council and a human decision rather than manufacturing a
-universal legal conclusion. These are scoped Ondo OUSG RWA sample signals, not
-jurisdiction-wide legal conclusions.
+The map is not a live legal conclusion. It is a snapshot of a reviewed evidence
+pack that can be refreshed as primary legal and regulatory sources change.
 
-The current evidence map is derived from a reviewed OUSG sample evidence pack
-last reviewed on `2026-06-07`. In production, the evidence layer would refresh
-from primary legal/regulatory sources and mark stale signals for re-review when
-source materials change.
+Key ideas:
 
-Each `Proceed` receipt binds one non-sensitive scenario reference to the
-selected evidence scope and deterministic reviewer scorecards. Choosing a
-single jurisdiction narrows the receipt and handoff to that source scope; it
-does not imply approval for that jurisdiction or a Hold for any other
-jurisdiction.
+- **Verified evidence first** — the app starts from reviewed source anchors, not
+  open-ended model output.
+- **Scope before action** — the Review Council checks whether a source is being
+  interpreted too broadly before a human can proceed.
+- **Human-gated receipts** — a Proceed decision creates a local commitment that
+  can be anchored as a zero-value testnet receipt hash.
+- **Bounded handoff** — downstream agents receive only the approved scope,
+  reviewer objections, and receipt proof.
 
-## Demo proof
+## Built With
 
-The product proof is not that LUO can answer every RWA question. It is that an
-agent can be forced to stay inside a reviewed evidence boundary before it moves
-toward execution.
+- [React](https://react.dev/)
+- [Vite](https://vite.dev/)
+- [ethers.js](https://docs.ethers.org/)
+- [Foundry](https://book.getfoundry.sh/)
+- [Vercel](https://vercel.com/)
 
-1. **Refuse unsupported scope** — an out-of-scope question is rejected or routed
-   back to a reviewed evidence pack instead of producing a fabricated
-   compliance map.
-2. **Preserve or narrow scope** — the Atlas Canvas can keep United States, Hong
-   Kong, Singapore, and European Union separate, or narrow to one reviewed
-   source such as Hong Kong.
-3. **Run the Review Council** — deterministic Scope, Source, and Risk agents
-   review the selected evidence before a human can create a receipt. Scores use
-   a fixed demo rubric over coverage, authority fit, claim support, and
-   residual risk; they are not LLM confidence scores.
-4. **Require human review** — the Decision Rail turns the evidence pack into a
-   source-bounded action plan, then requires a human to Hold or Proceed.
-5. **Anchor responsibility, not legal content** — a Proceed decision can be
-   recorded as a zero-value Injective EVM Testnet receipt hash after wallet
-   review and runtime-bytecode verification.
-6. **Run bounded handoff** — the downstream agent consumes the verified scope,
-   decision, receipt proof, and reviewer objections, then produces a scoped
-   counsel-preparation checklist instead of a universal legal answer.
+## Getting Started
 
-## Prototype
+### Prerequisites
 
-The current Atlas Canvas prototype lives in [`app/`](./app). It uses a map-first
-interface with interactive jurisdiction signals and a human decision rail.
+- Node.js 22+
+- npm
+- Foundry, for Solidity build and bytecode verification tests
+- A MetaMask-compatible browser wallet for the optional testnet flow
 
-Deployed app: [https://luo-sentinel.vercel.app](https://luo-sentinel.vercel.app)
+### Installation
 
-```bash
-cd app
-npm install --ignore-scripts
-npm run dev
-```
+1. Clone the repository.
 
-## Safety boundary
+   ```bash
+   git clone https://github.com/alexfanzong/luo-sentinel.git
+   cd luo-sentinel
+   ```
 
-The prototype does not move assets, make legal determinations, establish
-compliance, authorize an asset transaction, or transmit a private key. An
-operator can choose to connect a test-only MetaMask-compatible wallet to
-Injective EVM Testnet; the browser wallet keeps control of the account and may
-be disconnected at any time. `Prepare testnet decision receipt` creates an
-on-chain-compatible receipt draft locally. A separate review panel then shows
-the exact zero-value testnet operation and a fresh fee estimate. Nothing reaches
-the wallet until the operator clicks the explicit confirmation button; the
-wallet remains the final confirmation authority. After a deployment is mined,
-the app reads its runtime bytecode and accepts it only if its hash matches the
-locally reviewed contract artifact. The verified Injective integration boundary is documented in
-[docs/INJECTIVE_INTEGRATION.md](./docs/INJECTIVE_INTEGRATION.md).
+2. Install the app dependencies.
 
-## What goes on-chain
+   ```bash
+   cd app
+   npm install --ignore-scripts
+   ```
 
-On-chain:
+3. Start the local app.
+
+   ```bash
+   npm run dev
+   ```
+
+4. Run the test suite.
+
+   ```bash
+   npm test
+   ```
+
+5. Build the production bundle.
+
+   ```bash
+   npm run build
+   ```
+
+## Usage
+
+Use the default RWA scenario or ask a scoped OUSG question from the landing
+search. The app routes only to reviewed evidence scopes; unsupported questions
+are refused or narrowed to a known source scope.
+
+Demo path:
+
+1. Open the [live demo](https://luo-sentinel.vercel.app).
+2. Run the default cross-border OUSG query, or ask `Can we launch OUSG in Hong Kong only?` and choose the Hong Kong scope.
+3. Inspect the evidence map and source anchors.
+4. Open the workflow rail and review the action plan.
+5. Continue to the Review Council to see scope, source-fit, and claim-support checks.
+6. Connect a test-only wallet and prepare a Proceed receipt.
+7. Review and confirm the zero-value testnet contract deployment, then review and confirm the receipt anchor.
+8. Run the bounded downstream agent to produce a counsel-preparation checklist.
+
+## How The Evidence Map Works
+
+The current map is derived from a reviewed OUSG sample evidence pack last
+reviewed on `2026-06-07`.
+
+Each jurisdiction signal contains:
+
+- a source anchor;
+- a scoped signal, such as Restricted, Conditional, or Unresolved;
+- a summary of what the source supports;
+- a boundary for what the source does not prove.
+
+In production, the evidence layer would refresh from primary legal and
+regulatory sources such as regulator websites, official legal databases, or
+trusted MCP connectors. LLMs can help extract candidate claims, but those claims
+should become map signals only after expert or human verification. When source
+materials change, stale signals should be marked for re-review before they are
+used in a new handoff.
+
+The Review Council does not check whether an official database is "real." It
+checks whether the selected source is being applied too broadly, whether the
+claim is supported, and whether the downstream agent must remain limited to
+counsel-preparation work.
+
+## Safety Boundary
+
+LUO Sentinel does not:
+
+- move assets;
+- make legal determinations;
+- establish compliance;
+- authorize an asset transaction;
+- transmit private keys, seed phrases, or legal source text on-chain.
+
+On-chain, the demo anchors only:
 
 - receipt hash;
 - evidence manifest hash;
@@ -89,37 +149,47 @@ On-chain:
 - reviewer-controlled submitting wallet;
 - decision timestamp.
 
-Off-chain:
+Off-chain, the app keeps:
 
 - legal source text;
 - action-plan narrative;
-- deterministic reviewer scorecard details;
-- downstream agent handoff brief and bounded checklist;
-- private keys, seed phrases, personal data, and legal conclusions.
+- reviewer scorecards;
+- downstream handoff brief;
+- counsel-preparation checklist.
 
-## Live testnet proof
+The browser wallet remains the final confirmation authority for every testnet
+transaction. The app verifies deployed runtime bytecode before accepting a
+receipt-anchor contract. The full integration boundary is documented in
+[docs/INJECTIVE_INTEGRATION.md](docs/INJECTIVE_INTEGRATION.md).
 
-The demo has a user-confirmed, zero-value Injective EVM Testnet contract
-interaction:
+## Roadmap
 
-- Transaction:
-  [`0x17ae3d575955edb1c2e8d608641fb36d03a5c456dcacf0ca245bc0f9ed34c2eb`](https://testnet.blockscout.injective.network/tx/0x17ae3d575955edb1c2e8d608641fb36d03a5c456dcacf0ca245bc0f9ed34c2eb)
-- Contract:
-  [`0xc7AE2D5e83d5Fc3fC05e618E60807E05D5E57e15`](https://testnet.blockscout.injective.network/address/0xc7AE2D5e83d5Fc3fC05e618E60807E05D5E57e15)
-- Chain ID: `1439`
-- Transfer value: `0 INJ`
-- Receipt status: confirmed
-
-## Nova deliverables in progress
-
-- [x] Public-safe project frame and prototype
-- [x] Interactive jurisdiction map and human-review flow
-- [x] Injective EVM Testnet browser-wallet connection layer
-- [x] Locally tested, wallet-bound Proceed receipt contract
-- [x] Three-minute demo script
-- [x] Pitch deck outline
-- [x] User-confirmed live test-wallet connection
-- [x] User-confirmed non-value-moving testnet receipt
-- [x] Deployed demo URL
+- [x] Public-safe project frame and deployed app
+- [x] Reviewed RWA evidence map with jurisdiction-specific source anchors
+- [x] Single-jurisdiction and cross-border review scopes
+- [x] Review Council with deterministic scope, source-fit, and risk checks
+- [x] Wallet-gated Proceed receipt flow
+- [x] Zero-value testnet contract deployment and receipt anchoring
+- [x] Bounded downstream agent checklist
+- [x] Demo script and pitch deck outline
 - [ ] Three-minute demo video
 - [ ] Final designed pitch deck
+- [ ] Live LLM/legal reviewer agent integration
+- [ ] Refresh pipeline for primary legal and regulatory sources
+
+## License
+
+No license has been declared yet.
+
+## Contact
+
+Project Link: [https://github.com/alexfanzong/luo-sentinel](https://github.com/alexfanzong/luo-sentinel)
+
+Live Demo: [https://luo-sentinel.vercel.app](https://luo-sentinel.vercel.app)
+
+## Acknowledgments
+
+- The README structure follows the public layout pattern from
+  [othneildrew/Best-README-Template](https://github.com/othneildrew/Best-README-Template).
+- Regulatory source anchors in this demo are scoped sample signals, not
+  jurisdiction-wide legal conclusions.
