@@ -14,21 +14,19 @@
 </p>
 
 <p align="center">
-  <a href="#english">English</a> / <a href="#中文">中文</a>
+  <a href="#中文版本">中文版本</a>
 </p>
 
-## Bilingual Overview
+LUO Sentinel is an AI agent trust-layer demo for RWA compliance workflows. It turns reviewed regulatory source anchors into a visual evidence map, then requires scope review, a human gate, and a verifiable receipt before any downstream agent acts.
 
-| English | 中文 |
-| --- | --- |
-| LUO Sentinel is an AI agent trust-layer demo for RWA compliance workflows. It turns reviewed regulatory source anchors into a visual evidence map, then requires scope review, a human gate, and a verifiable receipt before any downstream agent acts. | LUO Sentinel 是一个面向 RWA 合规工作流的 AI agent trust layer demo。它把经过审核的监管 source anchors 组织成可视化 evidence map，并在任何下游 agent 行动前加入 scope review、human gate 和可验证 receipt。 |
-| The project is not about asking AI to produce a legal conclusion such as "this asset can be issued or transferred here." It demonstrates a safer path: verify the source and its boundary first, then decide what an AI agent is allowed to do. | 本项目的重点不是让 AI 直接给出“某地可以发行/转让”的法律结论，而是展示一条更安全的链路：先确认资料来源和适用边界，再决定 AI 被允许做什么。 |
-| The map is not a live legal conclusion. It is a snapshot of a reviewed evidence pack. When regulatory sources change, affected signals must be reviewed again. | 地图不是实时法律结论，而是 reviewed evidence pack 的当前快照。监管来源变化后，相关 signal 必须重新审核。 |
+The project is not about asking AI to produce a legal conclusion such as "this asset can be issued or transferred here." It demonstrates a safer path: verify the source and its boundary first, then decide what an AI agent is allowed to do.
 
-## Screenshots
+The map is not a live legal conclusion. It is a snapshot of a reviewed evidence pack. When regulatory sources change, affected signals must be reviewed again.
+
+## Evidence Map Screenshot
 
 <p align="center">
-  <img src="app/public/atlas-map.png" alt="LUO Sentinel evidence map" width="760" />
+  <img src="app/public/readme-evidence-map.png" alt="LUO Sentinel four-jurisdiction evidence map" width="820" />
 </p>
 
 ## English
@@ -185,7 +183,7 @@ Off-chain, the app keeps legal source text, action-plan narrative, reviewer scor
 - [ ] Reviewer reputation and evaluation records
 - [ ] Multi-source evidence graph beyond OUSG sample data
 
-## 中文
+## 中文版本
 
 ### 项目简介
 
@@ -294,4 +292,3 @@ No license has been declared yet.
 
 - README presentation style was inspired by [web3-awesome-solana-market](https://github.com/aiyoudiao/web3-awesome-solana-market) and [Best-README-Template](https://github.com/othneildrew/Best-README-Template).
 - Regulatory source anchors in this demo are scoped sample signals, not jurisdiction-wide legal conclusions.
-
