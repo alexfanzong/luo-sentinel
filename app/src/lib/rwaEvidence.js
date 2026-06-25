@@ -15,7 +15,7 @@ export const RWA_EVIDENCE = Object.freeze([
     detail: "The Rule 506(c) frame requires accredited-investor verification.",
     summary:
       "The cited Rule 506(c) provision permits general solicitation only if all purchasers are verified accredited investors. It is a candidate U.S. workstream, not a conclusion for any particular offer or transfer.",
-    sourceLabel: "SEC · Rule 506(c) · 17 CFR §230.506",
+    sourceLabel: "eCFR · Rule 506(c) · 17 CFR §230.506",
     sourceUrl: "https://www.ecfr.gov/current/title-17/section-230.506",
     tone: "coral",
     className: "marker marker--us",
@@ -28,7 +28,7 @@ export const RWA_EVIDENCE = Object.freeze([
     summary:
       "The reviewed SFC circular addresses intermediary conduct around tokenised securities. It does not by itself establish a universal retail-transfer route; licensed distribution, suitability and custody/control conditions must be assessed for the concrete product.",
     sourceLabel: "SFC · tokenised-securities circular (Nov 2023)",
-    sourceUrl: "https://apps.sfc.hk/edistributionWeb/gateway/EN/circular/doc?refNo=23EC56",
+    sourceUrl: "https://apps.sfc.hk/edistributionWeb/gateway/EN/circular/doc?refNo=23EC52",
     tone: "gold",
     className: "marker marker--hong-kong",
   },

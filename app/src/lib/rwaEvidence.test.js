@@ -27,3 +27,10 @@ test("keeps the evidence copy scoped to the cited source instead of asserting a 
   assert.equal(europeanUnion.secondarySourceLabel, "EU · MiFID II 2014/65/EU");
   assert.equal(europeanUnion.secondarySourceUrl, "https://eur-lex.europa.eu/eli/dir/2014/65/oj");
 });
+
+test("links Hong Kong to the SFC tokenised-securities circular, not an AML circular", () => {
+  const hongKong = RWA_EVIDENCE.find((item) => item.id === "HK-CLAIM-01");
+
+  assert.equal(hongKong.sourceUrl, "https://apps.sfc.hk/edistributionWeb/gateway/EN/circular/doc?refNo=23EC52");
+  assert.doesNotMatch(hongKong.sourceUrl, /23EC56/);
+});

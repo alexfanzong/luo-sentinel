@@ -35,6 +35,19 @@ LUO Sentinel 是一个面向 RWA 合规工作流的 AI agent trust layer demo。
 
 ## Demo
 
+Live app: [https://luo-sentinel.vercel.app](https://luo-sentinel.vercel.app)
+
+建议评委这样看：
+
+1. 在空白搜索框输入跨辖区问题：
+   `We're launching a tokenized US Treasury (OUSG) product, where can we legally offer and transfer it?`
+2. 打开地图上的 jurisdiction markers，检查每个 signal 是否跳转到对应 source anchor。
+3. 依次走完 Action Plan、Agent Review、Human Decision、Testnet Anchor 和 Handoff。
+4. 运行 bounded downstream agent，确认它生成的是 counsel-preparation checklist，而不是法律结论。
+5. 重新开始，输入 Hong Kong-only 问题：
+   `Can we launch OUSG in Hong Kong only?`
+6. 确认地图缩小到 Hong Kong source scope，并且不会推断 US、Singapore 或 EU 覆盖范围。
+
 ## 项目简介
 
 LUO Sentinel 展示了一个 AI x Web3 合规工作流的最小闭环：
@@ -153,19 +166,6 @@ LUO Sentinel 不会：
 
 链下保留 legal source text、action-plan narrative、reviewer scorecards、downstream handoff brief 和 counsel-preparation checklist。
 
-## 开源协议
-
-源代码采用 Apache License 2.0。详见 [LICENSE](LICENSE)。
-
-LUO Sentinel 是黑客松研究 demo。LUO Sentinel 的名称、logo、demo evidence pack、监管来源摘要、evidence map 和合规流程叙事，不构成法律、合规、商标、商业背书、投资建议或授权许可。该 demo 不能替代持牌律师或受监管合规专业人士的意见。
-
-## Contact
-
-Alex Fan  
-Cornell Law School  
-Programmable Compliance Architect  
-X: [@itsAlexFan](https://x.com/itsAlexFan)
-
 ## 产品路线图
 
 ### 1. Evidence Infrastructure
@@ -191,3 +191,16 @@ X: [@itsAlexFan](https://x.com/itsAlexFan)
 - 为团队、律师和合规 reviewer 增加 workspace 功能。
 - 增加 case history、audit trail 和 evidence refresh notification。
 - 支持 legal、compliance 和 RWA operations teams 的企业部署模式。
+
+## 开源协议
+
+源代码采用 Apache License 2.0。详见 [LICENSE](LICENSE)。
+
+LUO Sentinel 是黑客松研究 demo。LUO Sentinel 的名称、logo、demo evidence pack、监管来源摘要、evidence map 和合规流程叙事，不构成法律、合规、商标、商业背书、投资建议或授权许可。该 demo 不能替代持牌律师或受监管合规专业人士的意见。
+
+## Contact
+
+Alex Fan  
+Cornell Law School  
+Programmable Compliance Architect  
+X: [@itsAlexFan](https://x.com/itsAlexFan)

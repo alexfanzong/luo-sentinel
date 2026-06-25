@@ -5,21 +5,11 @@ import { createProceedReceiptDraft, getSafeDecisionTimestamp } from "./lib/oncha
 import { runBoundedDownstreamAgent } from "./lib/downstreamAgent.js";
 import { buildReviewCouncil, createReviewScope } from "./lib/reviewCouncil.js";
 import { RWA_EVIDENCE, RWA_EVIDENCE_PROVENANCE } from "./lib/rwaEvidence.js";
+import { getReviewedQuestionRoute } from "./lib/questionRouter.js";
 
 // The reviewed evidence pack the local agent is allowed to route to. The agent
 // never answers freely: it either maps a question onto these human-verified
 // source signals, or it refuses instead of fabricating a map.
-const SUPPORTED_SCENARIO_QUESTION =
-  "We're launching a tokenized US Treasury (OUSG) product, where can we legally offer and transfer it?";
-
-function evaluateAgentCoverage(question) {
-  const q = (question || "").trim().toLowerCase();
-  if (q.length === 0) return false;
-  const mentionsReviewedAsset = /(ousg|tokeniz(?:ed)? treasury|treasury product|\brwa\b)/.test(q);
-  const mentionsCrossBorder = /(jurisdiction|cross[ -]?border|offer|transfer|market|where|sell|distribut|abroad|four)/.test(q);
-  return mentionsReviewedAsset && mentionsCrossBorder;
-}
-
 // Deterministic, human-reviewed triage for the OUSG cross-border scenario.
 // The local agent translates a bounded evidence pack into preparation work; it
 // does not select a market or determine an offer path.
@@ -105,7 +95,7 @@ export function App() {
   const [caseRef, setCaseRef] = useState("RWA-DEMO-001");
   const [stage, setStage] = useState("landing"); // landing | app
   const [railOpen, setRailOpen] = useState(false);
-  const [agentQuestion, setAgentQuestion] = useState(SUPPORTED_SCENARIO_QUESTION);
+  const [agentQuestion, setAgentQuestion] = useState("");
   const [searchStatus, setSearchStatus] = useState("idle"); // idle | running | refused
   const [reviewScope, setReviewScope] = useState(() => createReviewScope());
   const [handoffCopied, setHandoffCopied] = useState(false);
@@ -148,8 +138,10 @@ export function App() {
     // Covered question opens the evidence map; anything outside the reviewed
     // pack is refused instead of fabricating a map.
     setTimeout(() => {
-      if (evaluateAgentCoverage(agentQuestion)) {
-        setReviewScope(createReviewScope());
+      const route = getReviewedQuestionRoute(agentQuestion);
+      if (route) {
+        setOpenMarkerId(route.jurisdictionId);
+        setReviewScope(createReviewScope(route.jurisdictionId));
         setStage("app");
         setSearchStatus("idle");
       } else {
@@ -531,8 +523,8 @@ export function App() {
                 setAgentQuestion(event.target.value);
                 if (searchStatus === "refused") resetSearch();
               }}
-              placeholder="Ask a cross-border RWA question…"
-              aria-label="Ask a cross-border RWA question"
+              placeholder="Ask a reviewed RWA question…"
+              aria-label="Ask a reviewed RWA question"
               autoFocus
             />
           </form>

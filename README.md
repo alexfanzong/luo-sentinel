@@ -35,6 +35,19 @@ The map is not a live legal conclusion. It is a snapshot of a reviewed evidence 
 
 ## Demo
 
+Live app: [https://luo-sentinel.vercel.app](https://luo-sentinel.vercel.app)
+
+Suggested reviewer path:
+
+1. In the empty search box, ask the cross-border prompt:
+   `We're launching a tokenized US Treasury (OUSG) product, where can we legally offer and transfer it?`
+2. Open the jurisdiction markers and check that each signal links to its cited source anchor.
+3. Continue through Action Plan, Agent Review, Human Decision, Testnet Anchor, and Handoff.
+4. Run the bounded downstream agent and confirm that it creates a counsel-preparation checklist, not a legal conclusion.
+5. Restart and ask the Hong Kong-only prompt:
+   `Can we launch OUSG in Hong Kong only?`
+6. Confirm that the map narrows to the Hong Kong source scope and does not infer U.S., Singapore, or EU coverage.
+
 ## About The Project
 
 LUO Sentinel demonstrates a minimal AI x Web3 compliance loop:
@@ -153,19 +166,6 @@ On-chain, the demo anchors only:
 
 Off-chain, the app keeps legal source text, action-plan narrative, reviewer scorecards, downstream handoff brief, and counsel-preparation checklist.
 
-## License
-
-The source code is licensed under the Apache License 2.0. See [LICENSE](LICENSE).
-
-LUO Sentinel is a hackathon research demo. The LUO Sentinel name, logo, demo evidence pack, regulatory source summaries, evidence map, and compliance workflow narrative do not grant legal, compliance, trademark, commercial endorsement, investment advice, or authorization rights. The demo should not be used as a substitute for advice from licensed counsel or regulated compliance professionals.
-
-## Contact
-
-Alex Fan  
-Cornell Law School  
-Programmable Compliance Architect  
-X: [@itsAlexFan](https://x.com/itsAlexFan)
-
 ## Product Roadmap
 
 ### 1. Evidence Infrastructure
@@ -191,3 +191,16 @@ X: [@itsAlexFan](https://x.com/itsAlexFan)
 - Build workspace features for teams, counsel, and compliance reviewers.
 - Add case history, audit trails, and evidence refresh notifications.
 - Support enterprise deployment patterns for legal, compliance, and RWA operations teams.
+
+## License
+
+The source code is licensed under the Apache License 2.0. See [LICENSE](LICENSE).
+
+LUO Sentinel is a hackathon research demo. The LUO Sentinel name, logo, demo evidence pack, regulatory source summaries, evidence map, and compliance workflow narrative do not grant legal, compliance, trademark, commercial endorsement, investment advice, or authorization rights. The demo should not be used as a substitute for advice from licensed counsel or regulated compliance professionals.
+
+## Contact
+
+Alex Fan  
+Cornell Law School  
+Programmable Compliance Architect  
+X: [@itsAlexFan](https://x.com/itsAlexFan)
