@@ -8,9 +8,7 @@
 
 <p align="center">
   <a href="README.md">English</a> ·
-  <a href="https://luo-sentinel.vercel.app">Live Demo</a> ·
-  <a href="docs/ONCHAIN_RECEIPT_SPEC.md">Receipt Spec</a> ·
-  <a href="docs/PITCH_DECK.md">Pitch Deck Outline</a>
+  <a href="https://luo-sentinel.vercel.app">Live Demo</a>
 </p>
 
 <p align="center">
@@ -72,13 +70,19 @@ LUO Sentinel 展示了一个 AI x Web3 合规工作流的最小闭环：
   三个 reviewer 检查 scope、source fit、claim support 和 action risk。分数是审核权重，不是 LLM confidence。
 
 - **Human-gated receipt**  
-  Proceed receipt 绑定 evidence hash、product reference hash、reviewer wallet 和 timestamp。
+  Proceed receipt 为已批准的 evidence scope 生成 reviewer-wallet decision record。
 
 - **Zero-value testnet anchoring**  
   钱包真实确认合约部署和 receipt anchor，但不移动资产。
 
 - **Bounded downstream agent**  
   下游 agent 只能基于已批准范围生成 counsel-preparation checklist。
+
+## Receipt Boundary
+
+LUO Sentinel 会在 testnet 上锚定一个 zero-value decision receipt。这个 receipt 只承诺 reviewed evidence scope、product reference、reviewer wallet 和 decision time，不会把法律分析或 source text 放到链上。
+
+它证明的是：某个钱包在 review 之后接受了一个有边界的 AI handoff。它不证明法律合规，不构成法律意见，也不授权任何资产交易。具体实现可以在 contract 和 tests 中查看。
 
 ## Evidence Map 是怎么来的
 
@@ -138,9 +142,7 @@ npm run build
 │   └── LUOReceiptAnchor.sol     # Receipt-anchor contract
 ├── docs/
 │   ├── DEMO_SCRIPT.md
-│   ├── INJECTIVE_INTEGRATION.md
-│   ├── ONCHAIN_RECEIPT_SPEC.md
-│   └── PITCH_DECK.md
+│   └── INJECTIVE_INTEGRATION.md
 ├── test/
 │   └── LUOReceiptAnchor.t.sol
 └── vercel.json

@@ -40,7 +40,6 @@ src/
 docs/
   INJECTIVE_INTEGRATION.md          # SDK decision and tested network path
   DEMO_SCRIPT.md                    # ≤3 minute recording script
-  PITCH_DECK.md                     # slide-by-slide content
 README.md                            # public setup, safety, architecture
 ```
 
@@ -445,7 +444,6 @@ git commit -m "feat: add human-in-the-loop receipt flow"
 **Files:**
 - Create: `README.md`
 - Create: `docs/DEMO_SCRIPT.md`
-- Create: `docs/PITCH_DECK.md`
 
 - [ ] **Step 1: Write README acceptance checks**
 
@@ -475,29 +473,16 @@ Use this timed narrative:
 2:45–3:00  State the expansion path: RWA issuance, stablecoins, custody, and cross-border payments.
 ```
 
-- [ ] **Step 3: Write the eight-slide pitch deck outline**
-
-```text
-1. LUO Sentinel — the one-line thesis
-2. The failure: AI agents can fabricate cross-border certainty
-3. The user and RWA action request
-4. Evidence-bound preflight product loop
-5. Human decision plus Injective receipt
-6. Agent SDK integration architecture
-7. Market and ecosystem fit
-8. Roadmap and call to action
-```
-
-- [ ] **Step 4: Verify public-safe boundaries**
+- [ ] **Step 3: Verify public-safe boundaries**
 
 Search the repository for private corpus names, source documents, wallet
 addresses, API keys, seed phrases, and original LUO private-path references.
 Expected: none are present.
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 4: Commit**
 
 ```bash
-git add README.md docs/DEMO_SCRIPT.md docs/PITCH_DECK.md
+git add README.md docs/DEMO_SCRIPT.md
 git commit -m "docs: add Nova submission materials"
 ```
 
