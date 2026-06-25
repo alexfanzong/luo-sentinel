@@ -1,13 +1,13 @@
 # LUO Sentinel
 
-> Evidence-bound AI handoffs for RWA compliance workflows.
+> 面向 RWA 合规工作流的 evidence-bound AI handoff demo。
 
 <p align="center">
   <img src="app/public/luo-logo.png" alt="LUO Sentinel logo" width="170" />
 </p>
 
 <p align="center">
-  <a href="README.zh-CN.md">中文</a> ·
+  <a href="README.md">English</a> ·
   <a href="https://luo-sentinel.vercel.app">Live Demo</a> ·
   <a href="docs/DEMO_SCRIPT.md">Demo Script</a> ·
   <a href="docs/PITCH_DECK.md">Pitch Deck Outline</a> ·
@@ -22,11 +22,11 @@
   <img src="https://img.shields.io/badge/License-Pending-6b7280?style=for-the-badge" alt="License pending" />
 </p>
 
-LUO Sentinel is an AI agent trust-layer demo for RWA compliance workflows. It turns reviewed regulatory source anchors into a visual evidence map, then requires scope review, a human gate, and a verifiable receipt before any downstream agent acts.
+LUO Sentinel 是一个面向 RWA 合规工作流的 AI agent trust layer demo。它把经过审核的监管 source anchors 组织成可视化 evidence map，并在任何下游 agent 行动前加入 scope review、human gate 和可验证 receipt。
 
-The project is not about asking AI to produce a legal conclusion such as "this asset can be issued or transferred here." It demonstrates a safer path: verify the source and its boundary first, then decide what an AI agent is allowed to do.
+本项目的重点不是让 AI 直接给出“某地可以发行/转让”的法律结论，而是展示一条更安全的链路：先确认资料来源和适用边界，再决定 AI 被允许做什么。
 
-The map is not a live legal conclusion. It is a snapshot of a reviewed evidence pack. When regulatory sources change, affected signals must be reviewed again.
+地图不是实时法律结论，而是 reviewed evidence pack 的当前快照。监管来源变化后，相关 signal 必须重新审核。
 
 ## Evidence Map Screenshot
 
@@ -34,17 +34,17 @@ The map is not a live legal conclusion. It is a snapshot of a reviewed evidence 
   <img src="app/public/readme-evidence-map.png" alt="LUO Sentinel four-jurisdiction evidence map" width="820" />
 </p>
 
-## About The Project
+## 项目简介
 
-LUO Sentinel demonstrates a minimal AI x Web3 compliance loop:
+LUO Sentinel 展示了一个 AI x Web3 合规工作流的最小闭环：
 
-1. A user asks an RWA compliance question.
-2. The system routes only into reviewed evidence scopes.
-3. The map shows jurisdiction-specific source anchors and risk boundaries.
-4. The Review Council checks whether a source is being over-interpreted.
-5. A human gate decides whether to Proceed.
-6. A Proceed receipt can be anchored on testnet.
-7. A downstream agent can only produce a counsel-preparation checklist within the approved scope.
+1. 用户提出 RWA 合规问题。
+2. 系统只允许进入已审核的 evidence scope。
+3. 地图展示不同司法辖区的 source anchors 和风险边界。
+4. Review Council 检查 source 是否被过度解释。
+5. Human gate 决定是否 Proceed。
+6. Proceed receipt 可以被锚定到 testnet。
+7. Downstream agent 只能在批准范围内生成律师准备清单。
 
 ## Demo
 
@@ -52,49 +52,49 @@ LUO Sentinel demonstrates a minimal AI x Web3 compliance loop:
 - HK-only query: `Can we launch OUSG in Hong Kong only?`
 - Cross-border query: `We're launching a tokenized US Treasury (OUSG) product, where can we legally offer and transfer it?`
 
-## Core Features
+## 核心特性
 
 - **Reviewed evidence map**  
-  The map comes from reviewed source anchors, not live model-generated legal conclusions.
+  地图来自已审核的 source anchors，不是 LLM 现场生成的法律判断。
 
 - **Cross-border / single-jurisdiction scope**  
-  The demo can preserve differences across the United States, Hong Kong, Singapore, and the European Union, or narrow to a Hong Kong-only scope.
+  可以保留 US、Hong Kong、Singapore、EU 的差异，也可以缩小到 Hong Kong-only。
 
 - **Agent Review Council**  
-  Three reviewers check scope, source fit, claim support, and action risk. Scores are audit weights, not LLM confidence.
+  三个 reviewer 检查 scope、source fit、claim support 和 action risk。分数是审核权重，不是 LLM confidence。
 
 - **Human-gated receipt**  
-  The Proceed receipt binds evidence hash, product reference hash, reviewer wallet, and timestamp.
+  Proceed receipt 绑定 evidence hash、product reference hash、reviewer wallet 和 timestamp。
 
 - **Zero-value testnet anchoring**  
-  Wallet confirmation is real for contract deployment and receipt anchoring, but no asset is moved.
+  钱包真实确认合约部署和 receipt anchor，但不移动资产。
 
 - **Bounded downstream agent**  
-  The downstream agent can only generate a counsel-preparation checklist inside the approved scope.
+  下游 agent 只能基于已批准范围生成 counsel-preparation checklist。
 
-## How The Evidence Map Is Built
+## Evidence Map 是怎么来的
 
-The current demo map is derived from a reviewed OUSG sample evidence pack last reviewed on `2026-06-07`.
+当前 demo map 来自一个 reviewed OUSG sample evidence pack，最后审核日期为 `2026-06-07`。
 
-Each jurisdiction signal contains:
+每个 jurisdiction signal 包含：
 
-- source anchor;
-- signal status, such as Restricted, Conditional, or Unresolved;
-- what the source supports;
-- what the source does not prove.
+- source anchor；
+- signal status，例如 Restricted、Conditional、Unresolved；
+- source 支持什么；
+- source 不能推出什么。
 
-In production, the evidence layer can connect to regulator websites, official legal databases, or trusted MCP connectors. LLMs can help extract candidate claims, but those claims should become map signals only after expert or human verification. When regulatory sources change, stale signals should be marked for re-review.
+在生产环境中，evidence layer 可以连接监管官网、官方法律数据库或可信 MCP connector。LLM 可以帮助抽取 candidate claims，但只有经过专家或人工验证后，claim 才能成为 map signal。监管来源变化时，旧 signal 应标记为 stale 并重新审核。
 
-## Tech Stack
+## 技术栈
 
-| Layer | Technology |
+| 层 | 技术 |
 | --- | --- |
 | Frontend | React, Vite, CSS |
 | Wallet / Testnet | ethers.js, MetaMask-compatible wallet |
 | Smart Contract | Solidity, Foundry |
 | Deployment | Vercel |
 
-## Quick Start
+## 快速开始
 
 ```bash
 git clone https://github.com/alexfanzong/luo-sentinel.git
@@ -103,19 +103,19 @@ npm install --ignore-scripts
 npm run dev
 ```
 
-Run tests:
+运行测试：
 
 ```bash
 npm test
 ```
 
-Build:
+生产构建：
 
 ```bash
 npm run build
 ```
 
-## Project Structure
+## 项目结构
 
 ```text
 .
@@ -138,27 +138,27 @@ npm run build
 └── vercel.json
 ```
 
-## Safety Boundary
+## 安全边界
 
-LUO Sentinel does not:
+LUO Sentinel 不会：
 
-- move assets;
-- make legal determinations;
-- establish compliance;
-- authorize token issuance or transfer;
-- put private keys, seed phrases, or legal text on-chain.
+- 移动资产；
+- 给出法律结论；
+- 建立合规结论；
+- 授权 token 发行或转让；
+- 将私钥、助记词或法律文本上传链上。
 
-On-chain, the demo anchors only:
+链上只锚定：
 
-- receipt hash;
-- evidence manifest hash;
-- product reference hash;
-- reviewer wallet;
-- decision timestamp.
+- receipt hash；
+- evidence manifest hash；
+- product reference hash；
+- reviewer wallet；
+- decision timestamp。
 
-Off-chain, the app keeps legal source text, action-plan narrative, reviewer scorecards, downstream handoff brief, and counsel-preparation checklist.
+链下保留 legal source text、action-plan narrative、reviewer scorecards、downstream handoff brief 和 counsel-preparation checklist。
 
-## Roadmap
+## 路线图
 
 ### Phase 1: Demo Closed Loop
 
