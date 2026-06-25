@@ -133,12 +133,6 @@ npm run build
 └── vercel.json
 ```
 
-## 非法律意见
-
-LUO Sentinel 是研究和演示项目。它不提供法律意见、法律结论、合规判断、投资建议，也不授权任何 tokenized asset 的发行、要约、销售、转让、托管或营销。
-
-Evidence map 和 agent handoff 的目的，是保留 source boundary，并把问题整理给合格专业人士审核。它不能替代持牌律师或受监管合规专业人士的意见。
-
 ## 安全边界
 
 LUO Sentinel 不会：
@@ -159,9 +153,18 @@ LUO Sentinel 不会：
 
 链下保留 legal source text、action-plan narrative、reviewer scorecards、downstream handoff brief 和 counsel-preparation checklist。
 
-## 作者介绍
+## 开源协议
 
-Built by Alex Fan。长期关注 AI、Web3 与跨境法律/合规基础设施的交叉方向，重点是 building programmable compliance systems for agentic workflows。
+源代码采用 Apache License 2.0。详见 [LICENSE](LICENSE)。
+
+LUO Sentinel 是黑客松研究 demo。LUO Sentinel 的名称、logo、demo evidence pack、监管来源摘要、evidence map 和合规流程叙事，不构成法律、合规、商标、商业背书、投资建议或授权许可。该 demo 不能替代持牌律师或受监管合规专业人士的意见。
+
+## Contact
+
+Alex Fan  
+Cornell Law School  
+Programmable Compliance Architect  
+X: [@itsAlexFan](https://x.com/itsAlexFan)
 
 ## 产品路线图
 
@@ -188,9 +191,3 @@ Built by Alex Fan。长期关注 AI、Web3 与跨境法律/合规基础设施的
 - 为团队、律师和合规 reviewer 增加 workspace 功能。
 - 增加 case history、audit trail 和 evidence refresh notification。
 - 支持 legal、compliance 和 RWA operations teams 的企业部署模式。
-
-## 开源协议
-
-源代码采用 Apache License 2.0。详见 [LICENSE](LICENSE)。
-
-LUO Sentinel 的名称、logo、demo evidence pack、监管来源摘要和合规流程叙事仅用于黑客松展示，不构成法律、合规、商标或商业背书授权。

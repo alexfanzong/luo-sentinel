@@ -133,12 +133,6 @@ npm run build
 └── vercel.json
 ```
 
-## Not Legal Advice
-
-LUO Sentinel is a research and demo project. It does not provide legal advice, legal opinions, compliance determinations, investment advice, or authorization to issue, offer, sell, transfer, custody, or market any tokenized asset.
-
-The evidence map and agent handoff are designed to preserve source boundaries and prepare issues for qualified professional review. They should not be used as a substitute for advice from licensed counsel or regulated compliance professionals.
-
 ## Safety Boundary
 
 LUO Sentinel does not:
@@ -159,9 +153,18 @@ On-chain, the demo anchors only:
 
 Off-chain, the app keeps legal source text, action-plan narrative, reviewer scorecards, downstream handoff brief, and counsel-preparation checklist.
 
-## Builder
+## License
 
-Built by Alex Fan, working at the intersection of AI, Web3, and cross-border legal/compliance infrastructure, with a focus on building programmable compliance systems for agentic workflows.
+The source code is licensed under the Apache License 2.0. See [LICENSE](LICENSE).
+
+LUO Sentinel is a hackathon research demo. The LUO Sentinel name, logo, demo evidence pack, regulatory source summaries, evidence map, and compliance workflow narrative do not grant legal, compliance, trademark, commercial endorsement, investment advice, or authorization rights. The demo should not be used as a substitute for advice from licensed counsel or regulated compliance professionals.
+
+## Contact
+
+Alex Fan  
+Cornell Law School  
+Programmable Compliance Architect  
+X: [@itsAlexFan](https://x.com/itsAlexFan)
 
 ## Product Roadmap
 
@@ -188,9 +191,3 @@ Built by Alex Fan, working at the intersection of AI, Web3, and cross-border leg
 - Build workspace features for teams, counsel, and compliance reviewers.
 - Add case history, audit trails, and evidence refresh notifications.
 - Support enterprise deployment patterns for legal, compliance, and RWA operations teams.
-
-## License
-
-The source code is licensed under the Apache License 2.0. See [LICENSE](LICENSE).
-
-The LUO Sentinel name, logo, demo evidence pack, regulatory source summaries, and compliance workflow narrative are provided for hackathon demonstration only. They do not grant any legal, compliance, trademark, or commercial endorsement rights.
