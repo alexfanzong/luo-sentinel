@@ -18,7 +18,7 @@
   <img src="https://img.shields.io/badge/AI-Agent%20Handoff-0f766e?style=for-the-badge" alt="AI Agent Handoff" />
   <img src="https://img.shields.io/badge/React-19-149eca?style=for-the-badge&logo=react&logoColor=white" alt="React 19" />
   <img src="https://img.shields.io/badge/Solidity-0.8.33-363636?style=for-the-badge&logo=solidity&logoColor=white" alt="Solidity 0.8.33" />
-  <img src="https://img.shields.io/badge/License-AGPLv3-5aa000?style=for-the-badge" alt="AGPLv3 license" />
+  <img src="https://img.shields.io/badge/License-Apache--2.0-5aa000?style=for-the-badge" alt="Apache-2.0 license" />
 </p>
 
 LUO Sentinel is an AI agent trust-layer demo for RWA compliance workflows. It turns reviewed regulatory source anchors into a visual evidence map, then requires scope review, a human gate, and a verifiable receipt before any downstream agent acts.
@@ -191,4 +191,6 @@ Built by Alex Fan, working at the intersection of AI, Web3, and cross-border leg
 
 ## License
 
-This project is licensed under the GNU Affero General Public License v3.0 (AGPLv3).
+The source code is licensed under the Apache License 2.0. See [LICENSE](LICENSE).
+
+The LUO Sentinel name, logo, demo evidence pack, regulatory source summaries, and compliance workflow narrative are provided for hackathon demonstration only. They do not grant any legal, compliance, trademark, or commercial endorsement rights.
