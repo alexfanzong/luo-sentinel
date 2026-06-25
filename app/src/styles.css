@@ -26,37 +26,37 @@ button { font: inherit; }
 .testnet-status--error span { background: #ef756f; }
 
 .atlas-layout { width: 100%; flex: 1; position: relative; display: block; }
-.atlas-stage { min-height: 760px; position: relative; overflow: hidden; padding: 76px clamp(28px, 5.5vw, 84px) 48px; border-right: 1px solid rgba(191, 205, 238, .18); background: radial-gradient(circle at 38% 42%, rgba(38, 91, 151, .18), transparent 44%), #041126; }
-.atlas-intro { position: relative; z-index: 2; max-width: 570px; }
+.atlas-stage { min-height: 760px; position: relative; overflow: hidden; padding: 64px clamp(28px, 5.2vw, 72px) 48px; border-right: 1px solid rgba(191, 205, 238, .18); background: radial-gradient(circle at 38% 42%, rgba(38, 91, 151, .18), transparent 44%), #041126; }
+.atlas-intro { position: relative; z-index: 2; max-width: 600px; }
 .atlas-intro p, .decision-rail > p { margin: 0 0 16px; color: #afbad0; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; }
-.atlas-intro h1 { margin: 0; max-width: 900px; color: #fbfbfa; font: 400 clamp(48px, 4vw, 60px)/.98 'Libre Baskerville', Georgia, serif; letter-spacing: -.07em; }
+.atlas-intro h1 { margin: 0; max-width: 820px; color: #fbfbfa; font: 600 clamp(46px, 4vw, 58px)/1.03 Manrope, system-ui, sans-serif; letter-spacing: 0; }
 .atlas-intro span { display: block; margin-top: 20px; max-width: 390px; color: #aebbd0; font-size: 15px; line-height: 1.7; }
 .atlas-intro span.scope-line { max-width: none; margin-top: 18px; color: #8fe3b0; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; }
-.map-provenance { display: grid; gap: 5px; width: min(500px, 100%); margin-top: 16px; padding: 11px 13px; color: #b9c4d8; border: 1px solid rgba(143, 227, 176, .22); border-radius: 8px; background: rgba(143, 227, 176, .055); }
+.map-provenance { display: grid; gap: 5px; width: min(460px, 100%); margin-top: 18px; padding: 13px 15px; color: #b9c4d8; border: 1px solid rgba(143, 227, 176, .26); border-radius: 8px; background: rgba(5, 18, 39, .58); backdrop-filter: blur(10px); }
 .map-provenance strong { color: #e8edf8; font: 11px 'DM Mono', monospace; letter-spacing: .08em; text-transform: uppercase; }
 .map-provenance small { color: #a7b5cb; font-size: 12px; line-height: 1.55; }
 .atlas-map { position: absolute; left: -2%; bottom: -3%; width: 106%; opacity: .72; mix-blend-mode: screen; -webkit-mask-image: radial-gradient(ellipse 78% 78% at 50% 55%, #000 54%, rgba(0,0,0,.7) 68%, transparent 100%); mask-image: radial-gradient(ellipse 78% 78% at 50% 55%, #000 54%, rgba(0,0,0,.7) 68%, transparent 100%); }
 .markers { position: absolute; inset: 0; z-index: 2; }
-.marker { position: absolute; display: flex; gap: 12px; align-items: flex-start; padding: 7px 9px; color: #eef2fb; text-align: left; border: 0; background: rgba(4, 17, 38, .24); cursor: pointer; transition: background .2s, transform .2s; }
-.marker:hover, .marker.is-selected { background: rgba(25, 45, 81, .76); transform: translateY(-2px); }
+.marker { position: absolute; display: flex; gap: 13px; align-items: flex-start; min-width: 190px; padding: 14px 16px; color: #eef2fb; text-align: left; border: 1px solid rgba(194, 207, 235, .24); border-radius: 8px; background: rgba(5, 18, 39, .6); box-shadow: 0 18px 40px rgba(0, 0, 0, .18); backdrop-filter: blur(10px); cursor: pointer; transition: border-color .2s, background .2s, transform .2s; }
+.marker:hover, .marker.is-selected { border-color: rgba(194, 207, 235, .44); background: rgba(16, 34, 66, .78); transform: translateY(-2px); }
 .marker.is-out-of-scope { opacity: .34; }
 .marker.is-out-of-scope:hover, .marker.is-out-of-scope.is-selected { opacity: 1; }
-.marker--us { top: 57%; left: 24%; }
-.marker--hong-kong { top: 49%; left: 79%; }
-.marker--singapore { top: 67%; left: 71%; }
-.marker--european-union { top: 46%; left: 47%; }
-.marker-dot { display: block; width: 18px; height: 18px; flex: 0 0 18px; border: 3px solid #0b1d38; border-radius: 50%; box-shadow: 0 0 0 2px currentColor, 0 0 14px currentColor; animation: luo-pulse 2.6s ease-in-out infinite; }
+.marker--us { top: 51%; left: 21%; }
+.marker--hong-kong { top: 46%; left: 78%; }
+.marker--singapore { top: 62%; left: 72%; }
+.marker--european-union { top: 39%; left: 49%; }
+.marker-dot { display: block; width: 18px; height: 18px; flex: 0 0 18px; margin-top: 2px; border: 3px solid #0b1d38; border-radius: 50%; box-shadow: 0 0 0 2px currentColor, 0 0 14px currentColor; animation: luo-pulse 2.6s ease-in-out infinite; }
 .marker:hover .marker-dot, .marker.is-selected .marker-dot { animation-duration: 1.4s; box-shadow: 0 0 0 2px currentColor, 0 0 30px currentColor; }
 @keyframes luo-pulse { 0%, 100% { box-shadow: 0 0 0 2px currentColor, 0 0 10px currentColor; } 50% { box-shadow: 0 0 0 2px currentColor, 0 0 26px currentColor; } }
 .marker-dot--coral { color: #ff827a; background: #ff827a; }
 .marker-dot--gold { color: #ffc756; background: #ffc756; }
 .marker-dot--blue { color: #7cb8ff; background: #7cb8ff; }
 .marker-copy { display: grid; gap: 2px; }
-.marker-copy strong { font: 400 21px/1.05 'Libre Baskerville', Georgia, serif; }
-.marker-copy em { font-style: normal; font-size: 13px; }
+.marker-copy strong { color: #f3f6fc; font: 700 18px/1.15 Manrope, system-ui, sans-serif; letter-spacing: 0; }
+.marker-copy em { font-style: normal; font-size: 13px; font-weight: 600; }
 .marker--us em { color: #ff9b96; }.marker--hong-kong em, .marker--singapore em { color: #ffd475; }.marker--european-union em { color: #a6ceff; }
 .marker-copy small { color: #8d9bb6; font: 10px 'DM Mono', monospace; }
-.map-note { position: absolute; left: clamp(28px, 5.5vw, 84px); bottom: 26px; z-index: 2; max-width: 500px; color: #8391ad; font-size: 11px; line-height: 1.6; }
+.map-note { position: absolute; left: clamp(28px, 5.2vw, 72px); bottom: 26px; z-index: 2; max-width: 640px; color: #8391ad; font-size: 11px; line-height: 1.6; background: transparent; border: 0; }
 .map-note span { color: #c6cfdf; font-family: 'DM Mono', monospace; margin-right: 8px; text-transform: uppercase; font-size: 10px; }
 
 .decision-rail { padding: 76px clamp(25px, 3vw, 50px) 46px; background: rgba(3, 12, 29, .76); }
