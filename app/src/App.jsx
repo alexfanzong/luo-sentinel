@@ -35,6 +35,21 @@ const ACTION_PLAN = {
   },
 };
 
+const PROPOSED_FINANCIAL_ACTION = Object.freeze({
+  label: "Proposed tokenized treasury action",
+  network: "Injective EVM testnet",
+  execution: "Blocked until human preflight",
+  intent: "Prepare an OUSG-like tokenized asset for a downstream transfer or strategy workflow.",
+  constraints: [
+    ["Asset context", "Tokenized U.S. Treasury sample"],
+    ["Execution layer", "Injective financial action, testnet only"],
+    ["Value transfer", "0 INJ in demo; no asset movement"],
+    ["Agent role", "Detect evidence gaps before execution"],
+  ],
+});
+
+const SCOPE_SUMMARY_ORDER = ["US-CLAIM-01", "EU-CLAIM-02", "HK-CLAIM-01", "SG-CLAIM-01"];
+
 const REVIEW_SCORE_LABELS = [
   { key: "coverage", label: "Scope", title: "How much of the requested scope is covered by reviewed sources." },
   { key: "authorityFit", label: "Source fit", title: "How closely the cited source fits the claim being reviewed." },
@@ -98,6 +113,7 @@ export function App() {
   const [agentQuestion, setAgentQuestion] = useState("");
   const [searchStatus, setSearchStatus] = useState("idle"); // idle | running | refused
   const [reviewScope, setReviewScope] = useState(() => createReviewScope());
+  const [scopePanelOpen, setScopePanelOpen] = useState(false);
   const [handoffCopied, setHandoffCopied] = useState(false);
   const [step, setStep] = useState(1); // 1 brief · 2 agent review · 3 decision · 4 anchor · 5 handoff
   const [decision, setDecision] = useState("review");
@@ -117,7 +133,15 @@ export function App() {
   const scopeLabel = reviewScope.label;
   const actionPlan = getScopedActionPlan(reviewScope);
   const reviewCouncil = buildReviewCouncil(reviewScope);
+  const chamberAgents = reviewCouncil.scorecards.slice(0, 3).map((card, index) => ({
+    ...card,
+    chamberLabel: ["Scope", "Source", "Risk"][index],
+    chamberClassName: ["source", "jurisdiction", "execution"][index],
+  }));
   const scopedEvidence = RWA_EVIDENCE.filter((item) => reviewScope.evidenceIds.includes(item.id));
+  const scopeSummaryEvidence = [...scopedEvidence].sort(
+    (a, b) => SCOPE_SUMMARY_ORDER.indexOf(a.id) - SCOPE_SUMMARY_ORDER.indexOf(b.id),
+  );
   const openItem = openMarkerId ? RWA_EVIDENCE.find((item) => item.id === openMarkerId) : null;
 
   async function connectTestWallet() {
@@ -195,6 +219,12 @@ export function App() {
       caseRef: receipt.evidenceSet.decision.caseRef,
       reviewScope: scopeLabel,
       reviewMode: reviewScope.reviewMode,
+      proposedAction: {
+        label: PROPOSED_FINANCIAL_ACTION.label,
+        network: PROPOSED_FINANCIAL_ACTION.network,
+        executionState: PROPOSED_FINANCIAL_ACTION.execution,
+        intent: PROPOSED_FINANCIAL_ACTION.intent,
+      },
       signals,
       agentReviews: reviewCouncil.scorecards.map((card) => ({
         agentId: card.agentId,
@@ -233,6 +263,8 @@ export function App() {
       "## Constraints for the downstream agent",
       "Act only within this human-verified scope. Do not exceed it or infer coverage outside the reviewed source anchors.",
       "",
+      `- **Proposed action** — ${PROPOSED_FINANCIAL_ACTION.intent}`,
+      "- **Execution boundary** — do not execute a transfer, order, strategy, or asset movement from this handoff alone.",
       ...buildScopeConstraints(),
     ].join("\n");
   }
@@ -507,8 +539,12 @@ export function App() {
   if (stage === "landing") {
     return (
       <div className="landing">
+        <img className="landing-map" src="/atlas-map.png" alt="" aria-hidden="true" />
+        <div className="landing-glow" aria-hidden="true" />
+        <span className="landing-status"><span /> Testnet demo</span>
         <div className="landing-inner">
-          <img className="landing-logo" src="/luo-logo.png" alt="LUO" />
+          <img className="landing-logo" src="/luo-mark.png" alt="LUO" />
+          <p className="landing-tagline">Evidence-bound AI handoffs</p>
           <form
             className="landing-search"
             onSubmit={(event) => {
@@ -527,14 +563,17 @@ export function App() {
               aria-label="Ask a reviewed RWA question"
               autoFocus
             />
+            <button type="submit" disabled={searchStatus === "running"}>
+              {searchStatus === "running" ? (
+                "Routing…"
+              ) : (
+                <>
+                  <span className="search-label-full">LUO Search</span>
+                  <span className="search-label-short">Search</span>
+                </>
+              )}
+            </button>
           </form>
-          {searchStatus !== "refused" && (
-            <div className="landing-actions">
-              <button type="button" onClick={runSearch} disabled={searchStatus === "running"}>
-                {searchStatus === "running" ? "Routing to verified sources…" : "LUO Search"}
-              </button>
-            </div>
-          )}
           {searchStatus === "refused" && (
             <div className="landing-suggest">
               <p className="landing-suggest-title">No reviewed match for this question.</p>
@@ -564,7 +603,7 @@ export function App() {
             </div>
           )}
         </div>
-        <p className="landing-note">Grounded, not guessed — every signal traceable to source.</p>
+        <p className="landing-note">Grounded, not guessed · every signal traceable to source</p>
       </div>
     );
   }
@@ -684,7 +723,7 @@ export function App() {
             onClick={(event) => event.stopPropagation()}
           >
             <button type="button" className="rail-close" onClick={() => setRailOpen(false)} aria-label="Close">✕</button>
-            <div className="sheet-inner">
+            <div className={`sheet-inner ${step === 3 ? "sheet-inner--wide" : ""}`}>
               <nav className="sheet-stepper" aria-label="Workflow steps">
                 {[["1", "Action plan"], ["2", "Agent review"], ["3", "Decision"], ["4", "Anchor"], ["5", "Handoff"]].map(([n, label]) => (
                   <button
@@ -701,10 +740,26 @@ export function App() {
 
               {step === 1 && (
                 <div className="sheet-step-panel">
-                  <p className="sheet-kicker">Step 1 · Source-bounded action plan</p>
-                  <h2>What to do next</h2>
+                  <p className="sheet-kicker">Step 1 · Injective action preflight</p>
+                  <h2>Proposed financial action</h2>
+                  <section className="preflight-action-card" aria-label="Proposed Injective financial action">
+                    <div>
+                      <span>{PROPOSED_FINANCIAL_ACTION.network}</span>
+                      <h3>{PROPOSED_FINANCIAL_ACTION.label}</h3>
+                      <p>{PROPOSED_FINANCIAL_ACTION.intent}</p>
+                    </div>
+                    <strong>{PROPOSED_FINANCIAL_ACTION.execution}</strong>
+                    <dl>
+                      {PROPOSED_FINANCIAL_ACTION.constraints.map(([label, value]) => (
+                        <div key={label}>
+                          <dt>{label}</dt>
+                          <dd>{value}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </section>
                   <div className="action-start">
-                    <h3>Start here</h3>
+                    <h3>Agent starts here</h3>
                     <p>
                       {actionPlan.startHere.text}{" "}
                       <a className="template-link" href={actionPlan.startHere.url} target="_blank" rel="noreferrer">
@@ -735,9 +790,8 @@ export function App() {
                       <ul>{actionPlan.materials.counsel.map((m) => <li key={m}>{m}</li>)}</ul>
                     </div>
                   </div>
-                  <p className="reco-disclaimer">This narrows the next work; it does not determine where an asset may be offered or transferred. Take this brief and the linked sources to qualified local counsel.</p>
                   <div className="sheet-nav">
-                    <button className="decision-button" onClick={() => setStep(2)}>Continue to agent review →</button>
+                    <button className="decision-button" onClick={() => setStep(2)}>Run agent preflight →</button>
                   </div>
                 </div>
               )}
@@ -745,16 +799,21 @@ export function App() {
               {step === 2 && (
                 <div className="sheet-step-panel">
                   <p className="sheet-kicker">Step 2 · Agent Review Council</p>
-                  <h2>Three agents review the same evidence</h2>
+                  <h2>Agents scan before execution</h2>
                   <span className="rail-lede">
                     {reviewScope.scopeType === "single-jurisdiction"
-                      ? `Reviewing ${scopeLabel}: the council checks source correctness, authority coverage and applicability risk.`
-                      : "Reviewing the comparative map: the council checks jurisdiction coverage, source support and residual risk."}
+                      ? `Reviewing ${scopeLabel}: the council checks whether this one source is enough to unblock the proposed Injective action.`
+                      : "Reviewing the comparative map: the council checks whether the proposed Injective action can leave the blocked state."}
                   </span>
                   <p className="score-guide">
                     Scores are audit weights, not AI confidence. Each agent starts from 100 and deducts for missing scope, source limits, weak claim support, and unresolved counsel questions.
                   </p>
-                  <div className="review-council" aria-label="Agent review council scorecards">
+                  <div className="preflight-flow" aria-label="Agent preflight sequence">
+                    <span>Action detected</span>
+                    <span>Evidence routed</span>
+                    <span>Human gate required</span>
+                  </div>
+                  <div className="review-council review-council--preflight" aria-label="Agent review council scorecards">
                     {reviewCouncil.scorecards.map((card) => (
                       <article className="review-card" key={card.agentId}>
                         <div className="review-card-head">
@@ -779,84 +838,170 @@ export function App() {
                       </article>
                     ))}
                   </div>
-                  <p className="reco-disclaimer">
-                    Gate: {reviewCouncil.aggregate.gate.replaceAll("-", " ")}. Audit weights only; human review stays required.
-                  </p>
+                  <p className="reco-disclaimer">Gate: {reviewCouncil.aggregate.gate.replaceAll("-", " ")}.</p>
                   <div className="sheet-nav">
-                    <button className="decision-button" onClick={() => setStep(3)}>Continue to decision →</button>
+                    <button className="decision-button" onClick={() => setStep(3)}>Open human gate →</button>
                   </div>
                 </div>
               )}
 
               {step === 3 && (
-                <div className="sheet-step-panel">
-                  <p className="sheet-kicker">Step 3 · Human decision</p>
-                  <h2>Record the next step</h2>
-                  <span className="rail-lede">Reviewing {scopeLabel}. A human decides what happens next.</span>
+                <div className="sheet-step-panel sheet-step-panel--gate">
+                  <p className="sheet-kicker">Step 3 · Human gate</p>
+                  <h2>Preflight gate</h2>
 
-                  <label className="scenario-ref-field">
-                    <span>Scenario reference</span>
-                    <input
-                      value={caseRef}
-                      onChange={(event) => changeCaseRef(event.target.value)}
-                      maxLength={64}
-                      pattern="[A-Za-z0-9][A-Za-z0-9._-]{2,63}"
-                      title="Use 3–64 letters, numbers, dots, hyphens, or underscores; start with a letter or number."
-                      aria-describedby="scenario-reference-help"
-                    />
-                    <small id="scenario-reference-help">{reviewScope.evidenceIds.length} reviewed signal{reviewScope.evidenceIds.length === 1 ? "" : "s"} · uppercase on receipt · non-sensitive only</small>
-                  </label>
-
-                  {wallet.status !== "connected" ? (
-                    <div className="connect-cta">
-                      <button className="decision-button" onClick={connectTestWallet} disabled={wallet.status === "connecting"}>
-                        {wallet.status === "connecting" ? "Connecting reviewer wallet…" : "① Connect reviewer wallet"}
-                      </button>
-                      <p className="sheet-hint">Connect your wallet first — the decision is recorded as this reviewer.</p>
+                  <div className="scope-reference-bar">
+                    <div>
+                      <span>Reviewing scope</span>
+                      <strong>{reviewScope.scopeType === "single-jurisdiction" ? scopedEvidence[0]?.title : "Cross-border review"} · {scopedEvidence.length} signal{scopedEvidence.length === 1 ? "" : "s"}</strong>
                     </div>
-                  ) : (
-                    <p className="reviewer-id">✓ Reviewer · {wallet.address.slice(0, 6)}…{wallet.address.slice(-4)}</p>
-                  )}
-
-                  <div className="rail-actions">
-                    <button className="decision-button decision-button--quiet" onClick={() => setDecision("hold")}>Hold for counsel</button>
-                    <button className="decision-button" onClick={prepareReceiptDraft} disabled={decision === "preparing" || wallet.status !== "connected"}>
-                      {decision === "preparing"
-                        ? "Preparing commitment…"
-                        : wallet.status !== "connected"
-                          ? "② Proceed (connect wallet first)"
-                          : "Proceed — prepare decision receipt"}
-                    </button>
+                    <button type="button" onClick={() => setScopePanelOpen(true)}>View references</button>
                   </div>
 
-                  <div className={`decision-state decision-state--${decision}`}>
-                    {decision === "review" && "No legal conclusion, compliance determination, or asset authorization is produced."}
-                    {decision === "hold" && "Held. No receipt created."}
-                    {decision === "preparing" && "Creating a local public commitment."}
-                    {decision === "draft" && "Proceed receipt ready. No transaction has been submitted."}
-                    {decision === "wallet-required" && "Connect the reviewer wallet first."}
-                    {decision === "error" && "Receipt could not be prepared. No wallet action occurred."}
-                  </div>
-
-                  {receipt && (
-                    <>
-                      <div className="receipt-commitment">
-                        <span>Proceed receipt · local only</span>
-                        <code>{receipt.receiptHash.slice(0, 18)}…{receipt.receiptHash.slice(-8)}</code>
-                        <small>{receipt.evidenceSet.decision.caseRef} · {receipt.evidenceSet.decision.reviewScope.length} reviewed signal{receipt.evidenceSet.decision.reviewScope.length === 1 ? "" : "s"} · agent-reviewed</small>
+                  {scopePanelOpen && (
+                    <div className="scope-reference-backdrop" onClick={() => setScopePanelOpen(false)}>
+                      <aside className="scope-summary-panel scope-summary-panel--popover" aria-label="Reviewing scope summary" onClick={(event) => event.stopPropagation()}>
+                        <button type="button" className="scope-reference-close" onClick={() => setScopePanelOpen(false)} aria-label="Close scope references">✕</button>
+                      <p>Reviewing scope</p>
+                      <h3>{reviewScope.scopeType === "single-jurisdiction" ? scopedEvidence[0]?.title : "Cross-border"}<br />review</h3>
+                      <strong>{scopedEvidence.length} reviewed signal{scopedEvidence.length === 1 ? "" : "s"}</strong>
+                      <div className="scope-signal-list">
+                        {scopeSummaryEvidence.map((item) => (
+                          <div className={`scope-signal-row scope-signal-row--${item.tone}`} key={item.id}>
+                            <span aria-hidden="true" />
+                            <div>
+                              <b>{item.title}</b>
+                              <small>{item.id}</small>
+                            </div>
+                            <em>{item.signal}</em>
+                          </div>
+                        ))}
                       </div>
-                      <div className="sheet-nav">
-                        <button className="decision-button" onClick={() => setStep(4)}>Continue to anchoring →</button>
+                      <div className="scope-pack-note">
+                        <span>{RWA_EVIDENCE_PROVENANCE.packLabel}</span>
+                        <small>Last reviewed {RWA_EVIDENCE_PROVENANCE.reviewedAt}. Refresh required before reuse.</small>
                       </div>
-                    </>
+                      </aside>
+                    </div>
                   )}
+
+                  <div className="gate-workspace">
+                    <div className="gate-main">
+                      <section className="consultation-ledger" aria-label="Agent consultation ledger">
+                        <div className="ledger-meta-grid" aria-label="Intercepted action metadata">
+                          <div><span>Action source</span><strong>Injective Testnet</strong></div>
+                          <div><span>Action type</span><strong>MsgExec</strong></div>
+                          <div><span>Action id</span><strong>{caseRef}</strong></div>
+                        </div>
+                        <div className="ledger-action-line">
+                          <span>Intercepted Injective action</span>
+                          <strong>{receipt ? "Receipt ready" : decision === "hold" ? "Held for counsel" : "Blocked before execution"}</strong>
+                          <small>OUSG-like treasury sample · 0 INJ · Testnet</small>
+                        </div>
+
+                        <div className="review-matrix" aria-label="Agent score matrix">
+                          {chamberAgents.map((agent) => (
+                            <article className="review-matrix-cell" key={agent.agentId}>
+                              <div className="review-matrix-head">
+                                <span>{agent.chamberLabel}</span>
+                                <em>{agent.verdict}</em>
+                              </div>
+                              <div className="review-matrix-score">
+                                <strong>{agent.scores.claimSupport}</strong>
+                                <small>/100</small>
+                              </div>
+                              <div className="review-matrix-rail" aria-label={`${agent.name} claim support score`}>
+                                <span style={{ width: `${agent.scores.claimSupport}%` }} />
+                              </div>
+                              <p>{agent.name}</p>
+                              <small>{agent.objections[0]}</small>
+                            </article>
+                          ))}
+                        </div>
+
+                        <div className="matrix-gate-line">
+                          <span>Human gate</span>
+                          <strong>{reviewCouncil.aggregate.gate.replaceAll("-", " ")}</strong>
+                        </div>
+                      </section>
+
+                      <section className="gate-facts" aria-label="Preflight facts">
+                        <div>
+                          <span>Source route</span>
+                          <strong>{reviewScope.evidenceIds.length} reviewed signal{reviewScope.evidenceIds.length === 1 ? "" : "s"}</strong>
+                        </div>
+                        <div>
+                          <span>Execution</span>
+                          <strong>Frozen</strong>
+                        </div>
+                        <div>
+                          <span>Receipt</span>
+                          <strong>Hash only</strong>
+                        </div>
+                      </section>
+
+                      <label className="scenario-ref-field">
+                        <span>Action reference</span>
+                        <input
+                          value={caseRef}
+                          onChange={(event) => changeCaseRef(event.target.value)}
+                          maxLength={64}
+                          pattern="[A-Za-z0-9][A-Za-z0-9._-]{2,63}"
+                          title="Use 3–64 letters, numbers, dots, hyphens, or underscores; start with a letter or number."
+                        />
+                      </label>
+
+                      {wallet.status !== "connected" ? (
+                        <div className="connect-cta">
+                          <button className="decision-button" onClick={connectTestWallet} disabled={wallet.status === "connecting"}>
+                            {wallet.status === "connecting" ? "Connecting reviewer wallet…" : "① Connect reviewer wallet"}
+                          </button>
+                        </div>
+                      ) : (
+                        <p className="reviewer-id">✓ Reviewer · {wallet.address.slice(0, 6)}…{wallet.address.slice(-4)}</p>
+                      )}
+
+                      <div className="rail-actions">
+                        <button className="decision-button decision-button--quiet" onClick={() => setDecision("hold")}>Hold for counsel</button>
+                        <button className="decision-button" onClick={prepareReceiptDraft} disabled={decision === "preparing" || wallet.status !== "connected"}>
+                          {decision === "preparing"
+                            ? "Preparing commitment…"
+                            : wallet.status !== "connected"
+                              ? "② Proceed preflight (connect wallet first)"
+                              : "Proceed preflight — prepare receipt"}
+                        </button>
+                      </div>
+
+                      <div className={`decision-state decision-state--${decision}`}>
+                        {decision === "review" && "Blocked · No transfer, order, or strategy is executed."}
+                        {decision === "hold" && "Held for counsel. No Injective action is executed."}
+                        {decision === "preparing" && "Creating a local public commitment."}
+                        {decision === "draft" && "Proceed receipt ready. Preflight decision only."}
+                        {decision === "wallet-required" && "Connect the reviewer wallet first."}
+                        {decision === "error" && "Receipt could not be prepared. No wallet action occurred."}
+                      </div>
+
+                      {receipt && (
+                        <>
+                          <div className="receipt-commitment">
+                            <span>Proceed receipt · local only</span>
+                            <code>{receipt.receiptHash.slice(0, 18)}…{receipt.receiptHash.slice(-8)}</code>
+                            <small>{receipt.evidenceSet.decision.caseRef} · {receipt.evidenceSet.decision.reviewScope.length} reviewed signal{receipt.evidenceSet.decision.reviewScope.length === 1 ? "" : "s"} · agent-reviewed</small>
+                          </div>
+                          <div className="sheet-nav">
+                            <button className="decision-button" onClick={() => setStep(4)}>Continue to anchoring →</button>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
                 </div>
               )}
 
               {step === 4 && (
                 <div className="sheet-step-panel">
                   <p className="sheet-kicker">Step 4 · Anchor on testnet</p>
-                  <h2>Anchor the receipt</h2>
+                  <h2>Anchor the preflight receipt</h2>
                   {!receipt && <p className="sheet-hint">Complete the decision in step 3 first.</p>}
                   {receipt && (
                     <>
@@ -913,7 +1058,7 @@ export function App() {
               {step === 5 && (
                 <div className="sheet-step-panel">
                   <p className="sheet-kicker">Step 5 · On-chain proof &amp; agent handoff</p>
-                  <h2>Verifiable &amp; ready to hand off</h2>
+                  <h2>Preflight proof &amp; bounded handoff</h2>
                   {!receipt && <p className="sheet-hint">Complete the earlier steps first.</p>}
                   {receipt && (
                     <>
@@ -934,9 +1079,9 @@ export function App() {
                             {handoffCopied ? "Copied ✓" : "Copy handoff"}
                           </button>
                           <button type="button" className="testnet-review-button" onClick={downloadHandoff}>Download .md</button>
-                          <button type="button" className="testnet-review-button" onClick={runDownstreamAgent}>Run bounded downstream agent</button>
+                          <button type="button" className="testnet-review-button" onClick={runDownstreamAgent}>Run bounded execution agent</button>
                         </div>
-                        <p className="reco-disclaimer">This brief stays off-chain. Only the receipt hash is anchored on-chain.</p>
+                        <p className="reco-disclaimer">Scope-bound handoff. Receipt hash only is anchored on-chain.</p>
                       </section>
                       {downstreamResult && (
                         <section className="downstream-agent" aria-label="Bounded downstream agent output">

@@ -13,7 +13,7 @@ test("shows a source-bounded action plan instead of a lead-market recommendation
   const source = appSource();
 
   assert.match(source, /Action plan/);
-  assert.match(source, /Start here/);
+  assert.match(source, /Agent starts here/);
   assert.match(source, /Take to local counsel/);
   assert.doesNotMatch(source, /Suggested lead market/);
   assert.doesNotMatch(source, /Most actionable/);
@@ -70,6 +70,18 @@ test("lets the bounded downstream agent consume the handoff in step five", () =>
 
   assert.match(source, /runBoundedDownstreamAgent/);
   assert.match(source, /buildHandoffFacts/);
-  assert.match(source, /Run bounded downstream agent/);
+  assert.match(source, /Run bounded execution agent/);
   assert.match(source, /Counsel preparation checklist/);
+});
+
+test("frames the demo as a preflight for a proposed Injective financial action", () => {
+  const source = appSource();
+
+  assert.match(source, /PROPOSED_FINANCIAL_ACTION/);
+  assert.match(source, /Proposed tokenized treasury action/);
+  assert.match(source, /Injective EVM testnet/);
+  assert.match(source, /Blocked until human preflight/);
+  assert.match(source, /No transfer, order, or strategy is executed/);
+  assert.match(source, /do not execute a transfer, order, strategy, or asset movement from this handoff alone/);
+  assert.doesNotMatch(source, /Injective RWA market/);
 });

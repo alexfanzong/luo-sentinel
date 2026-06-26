@@ -9,6 +9,18 @@ When implementing from a selected generated mock, treat that image as the source
 ## LUO Sentinel Design Decisions
 
 - The selected visual direction is the Atlas Canvas map-first screen.
+- The landing page source of truth is the dark Atlas Canvas version from the
+  Claude UI redesign: map background, centered LUO mark, short monospaced
+  tagline, and one large search capsule with the action button inside.
+- Keep the landing search capsule refined rather than oversized; it should feel
+  like a precise command surface, not a full-width hero banner.
+- The preferred Step 3 direction is a `Review Matrix`: reference scope opens as
+  a popover, while Scope / Source / Risk scores sit side by side as primary
+  evidence. Avoid bubbly cards, floating pods, linear timelines, or game-like
+  3D agents on this trust surface.
+- Keep legal disclaimers sparse. Use the footer and critical handoff/execution
+  boundaries for "not legal advice"; do not repeat long disclaimers in every
+  card.
 - The map represents cross-jurisdiction information relationships only; it must
   not imply authoritative boundaries, sovereignty, or legal conclusions.
 - The primary demo uses LUO's reviewed Ondo OUSG RWA sample: United States,
