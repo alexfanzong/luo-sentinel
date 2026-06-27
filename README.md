@@ -1,6 +1,6 @@
 # LUO Sentinel
 
-> Evidence-bound guard layer between project Agents and on-chain RWA execution.
+> An evidence-bound compliance interlayer between project Agents and on-chain RWA execution.
 
 <p align="center">
   <img src="app/public/luo-mark.png" alt="LUO Sentinel logo" width="170" />
@@ -19,13 +19,13 @@
   <img src="https://img.shields.io/badge/License-Apache--2.0-5aa000?style=for-the-badge" alt="Apache-2.0 license" />
 </p>
 
-LUO Sentinel is an evidence-bound guard layer for RWA actions on Injective. It turns reviewed regulatory source anchors into a visual evidence map, then requires Sentinel review, a human gate, and a verifiable receipt before any downstream agent acts.
+LUO Sentinel is an evidence-bound compliance interlayer for RWA actions on Injective. It turns reviewed regulatory source anchors into a visual evidence map, then adds Sentinel review, a human gate, and a verifiable receipt before any downstream agent acts.
 
-The entry point is an upstream project Agent, not a human legal search user. When that Agent tries to prepare or advance an RWA action, Sentinel holds the action before execution, routes it only into reviewed source scopes, and forces a human wallet gate before any downstream handoff is created.
+The asker here is an upstream project Agent (not a human running a legal search). When that Agent prepares an RWA action, Sentinel aligns it to reviewed source scopes, brings in a human wallet gate, and only then creates a bounded downstream handoff.
 
-The project is not about asking AI to produce a legal conclusion such as "this asset can be issued or transferred here." It demonstrates a safer path: intercept the action, verify the source boundary, then decide what another AI agent is allowed to do.
+LUO Sentinel doesn't ask AI to produce a legal conclusion like "this asset can be issued or transferred here." It demonstrates a safer division of labor: the Agent gets the prep right against reviewed sources, and a human holds the final gate before another AI agent does anything.
 
-The map is not a live legal conclusion. It is a snapshot of a reviewed evidence pack. When regulatory sources change, affected signals must be reviewed again.
+Each cell on the map is a snapshot of a reviewed evidence pack, not a live legal conclusion. When regulatory sources change, affected signals must be reviewed again.
 
 ## Evidence Map Screenshot
 
@@ -55,7 +55,7 @@ Suggested reviewer path:
 LUO Sentinel demonstrates a minimal AI x Web3 Sentinel loop:
 
 1. An upstream project Agent proposes an RWA action.
-2. Sentinel holds the action before execution.
+2. Sentinel brings it into the compliance layer before execution.
 3. The system routes it only into reviewed evidence scopes.
 4. The map shows jurisdiction-specific source anchors and risk boundaries.
 5. The Review Council checks whether a source is being over-interpreted.
@@ -65,8 +65,8 @@ LUO Sentinel demonstrates a minimal AI x Web3 Sentinel loop:
 
 ## Core Features
 
-- **Agent-first request hold**
-  The demo starts from a proposed Agent action and stops it before any token issuance, transfer, order, or strategy can run.
+- **Agent prepares, human decides**
+  The demo starts from a proposed Agent action; issuance, transfer, order, and strategy stay with a human until the evidence is reviewed and signed off.
 
 - **Reviewed evidence map**  
   The map comes from reviewed source anchors, not live model-generated legal conclusions.
