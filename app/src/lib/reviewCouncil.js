@@ -29,8 +29,8 @@ export function createReviewScope(jurisdictionId = null) {
   };
 }
 
-function scorecard({ agentId, name, role, focus, verdict, scores, scoringBasis, findings, objections }) {
-  return { agentId, name, role, focus, verdict, scores, scoringBasis, findings, objections };
+function scorecard({ agentId, name, role, question, plainStatus, focus, verdict, scores, scoringBasis, findings, objections }) {
+  return { agentId, name, role, question, plainStatus, focus, verdict, scores, scoringBasis, findings, objections };
 }
 
 function buildComparativeScorecards(scope) {
@@ -39,6 +39,8 @@ function buildComparativeScorecards(scope) {
       agentId: "scope-agent",
       name: "Scope Agent",
       role: "Coverage reviewer",
+      question: "Do we have reviewed sources for everywhere this could go?",
+      plainStatus: "Partial coverage",
       focus: "Jurisdiction coverage and comparison boundaries",
       verdict: "warn",
       scores: { coverage: 82, authorityFit: 76, claimSupport: 70, residualRisk: 64 },
@@ -53,6 +55,8 @@ function buildComparativeScorecards(scope) {
       agentId: "source-agent",
       name: "Source Agent",
       role: "Authority reviewer",
+      question: "Does each thing we say trace back to a real source?",
+      plainStatus: "Sourced, gaps remain",
       focus: "Primary source support for each mapped claim",
       verdict: "warn",
       scores: { coverage: 78, authorityFit: 84, claimSupport: 72, residualRisk: 58 },
@@ -67,6 +71,8 @@ function buildComparativeScorecards(scope) {
       agentId: "risk-agent",
       name: "Risk Agent",
       role: "Human gate reviewer",
+      question: "Is it safe to let this run without a person signing off?",
+      plainStatus: "Needs your sign-off",
       focus: "Operational risk before any downstream action",
       verdict: "warn",
       scores: { coverage: 80, authorityFit: 80, claimSupport: 68, residualRisk: 66 },
@@ -119,6 +125,8 @@ function buildSingleJurisdictionScorecards(scope) {
       agentId: "scope-agent",
       name: "Scope Agent",
       role: "Depth reviewer",
+      question: "Is this one source enough to act on?",
+      plainStatus: "One source only",
       focus: "Authority coverage inside one jurisdiction",
       verdict: "warn",
       scores: weights.scope,
@@ -133,6 +141,8 @@ function buildSingleJurisdictionScorecards(scope) {
       agentId: "source-agent",
       name: "Source Agent",
       role: "Source verifier",
+      question: "Does the cited source actually support the next step?",
+      plainStatus: "Sourced, gaps remain",
       focus: "Source correctness and claim support",
       verdict: "warn",
       scores: weights.source,
@@ -149,6 +159,8 @@ function buildSingleJurisdictionScorecards(scope) {
       agentId: "risk-agent",
       name: "Risk Agent",
       role: "Human gate reviewer",
+      question: "Is it safe to let this run without a person signing off?",
+      plainStatus: "Needs your sign-off",
       focus: "Applicability risk before action",
       verdict: "warn",
       scores: weights.risk,

@@ -45,7 +45,7 @@ test("routes the selected scope through the agent review council before a receip
 
   assert.match(source, /buildReviewCouncil/);
   assert.match(source, /Agent Review Council/);
-  assert.match(source, /Scores are audit weights, not AI confidence/);
+  assert.match(source, /Each score is out of 100/);
   assert.match(source, /Scope.*\/100/s);
   assert.match(source, /Source fit.*\/100/s);
   assert.match(source, /reviewScopeIds:\s*reviewScope\.evidenceIds/);

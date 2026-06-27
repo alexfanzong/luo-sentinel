@@ -116,6 +116,14 @@ const REVIEW_SCORE_LABELS = [
   { key: "claimSupport", label: "Claim support", title: "How directly the source supports the next workstream." },
 ];
 
+// Plain-language band for a 0–100 review score, so a non-expert can read it
+// without decoding the number.
+function scoreBand(value) {
+  if (value >= 80) return "Strong";
+  if (value >= 65) return "Fair";
+  return "Limited";
+}
+
 // Bespoke single-jurisdiction Step 1 plans, one per reviewed source. Each stays
 // scoped to its own jurisdiction so a US/SG/EU single review is as specific as
 // the Hong Kong one (and matches the per-source brief in step 5).
@@ -1018,14 +1026,14 @@ export function App() {
               {step === 2 && (
                 <div className="sheet-step-panel">
                   <p className="sheet-kicker">Step 2 · Agent Review Council</p>
-                  <h2>Agents scan before execution</h2>
+                  <h2>Three checks before anything runs</h2>
                   <span className="rail-lede">
                     {reviewScope.scopeType === "single-jurisdiction"
-                      ? `Reviewing ${scopeLabel}: the council checks whether this one source is enough to unblock the proposed Injective action.`
-                      : "Reviewing the comparative map: the council checks whether the proposed Injective action can leave the blocked state."}
+                      ? `Three reviewers look at ${scopeLabel} from different angles, then hand the decision to you.`
+                      : "Three reviewers look at the map from different angles, then hand the decision to you."}
                   </span>
                   <p className="score-guide">
-                    Scores are audit weights, not AI confidence. Each agent starts from 100 and deducts for missing scope, source limits, weak claim support, and unresolved counsel questions.
+                    Each score is out of 100 — higher means the reviewed sources cover more of that question. It's a review score, not a prediction or a legal opinion.
                   </p>
                   <div className="preflight-flow" aria-label="Agent preflight sequence">
                     <span>Action detected</span>
@@ -1040,24 +1048,23 @@ export function App() {
                             <h3>{card.name}</h3>
                             <span>{card.role}</span>
                           </div>
-                          <strong>{card.verdict}</strong>
+                          <strong title={card.scoringBasis}>{card.plainStatus}</strong>
                         </div>
-                        <p>{card.focus}</p>
+                        <p className="review-question">{card.question}</p>
                         <div className="review-scores">
                           {REVIEW_SCORE_LABELS.map((score) => (
                             <span key={score.key} title={score.title}>
-                              {score.label} {card.scores[score.key]}/100
+                              {score.label} · {scoreBand(card.scores[score.key])} {card.scores[score.key]}/100
                             </span>
                           ))}
                         </div>
-                        <small className="score-basis">Why: {card.scoringBasis}</small>
                         <ul>
                           {card.findings.map((finding) => <li key={finding}>{finding}</li>)}
                         </ul>
                       </article>
                     ))}
                   </div>
-                  <p className="reco-disclaimer">Gate: {reviewCouncil.aggregate.gate.replaceAll("-", " ")}.</p>
+                  <p className="reco-disclaimer">All three point to the same thing: a person has to decide before anything runs.</p>
                   <div className="sheet-nav">
                     <button className="decision-button" onClick={() => setStep(3)}>Make the decision →</button>
                   </div>
