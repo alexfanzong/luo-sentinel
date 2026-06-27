@@ -15,14 +15,14 @@ import { getReviewedQuestionRoute } from "./lib/questionRouter.js";
 // does not select a market or determine an offer path.
 const ACTION_PLAN = {
   startHere: {
-    text: "Assess whether a Rule 506(c) private-placement route could fit the reviewed U.S. source. This is a scoped research starting point, not an eligibility or offering finding.",
+    text: "One suggested first workstream is the U.S. Rule 506(c) private-placement route for the reviewed U.S. source; the Hong Kong, Singapore and EU workstreams are covered per-source below. This is a scoped research starting point, not an eligibility or offering finding.",
     url: "https://www.ecfr.gov/current/title-17/section-230.506",
     label: "17 CFR §230.506",
   },
   materials: {
     need: [
       { text: "Accredited-investor verification design" },
-      { text: "Form D filing workflow (if counsel confirms an exempt path)" },
+      { text: "Form D filing workflow (if counsel confirms an exempt path)", url: "https://www.sec.gov/resources-small-businesses/exempt-offerings/filing-form-d-notice", label: "SEC · file Form D" },
       { text: "Offering and subscription materials" },
       { text: "Rule 506(d) bad-actor checks", url: "https://www.ecfr.gov/current/title-17/section-230.506", label: "17 CFR §230.506" },
     ],
@@ -36,15 +36,15 @@ const ACTION_PLAN = {
 };
 
 const PROPOSED_FINANCIAL_ACTION = Object.freeze({
-  label: "Proposed tokenized treasury action",
+  label: "Upstream Agent proposed RWA action",
   network: "Injective EVM testnet",
-  execution: "Held by Sentinel. Nothing executed",
-  intent: "Prepare an OUSG-like tokenized asset for a downstream transfer or strategy workflow.",
+  execution: "Intercepted by Sentinel. Nothing executed",
+  intent: "A project Agent wants to prepare an OUSG-like tokenized asset for an Injective transfer or strategy workflow.",
   constraints: [
     ["Asset context", "Tokenized U.S. Treasury sample"],
-    ["Execution layer", "Injective financial action, testnet only"],
-    ["If released", "Downstream transfer or strategy"],
-    ["Agent role", "Detect evidence gaps before execution"],
+    ["Upstream request", "Automated Injective action, testnet only"],
+    ["Sentinel role", "Stop execution before evidence review"],
+    ["If released", "Bounded handoff, not asset movement"],
   ],
 });
 
@@ -62,6 +62,13 @@ const COUNSEL_PREP_TEMPLATES = Object.freeze({
       "Draft subscription agreement and offering materials for counsel to review.",
     ],
     confirm: "Whether Rule 506(c) or another exemption fits the actual product and buyer set.",
+    templates: [
+      { label: "SEC · file Form D (EDGAR, no fee)", url: "https://www.sec.gov/resources-small-businesses/exempt-offerings/filing-form-d-notice" },
+      { label: "SEC · current Form D PDF", url: "https://www.sec.gov/files/formd.pdf" },
+      { label: "SEC · what is Form D / building blocks", url: "https://www.sec.gov/files/form-d-building-blocks.pdf" },
+      { label: "SEC · Rule 506(d) bad-actor disqualification guide", url: "https://www.sec.gov/resources-small-businesses/small-business-compliance-guides/disqualification-felons-other-bad-actors-rule-506-offerings-related-disclosure-requirements" },
+      { label: "eCFR · 17 CFR §230.506", url: "https://www.ecfr.gov/current/title-17/section-230.506" },
+    ],
   },
   "HK-CLAIM-01": {
     route: "SFC tokenised-securities intermediary assessment",
@@ -72,22 +79,36 @@ const COUNSEL_PREP_TEMPLATES = Object.freeze({
       "Document custody, control and transfer-restriction design.",
     ],
     confirm: "Whether the product is a tokenised security on the actual facts, and which SFC conditions apply.",
+    templates: [
+      { label: "SFC · intermediaries in tokenised securities (23EC52)", url: "https://apps.sfc.hk/edistributionWeb/gateway/EN/circular/doc?refNo=23EC52" },
+      { label: "SFC · tokenisation of authorised products (23EC53)", url: "https://apps.sfc.hk/edistributionWeb/gateway/EN/circular/doc?refNo=23EC53" },
+    ],
   },
   "SG-CLAIM-01": {
-    route: "Singapore SFA offer-path assessment",
+    route: "Singapore SFA capital-markets-product assessment",
     steps: [
-      "Identify the specific SFA or MAS provision relied on; the reviewed pack does not establish one.",
-      "Map any collective-investment-scheme, prospectus or exemption requirements for the offer structure.",
+      "Classify whether the token is a capital markets product, such as a security or CIS unit, on the actual product facts.",
+      "If it is a CMP, map the SFA Part 13 offer path, prospectus need and any exemption counsel can rely on.",
+      "Prepare distribution, investor-profile and transfer-control questions before Singapore counsel reviews the route.",
     ],
-    confirm: "Whether a concrete SFA provision supports the intended offer or transfer.",
+    confirm: "Whether the token is a capital markets product on the actual facts, and which SFA offer route applies.",
+    templates: [
+      { label: "Singapore Statutes Online · Securities and Futures Act 2001", url: "https://sso.agc.gov.sg/Act/SFA2001" },
+      { label: "MAS · Guide to Digital Token Offerings (secondary guidance)", url: "https://www.mas.gov.sg/-/media/MAS/Sectors/Guidance/Guide-to-Digital-Token-Offerings-26-May-2020.pdf" },
+    ],
   },
   "EU-CLAIM-02": {
     route: "EU classification (MiCA with MiFID II)",
     steps: [
       "Assemble the product features needed for a MiFID II financial-instrument assessment.",
-      "Prepare MiCA scope-analysis inputs and note that MiCA alone does not resolve classification.",
+      "Prepare MiCA scope-analysis inputs and note that a token that is a MiFID II financial instrument is excluded from MiCA.",
     ],
     confirm: "Whether the product is a financial instrument, and which member-state rules apply.",
+    templates: [
+      { label: "EUR-Lex · MiCA Article 2(4)(a)", url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32023R1114#d1e1202-40-1" },
+      { label: "EUR-Lex · MiFID II Article 4(1)(15)", url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32014L0065#d1e2078-349-1" },
+      { label: "EUR-Lex · MiFID II Annex I Section C", url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32014L0065#d1e160-481-1" },
+    ],
   },
 });
 
@@ -97,32 +118,105 @@ const REVIEW_SCORE_LABELS = [
   { key: "claimSupport", label: "Claim support", title: "How directly the source supports the next workstream." },
 ];
 
+// Plain-language band for a 0–100 review score, so a non-expert can read it
+// without decoding the number.
+function scoreBand(value) {
+  if (value >= 80) return "Strong";
+  if (value >= 65) return "Fair";
+  return "Limited";
+}
+
+// Bespoke single-jurisdiction Step 1 plans, one per reviewed source. Each stays
+// scoped to its own jurisdiction so a US/SG/EU single review is as specific as
+// the Hong Kong one (and matches the per-source brief in step 5).
+const SINGLE_JURISDICTION_ACTION_PLANS = {
+  "US-CLAIM-01": {
+    startHere: {
+      text: "Review whether the reviewed U.S. source — Rule 506(c) — fits the product as a private-placement route: general solicitation is allowed only if every purchaser is a verified accredited investor.",
+      url: "https://www.ecfr.gov/current/title-17/section-230.506",
+      label: "17 CFR §230.506",
+    },
+    materials: {
+      need: [
+        { text: "Accredited-investor verification design (income/net-worth evidence or third-party letters)" },
+        { text: "Form D filing workflow", url: "https://www.sec.gov/resources-small-businesses/exempt-offerings/filing-form-d-notice", label: "SEC · file Form D" },
+        { text: "Rule 506(d) bad-actor disqualification checks", url: "https://www.ecfr.gov/current/title-17/section-230.506", label: "17 CFR §230.506(d)" },
+        { text: "Offering and subscription materials" },
+      ],
+      likelyHave: ["Product rights and token terms", "Entity and cap-table materials", "Intended investor profile"],
+      counsel: [
+        "Whether Rule 506(c) or another exemption fits the actual product and buyer set",
+        "Non-U.S. buyer treatment, state blue-sky notices and secondary-transfer controls",
+      ],
+    },
+  },
+  "HK-CLAIM-01": {
+    startHere: {
+      text: "Review the Hong Kong tokenised-securities source as an applicability question: licensed intermediary, product controls, suitability and custody are the first workstream.",
+      url: "https://apps.sfc.hk/edistributionWeb/gateway/EN/circular/doc?refNo=23EC52",
+      label: "SFC · tokenised-securities circular (Nov 2023)",
+    },
+    materials: {
+      need: [
+        { text: "Product token rights and redemption mechanics" },
+        { text: "Target client type and distribution channel" },
+        { text: "Licensed-intermediary, suitability and onboarding workflow" },
+        { text: "Custody, control and transfer-restriction design" },
+      ],
+      likelyHave: ["Product term sheet", "Issuer/operator structure", "Wallet and transfer-control design"],
+      counsel: [
+        "Whether the product is treated as a tokenised security in the actual facts",
+        "Which Hong Kong regulated activities may be triggered",
+        "Whether marketing, custody or secondary transfer needs additional controls",
+      ],
+    },
+  },
+  "SG-CLAIM-01": {
+    startHere: {
+      text: "Assess whether the token is a capital markets product under the SFA. If it is, counsel maps the Part 13 offer path, prospectus need and any exemption before any Singapore-facing claim is made.",
+      url: "https://sso.agc.gov.sg/Act/SFA2001",
+      label: "Singapore Statutes Online · SFA 2001",
+    },
+    materials: {
+      need: [
+        { text: "CMP classification analysis (is the token a security or CIS unit?)" },
+        { text: "SFA Part 13 offer-path, prospectus and exemption assessment", url: "https://sso.agc.gov.sg/Act/SFA2001", label: "SFA 2001" },
+        { text: "Distribution, investor-profile and transfer-control questions" },
+      ],
+      likelyHave: ["Product term sheet", "Issuer/operator structure", "Target investor profile"],
+      counsel: [
+        "Whether the token is a capital markets product on the actual facts",
+        "Which prospectus or exemption route applies under SFA Part 13",
+      ],
+    },
+  },
+  "EU-CLAIM-02": {
+    startHere: {
+      text: "Determine whether the product is a MiFID II financial instrument. If it is, MiCA does not apply and the MiFID II / local-law regime governs; MiCA alone does not resolve classification.",
+      url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32014L0065#d1e2078-349-1",
+      label: "MiFID II Article 4(1)(15)",
+    },
+    materials: {
+      need: [
+        { text: "MiFID II financial-instrument classification inputs" },
+        { text: "MiCA scope analysis", url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32023R1114#d1e1202-40-1", label: "MiCA Article 2(4)(a)" },
+        { text: "Member-state local-law review" },
+      ],
+      likelyHave: ["Product features and rights", "Issuer structure", "Target market and distribution"],
+      counsel: [
+        "Whether the product is a financial instrument under MiFID II",
+        "Which member-state rules apply if MiCA is excluded",
+      ],
+    },
+  },
+};
+
 function getScopedActionPlan(reviewScope) {
   if (reviewScope.scopeType !== "single-jurisdiction") return ACTION_PLAN;
 
   const item = RWA_EVIDENCE.find((entry) => entry.id === reviewScope.evidenceIds[0]);
-  if (item?.id === "HK-CLAIM-01") {
-    return {
-      startHere: {
-        text: "Review the Hong Kong tokenised-securities source as an applicability question: licensed intermediary, product controls, suitability and custody are the first workstream.",
-        url: item.sourceUrl,
-        label: item.sourceLabel,
-      },
-      materials: {
-        need: [
-          { text: "Product token rights and redemption mechanics" },
-          { text: "Target client type and distribution channel" },
-          { text: "Licensed-intermediary, suitability and onboarding workflow" },
-          { text: "Custody, control and transfer-restriction design" },
-        ],
-        likelyHave: ["Product term sheet", "Issuer/operator structure", "Wallet and transfer-control design"],
-        counsel: [
-          "Whether the product is treated as a tokenised security in the actual facts",
-          "Which Hong Kong regulated activities may be triggered",
-          "Whether marketing, custody or secondary transfer needs additional controls",
-        ],
-      },
-    };
+  if (item && SINGLE_JURISDICTION_ACTION_PLANS[item.id]) {
+    return SINGLE_JURISDICTION_ACTION_PLANS[item.id];
   }
 
   return {
@@ -157,6 +251,7 @@ export function App() {
   const [scopePanelOpen, setScopePanelOpen] = useState(false);
   const [handoffCopied, setHandoffCopied] = useState(false);
   const [briefCopied, setBriefCopied] = useState(false);
+  const [manualAddress, setManualAddress] = useState("");
   const [step, setStep] = useState(1); // 1 brief · 2 agent review · 3 decision · 4 anchor · 5 handoff
   const [decision, setDecision] = useState("review");
   const [receipt, setReceipt] = useState(null);
@@ -249,7 +344,7 @@ export function App() {
     return [
       "- **United States** — candidate Rule 506(c) workstream; counsel confirms availability and scope.",
       "- **Hong Kong** — licensed-intermediary and product-control questions remain conditionally scoped.",
-      "- **Singapore** — current source pack has no specific provision supporting a broader path.",
+      "- **Singapore** — SFA source anchor is available, but CMP classification and Part 13 offer route remain conditional.",
       "- **European Union** — classification remains unresolved in the current pack.",
     ];
   }
@@ -264,6 +359,8 @@ export function App() {
       caseRef: receipt.evidenceSet.decision.caseRef,
       reviewScope: scopeLabel,
       reviewMode: reviewScope.reviewMode,
+      scopeType: reviewScope.scopeType,
+      evidenceIds: reviewScope.evidenceIds,
       proposedAction: {
         label: PROPOSED_FINANCIAL_ACTION.label,
         network: PROPOSED_FINANCIAL_ACTION.network,
@@ -306,7 +403,7 @@ export function App() {
       "```",
       "",
       "## Constraints for the downstream agent",
-      "Act only within this human-verified scope. Do not exceed it or infer coverage outside the reviewed source anchors.",
+      "This is the only payload the downstream agent may consume. Act only within this human-verified scope; do not infer coverage outside the reviewed source anchors.",
       "",
       `- **Proposed action** — ${PROPOSED_FINANCIAL_ACTION.intent}`,
       "- **Execution boundary** — do not execute a transfer, order, strategy, or asset movement from this handoff alone.",
@@ -344,10 +441,17 @@ export function App() {
       const tpl = COUNSEL_PREP_TEMPLATES[item.id];
       lines.push("", `### ${item.title} — ${item.signal}`);
       lines.push(`Source: ${item.sourceLabel} (${item.sourceUrl})`);
+      if (item.secondarySourceUrl) {
+        lines.push(`Also: ${item.secondarySourceLabel} (${item.secondarySourceUrl})`);
+      }
       if (tpl) {
         lines.push(`Route to prepare: ${tpl.route}`);
         lines.push("Prepare before counsel:");
         tpl.steps.forEach((s) => lines.push(`- [ ] ${s}`));
+        if (tpl.templates?.length) {
+          lines.push("Templates & official sources:");
+          tpl.templates.forEach((t) => lines.push(`- ${t.label}: ${t.url}`));
+        }
         lines.push(`Confirm with counsel: ${tpl.confirm}`);
       } else {
         lines.push(item.summary);
@@ -575,6 +679,36 @@ export function App() {
     }
   }
 
+  // Recovery path for the known Injective-testnet case where a deployment is
+  // visible on the explorer but the wallet/RPC reported it late or as failed.
+  // The pasted address is only accepted after its runtime bytecode is verified.
+  async function recoverDeployedContract(address) {
+    const candidate = (address || "").trim();
+    if (!candidate) return;
+
+    setAnchor((current) => ({ ...current, status: "estimating", message: "Verifying the pasted contract address…" }));
+    try {
+      const receiptAnchorClient = await getReceiptAnchorClient();
+      const reader = await getTestnetReceiptReader();
+      const { contractAddress } = await receiptAnchorClient.verifyDeployedRuntimeBytecode({
+        provider: reader,
+        contractAddress: candidate,
+      });
+      setManualAddress("");
+      setAnchor({
+        status: "deployed",
+        contractAddress,
+        unverifiedContractAddress: null,
+        preview: null,
+        estimate: null,
+        txHash: null,
+        message: "Pasted contract verified on-chain. Review the receipt anchor next.",
+      });
+    } catch (error) {
+      setAnchor((current) => ({ ...current, status: "error", message: getErrorMessage(error) }));
+    }
+  }
+
   async function reviewReceiptAnchor() {
     if (!receipt || !anchor.contractAddress || wallet.status !== "connected") return;
 
@@ -653,23 +787,26 @@ export function App() {
         <span className="landing-status"><span /> Testnet demo</span>
         <div className="landing-inner">
           <img className="landing-logo" src="/luo-mark.png" alt="LUO" />
-          <p className="landing-tagline">Evidence-bound AI handoffs</p>
+          <p className="landing-tagline">Sentinel for AI handoffs</p>
           <form
-            className="landing-search"
+            className="landing-agent-pill"
             onSubmit={(event) => {
               event.preventDefault();
               runSearch();
             }}
           >
-            <span className="landing-search-icon" aria-hidden="true">⌕</span>
+            <span className="agent-pill-badge">
+              <span className="agent-pill-dot" aria-hidden="true" />
+              Agent request
+            </span>
             <input
               value={agentQuestion}
               onChange={(event) => {
                 setAgentQuestion(event.target.value);
                 if (searchStatus === "refused") resetSearch();
               }}
-              placeholder="Ask a reviewed RWA question…"
-              aria-label="Ask a reviewed RWA question"
+              placeholder="Issue or transfer OUSG on Injective…"
+              aria-label="Submit an upstream Agent request"
               autoFocus
             />
             <button type="submit" disabled={searchStatus === "running"}>
@@ -677,17 +814,17 @@ export function App() {
                 "Routing…"
               ) : (
                 <>
-                  <span className="search-label-full">LUO Search</span>
-                  <span className="search-label-short">Search</span>
+                  <span className="agent-label-full">Hold in Sentinel</span>
+                  <span className="agent-label-short">Hold</span>
                 </>
               )}
             </button>
           </form>
           {searchStatus === "refused" && (
             <div className="landing-suggest">
-              <p className="landing-suggest-title">No reviewed match for this question.</p>
+              <p className="landing-suggest-title">Unreviewed Agent request refused.</p>
               <p className="landing-suggest-body">
-                LUO will not fabricate a map. Choose a path it can ground in verified sources:
+                Sentinel will not fabricate a route another Agent could execute. Use a reviewed scope:
               </p>
               <button
                 type="button"
@@ -712,7 +849,7 @@ export function App() {
             </div>
           )}
         </div>
-        <p className="landing-note">Grounded, not guessed · every signal traceable to source</p>
+        <p className="landing-note">Upstream Agent held · human gate required · bounded handoff only</p>
       </div>
     );
   }
@@ -725,7 +862,7 @@ export function App() {
           <span className="topbar-divider" />
           <div>
             <strong>LUO Sentinel</strong>
-            <span>Evidence-bound decision record for tokenized RWA actions · testnet demo</span>
+            <span>Guard layer between project Agents and tokenized RWA execution · testnet demo</span>
           </div>
         </div>
         <button
@@ -834,7 +971,7 @@ export function App() {
             <button type="button" className="rail-close" onClick={() => setRailOpen(false)} aria-label="Close">✕</button>
             <div className="sheet-inner">
               <nav className="sheet-stepper" aria-label="Workflow steps">
-                {[["1", "Action"], ["2", "Review"], ["3", "Decision"], ["4", "Receipt"], ["5", "Handoff"]].map(([n, label]) => (
+                {[["1", "Intercept"], ["2", "Review"], ["3", "Gate"], ["4", "Receipt"], ["5", "Handoff"]].map(([n, label]) => (
                   <button
                     key={n}
                     type="button"
@@ -849,8 +986,8 @@ export function App() {
 
               {step === 1 && (
                 <div className="sheet-step-panel">
-                  <p className="sheet-kicker">Step 1 · The held action</p>
-                  <h2>What Sentinel held</h2>
+                  <p className="sheet-kicker">Step 1 · Agent action intercepted</p>
+                  <h2>Sentinel stopped this before execution</h2>
                   <section className="preflight-action-card" aria-label="Proposed Injective financial action">
                     <div>
                       <span>{PROPOSED_FINANCIAL_ACTION.network}</span>
@@ -868,7 +1005,7 @@ export function App() {
                     </dl>
                   </section>
                   <div className="action-start">
-                    <h3>Agent starts here</h3>
+                    <h3>Upstream Agent request</h3>
                     <p>
                       {actionPlan.startHere.text}{" "}
                       <a className="template-link" href={actionPlan.startHere.url} target="_blank" rel="noreferrer">
@@ -878,29 +1015,15 @@ export function App() {
                   </div>
                   <div className="reco-materials">
                     <div>
-                      <h4>Need</h4>
-                      <ul>
-                        {actionPlan.materials.need.map((m) => (
-                          <li key={m.text}>
-                            {m.text}
-                            {m.url && (
-                              <a className="template-link" href={m.url} target="_blank" rel="noreferrer"> · {m.label} ↗</a>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div>
-                      <h4>Likely have</h4>
-                      <ul>{actionPlan.materials.likelyHave.map((m) => <li key={m}>{m}</li>)}</ul>
-                    </div>
-                    <div>
                       <h4>Take to local counsel</h4>
                       <ul>{actionPlan.materials.counsel.map((m) => <li key={m}>{m}</li>)}</ul>
                     </div>
                   </div>
+                  <p className="sheet-hint">
+                    The full assembly checklist and per-source workstreams are generated as a downloadable brief in step 5, scoped to your decision.
+                  </p>
                   <div className="sheet-nav">
-                    <button className="decision-button" onClick={() => setStep(2)}>Run the review →</button>
+                    <button className="decision-button" onClick={() => setStep(2)}>Route to reviewers →</button>
                   </div>
                 </div>
               )}
@@ -908,18 +1031,18 @@ export function App() {
               {step === 2 && (
                 <div className="sheet-step-panel">
                   <p className="sheet-kicker">Step 2 · Agent Review Council</p>
-                  <h2>Agents scan before execution</h2>
+                  <h2>Three checks before anything runs</h2>
                   <span className="rail-lede">
                     {reviewScope.scopeType === "single-jurisdiction"
-                      ? `Reviewing ${scopeLabel}: the council checks whether this one source is enough to unblock the proposed Injective action.`
-                      : "Reviewing the comparative map: the council checks whether the proposed Injective action can leave the blocked state."}
+                      ? `Three reviewers look at ${scopeLabel} from different angles, then hand the decision to you.`
+                      : "Three reviewers look at the map from different angles, then hand the decision to you."}
                   </span>
                   <p className="score-guide">
-                    Scores are audit weights, not AI confidence. Each agent starts from 100 and deducts for missing scope, source limits, weak claim support, and unresolved counsel questions.
+                    Each score is out of 100 — higher means the reviewed sources cover more of that request. It's a review score, not a prediction or a legal opinion.
                   </p>
                   <div className="preflight-flow" aria-label="Agent preflight sequence">
-                    <span>Action detected</span>
-                    <span>Evidence routed</span>
+                    <span>Upstream request</span>
+                    <span>Sentinel intercept</span>
                     <span>Human gate required</span>
                   </div>
                   <div className="review-council review-council--preflight" aria-label="Agent review council scorecards">
@@ -930,24 +1053,23 @@ export function App() {
                             <h3>{card.name}</h3>
                             <span>{card.role}</span>
                           </div>
-                          <strong>{card.verdict}</strong>
+                          <strong title={card.scoringBasis}>{card.plainStatus}</strong>
                         </div>
-                        <p>{card.focus}</p>
+                        <p className="review-question">{card.question}</p>
                         <div className="review-scores">
                           {REVIEW_SCORE_LABELS.map((score) => (
                             <span key={score.key} title={score.title}>
-                              {score.label} {card.scores[score.key]}/100
+                              {score.label} · {scoreBand(card.scores[score.key])} {card.scores[score.key]}/100
                             </span>
                           ))}
                         </div>
-                        <small className="score-basis">Why: {card.scoringBasis}</small>
                         <ul>
                           {card.findings.map((finding) => <li key={finding}>{finding}</li>)}
                         </ul>
                       </article>
                     ))}
                   </div>
-                  <p className="reco-disclaimer">Gate: {reviewCouncil.aggregate.gate.replaceAll("-", " ")}.</p>
+                  <p className="reco-disclaimer">All three point to the same thing: a person has to decide before anything runs.</p>
                   <div className="sheet-nav">
                     <button className="decision-button" onClick={() => setStep(3)}>Make the decision →</button>
                   </div>
@@ -956,9 +1078,9 @@ export function App() {
 
               {step === 3 && (
                 <div className="sheet-step-panel sheet-step-panel--gate">
-                  <p className="sheet-kicker">Step 3 · The Sentinel gate</p>
-                  <h2>You decide what happens</h2>
-                  <p className="rail-lede">Sentinel holds the action until a person decides. Neither choice issues the asset. Proceeding records an accountable, wallet-signed decision; issuing or transferring still requires counsel.</p>
+                  <p className="sheet-kicker">Step 3 · Human gate</p>
+                  <h2>Release only a bounded handoff</h2>
+                  <p className="rail-lede">The upstream Agent stays blocked. Your signature records a reviewed decision; it does not move the asset.</p>
 
                   <div className="scope-reference-bar">
                     <div>
@@ -1010,9 +1132,9 @@ export function App() {
                       )}
 
                       <div className="gate-held-line">
-                        <span>Held action</span>
+                        <span>Blocked upstream action</span>
                         <strong>{receipt ? "Receipt ready" : decision === "hold" ? "Held for counsel" : "OUSG-like treasury sample"}</strong>
-                        <small>0 INJ · Injective testnet · frozen until you decide</small>
+                        <small>0 INJ · Injective testnet</small>
                       </div>
 
                       <div className="gate-outcomes">
@@ -1030,7 +1152,7 @@ export function App() {
                             <strong>Proceed with sign-off</strong>
                             <em>Decision recorded</em>
                           </div>
-                          <p>You sign with your wallet that you reviewed the flags and chose to move forward. This anchors an accountable decision on-chain. It does <strong>not</strong> authorize issuing or transferring the asset; that still requires counsel.</p>
+                          <p>You sign with your wallet that you reviewed the flags and chose to release a bounded handoff. It does <strong>not</strong> authorize issuing or transferring the asset; that still requires counsel.</p>
                         </article>
                       </div>
 
@@ -1067,10 +1189,10 @@ export function App() {
                       </div>
 
                       <div className={`decision-state decision-state--${decision}`}>
-                        {decision === "review" && "Held · nothing is executed until you decide."}
+                        {decision === "review" && "Intercepted · the upstream Agent cannot execute this action."}
                         {decision === "hold" && "Held for counsel. No Injective action is executed."}
                         {decision === "preparing" && "Creating your signed receipt."}
-                        {decision === "draft" && "Proceed receipt ready. Decision recorded."}
+                        {decision === "draft" && "Receipt ready. Only a bounded handoff can be released."}
                         {decision === "wallet-required" && "Connect the reviewer wallet first."}
                         {decision === "error" && "Receipt could not be prepared. No wallet action occurred."}
                       </div>
@@ -1107,6 +1229,11 @@ export function App() {
                           {anchor.status === "estimating" ? "Estimating deployment fee…" : "① Review contract deployment"}
                         </button>
                       )}
+                      {wallet.status === "connected" && !anchor.contractAddress && (
+                        <p className="sheet-hint">
+                          On Injective EVM testnet some wallets show a successful deployment as “failed.” This app confirms the contract from its on-chain code, so trust the explorer and this check over the wallet status.
+                        </p>
+                      )}
                       {anchor.contractAddress && (
                         <div className="testnet-result">
                           <span>Contract verified ✓</span>
@@ -1139,6 +1266,27 @@ export function App() {
                         </section>
                       )}
                       {anchor.message && <p className={`testnet-message testnet-message--${anchor.status}`}>{anchor.message}</p>}
+                      {!anchor.contractAddress && anchor.status === "error" && (
+                        <div className="manual-recovery">
+                          <label>
+                            <span>Already deployed? Paste the contract address from the explorer to continue.</span>
+                            <input
+                              value={manualAddress || anchor.unverifiedContractAddress || ""}
+                              onChange={(event) => setManualAddress(event.target.value)}
+                              placeholder="0x…"
+                              spellCheck={false}
+                              autoComplete="off"
+                            />
+                          </label>
+                          <button
+                            type="button"
+                            className="testnet-review-button"
+                            onClick={() => recoverDeployedContract(manualAddress || anchor.unverifiedContractAddress)}
+                          >
+                            Verify pasted contract
+                          </button>
+                        </div>
+                      )}
                       {anchor.status === "anchored" && (
                         <div className="sheet-nav">
                           <button className="decision-button" onClick={() => setStep(5)}>Continue to handoff →</button>
@@ -1151,8 +1299,8 @@ export function App() {
 
               {step === 5 && (
                 <div className="sheet-step-panel">
-                  <p className="sheet-kicker">Step 5 · Verified handoff</p>
-                  <h2>Hand off, inside the scope</h2>
+                  <p className="sheet-kicker">Step 5 · Bounded Agent handoff</p>
+                  <h2>Release the constrained payload</h2>
                   {!receipt && <p className="sheet-hint">Complete the earlier steps first.</p>}
                   {receipt && (
                     <>
@@ -1166,14 +1314,14 @@ export function App() {
                         </a>
                       )}
                       <div className="handoff-templates">
-                        <p className="handoff-templates-intro">Two ready-to-use templates so you can move before counsel is engaged.</p>
+                        <p className="handoff-templates-intro">One package for the human reviewer, one constrained payload for the downstream Agent. Neither authorizes an on-chain asset move.</p>
 
-                        <section className="handoff-card handoff-card--human" aria-label="Pre-counsel preparation brief">
+                        <section className="handoff-card handoff-card--human" aria-label="Counsel preparation brief">
                           <div className="handoff-card-head">
-                            <span className="handoff-card-for">For you · before counsel</span>
-                            <h3>Pre-counsel preparation brief</h3>
+                            <span className="handoff-card-for">For the project team</span>
+                            <h3>Counsel preparation brief</h3>
                           </div>
-                          <p className="handoff-card-lede">A procedural worksheet: what to assemble, what you likely have, and exactly what to confirm with counsel for {scopeLabel}.</p>
+                          <p className="handoff-card-lede">The human-facing package: what to assemble and what counsel must confirm for {scopeLabel}.</p>
                           <pre>{buildCounselPrepBrief()}</pre>
                           <div className="handoff-actions">
                             <button type="button" className="testnet-review-button" onClick={copyBrief}>
@@ -1188,7 +1336,7 @@ export function App() {
                             <span className="handoff-card-for">For a downstream agent</span>
                             <h3>Scope-bound machine handoff</h3>
                           </div>
-                          <p className="handoff-card-lede">Structured, verified facts plus hard limits, so an automated agent can prepare work without exceeding the reviewed scope.</p>
+                          <p className="handoff-card-lede">Structured facts plus hard limits, so a downstream Agent can prepare work without expanding the reviewed scope.</p>
                           <pre>{buildAgentHandoff()}</pre>
                           <div className="handoff-actions">
                             <button type="button" className="testnet-review-button" onClick={copyHandoff}>

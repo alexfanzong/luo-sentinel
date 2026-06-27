@@ -48,6 +48,27 @@ test("keeps a Hong Kong-only handoff inside Hong Kong source scope", () => {
   assert.equal(result.checklist.some((item) => /Rule 506\(c\)/.test(item)), false);
 });
 
+test("keeps a Singapore-only handoff inside Singapore scope without inferring U.S. coverage", () => {
+  const result = runBoundedDownstreamAgent({
+    handoffFacts: {
+      caseRef: "SG-ONLY-001",
+      reviewScope: "Singapore · single jurisdiction",
+      reviewMode: "source-and-applicability-review",
+      scopeType: "single-jurisdiction",
+      evidenceIds: ["SG-CLAIM-01"],
+      signals: { "SG-CLAIM-01": "Conditional" },
+      decision: "PROCEED",
+      riskAcknowledged: true,
+    },
+  });
+
+  assert.match(result.summary, /Singapore-only/);
+  assert.ok(result.checklist.some((item) => /SFA Part 13 provision/.test(item)));
+  // The core boundary: a single-jurisdiction handoff must not leak other markets.
+  assert.equal(result.checklist.some((item) => /Rule 506\(c\)/.test(item)), false);
+  assert.ok(result.constraints.some((item) => /Do not infer United States, Hong Kong, or EU coverage/.test(item)));
+});
+
 test("refuses to run without a human-approved Proceed handoff", () => {
   assert.throws(
     () => runBoundedDownstreamAgent({

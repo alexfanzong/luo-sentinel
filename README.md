@@ -1,6 +1,6 @@
 # LUO Sentinel
 
-> Evidence-bound AI Sentinel for RWA actions on Injective.
+> Evidence-bound guard layer between project Agents and on-chain RWA execution.
 
 <p align="center">
   <img src="app/public/luo-mark.png" alt="LUO Sentinel logo" width="170" />
@@ -21,7 +21,9 @@
 
 LUO Sentinel is an evidence-bound guard layer for RWA actions on Injective. It turns reviewed regulatory source anchors into a visual evidence map, then requires Sentinel review, a human gate, and a verifiable receipt before any downstream agent acts.
 
-The project is not about asking AI to produce a legal conclusion such as "this asset can be issued or transferred here." It demonstrates a safer path: hold the action, verify the source boundary, then decide what an AI agent is allowed to do.
+The entry point is an upstream project Agent, not a human legal search user. When that Agent tries to prepare or advance an RWA action, Sentinel holds the action before execution, routes it only into reviewed source scopes, and forces a human wallet gate before any downstream handoff is created.
+
+The project is not about asking AI to produce a legal conclusion such as "this asset can be issued or transferred here." It demonstrates a safer path: intercept the action, verify the source boundary, then decide what another AI agent is allowed to do.
 
 The map is not a live legal conclusion. It is a snapshot of a reviewed evidence pack. When regulatory sources change, affected signals must be reviewed again.
 
@@ -35,30 +37,36 @@ The map is not a live legal conclusion. It is a snapshot of a reviewed evidence 
 
 Live app: [https://luo-sentinel.vercel.app](https://luo-sentinel.vercel.app)
 
+Deck draft: [https://luo-sentinel.vercel.app/deck.html](https://luo-sentinel.vercel.app/deck.html)
+
 Suggested reviewer path:
 
-1. In the empty search box, ask the cross-border prompt:
-   `We're launching a tokenized US Treasury (OUSG) product, where can we legally offer and transfer it?`
+1. In the Agent request capsule, submit a proposed RWA action:
+   `Prepare an OUSG-like tokenized treasury asset for Injective issuance or transfer.`
 2. Open the jurisdiction markers and check that each signal links to its cited source anchor.
 3. Continue through Action Plan, Agent Review, Human Gate, Testnet Anchor, and Handoff.
 4. Run the bounded downstream agent and confirm that it creates a counsel-preparation checklist, not a legal conclusion.
-5. Restart and ask the Hong Kong-only prompt:
-   `Can we launch OUSG in Hong Kong only?`
+5. Restart and submit the Hong Kong-only scope:
+   `Prepare the OUSG handoff for Hong Kong only.`
 6. Confirm that the map narrows to the Hong Kong source scope and does not infer U.S., Singapore, or EU coverage.
 
 ## About The Project
 
 LUO Sentinel demonstrates a minimal AI x Web3 Sentinel loop:
 
-1. A proposed RWA action is held before execution.
-2. The system routes it only into reviewed evidence scopes.
-3. The map shows jurisdiction-specific source anchors and risk boundaries.
-4. The Review Council checks whether a source is being over-interpreted.
-5. A human gate decides whether to Proceed.
-6. A bounded Sentinel receipt can be anchored on testnet.
-7. A downstream agent can only produce a counsel-preparation checklist within the approved scope.
+1. An upstream project Agent proposes an RWA action.
+2. Sentinel holds the action before execution.
+3. The system routes it only into reviewed evidence scopes.
+4. The map shows jurisdiction-specific source anchors and risk boundaries.
+5. The Review Council checks whether a source is being over-interpreted.
+6. A human gate decides whether to Proceed.
+7. A bounded Sentinel receipt can be anchored on testnet.
+8. A downstream agent can only produce a counsel-preparation checklist within the approved scope.
 
 ## Core Features
+
+- **Agent-first request hold**
+  The demo starts from a proposed Agent action and stops it before any token issuance, transfer, order, or strategy can run.
 
 - **Reviewed evidence map**  
   The map comes from reviewed source anchors, not live model-generated legal conclusions.
@@ -167,6 +175,8 @@ On-chain, the demo anchors only:
 - decision timestamp.
 
 Off-chain, the app keeps legal source text, action-plan narrative, reviewer scorecards, downstream handoff brief, and counsel-preparation checklist.
+
+Singapore uses the official Securities and Futures Act 2001 as the primary source anchor. MAS digital-token guidance may be useful as secondary operational reading, but it is not treated as the source that authorizes an RWA offer or transfer.
 
 ## Product Roadmap
 
