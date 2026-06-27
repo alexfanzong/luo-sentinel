@@ -14,7 +14,7 @@ Use this checklist before recording the final demo or submitting the project.
 ## Pre-recording checks
 
 - Run the app from `app/` on `127.0.0.1`.
-- Confirm the landing search opens the reviewed OUSG cross-border scope.
+- Confirm the landing Agent request capsule opens the reviewed OUSG cross-border scope.
 - Confirm an unsupported question shows the refusal branch instead of a
   fabricated map.
 - Confirm the refusal branch can route to one selected jurisdiction, especially

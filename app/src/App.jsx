@@ -94,6 +94,7 @@ const COUNSEL_PREP_TEMPLATES = Object.freeze({
     confirm: "Whether the token is a capital markets product on the actual facts, and which SFA offer route applies.",
     templates: [
       { label: "Singapore Statutes Online · Securities and Futures Act 2001", url: "https://sso.agc.gov.sg/Act/SFA2001" },
+      { label: "MAS · Guide to Digital Token Offerings (secondary guidance)", url: "https://www.mas.gov.sg/-/media/MAS/Sectors/Guidance/Guide-to-Digital-Token-Offerings-26-May-2020.pdf" },
     ],
   },
   "EU-CLAIM-02": {

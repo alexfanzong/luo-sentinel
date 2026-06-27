@@ -11,9 +11,10 @@ When implementing from a selected generated mock, treat that image as the source
 - The selected visual direction is the Atlas Canvas map-first screen.
 - The landing page source of truth is the dark Atlas Canvas version from the
   Claude UI redesign: map background, centered LUO mark, short monospaced
-  tagline, and one large search capsule with the action button inside.
-- Keep the landing search capsule refined rather than oversized; it should feel
-  like a precise command surface, not a full-width hero banner.
+  tagline, and one rounded Agent request capsule with the action button inside.
+- Keep the landing Agent capsule refined rather than oversized; it should feel
+  like a precise guard-layer request surface, not a human legal search box or a
+  full-width hero banner.
 - The preferred Step 3 direction is a `Review Matrix`: reference scope opens as
   a popover, while Scope / Source / Risk scores sit side by side as primary
   evidence. Avoid bubbly cards, floating pods, linear timelines, or game-like
