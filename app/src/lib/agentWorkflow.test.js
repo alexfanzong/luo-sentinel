@@ -12,8 +12,8 @@ function appSource() {
 test("shows a source-bounded action plan instead of a lead-market recommendation", () => {
   const source = appSource();
 
-  assert.match(source, /Action plan/);
-  assert.match(source, /Agent starts here/);
+  assert.match(source, /What Sentinel held/);
+  assert.match(source, /Run the review/);
   assert.match(source, /Take to local counsel/);
   assert.doesNotMatch(source, /Suggested lead market/);
   assert.doesNotMatch(source, /Most actionable/);
@@ -44,7 +44,7 @@ test("routes the selected scope through the agent review council before a receip
   const source = appSource();
 
   assert.match(source, /buildReviewCouncil/);
-  assert.match(source, /Agent review/);
+  assert.match(source, /Agent Review Council/);
   assert.match(source, /Scores are audit weights, not AI confidence/);
   assert.match(source, /Scope.*\/100/s);
   assert.match(source, /Source fit.*\/100/s);
@@ -70,7 +70,7 @@ test("lets the bounded downstream agent consume the handoff in step five", () =>
 
   assert.match(source, /runBoundedDownstreamAgent/);
   assert.match(source, /buildHandoffFacts/);
-  assert.match(source, /Run bounded execution agent/);
+  assert.match(source, /Run counsel-prep agent/);
   assert.match(source, /Counsel preparation checklist/);
 });
 
@@ -80,8 +80,8 @@ test("frames the demo as a preflight for a proposed Injective financial action",
   assert.match(source, /PROPOSED_FINANCIAL_ACTION/);
   assert.match(source, /Proposed tokenized treasury action/);
   assert.match(source, /Injective EVM testnet/);
-  assert.match(source, /Blocked until human preflight/);
-  assert.match(source, /No transfer, order, or strategy is executed/);
+  assert.match(source, /Held by Sentinel\. Nothing executed/);
+  assert.match(source, /Held · nothing is executed until you decide/);
   assert.match(source, /do not execute a transfer, order, strategy, or asset movement from this handoff alone/);
   assert.doesNotMatch(source, /Injective RWA market/);
 });

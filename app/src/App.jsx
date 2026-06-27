@@ -38,17 +38,58 @@ const ACTION_PLAN = {
 const PROPOSED_FINANCIAL_ACTION = Object.freeze({
   label: "Proposed tokenized treasury action",
   network: "Injective EVM testnet",
-  execution: "Blocked until human preflight",
+  execution: "Held by Sentinel. Nothing executed",
   intent: "Prepare an OUSG-like tokenized asset for a downstream transfer or strategy workflow.",
   constraints: [
     ["Asset context", "Tokenized U.S. Treasury sample"],
     ["Execution layer", "Injective financial action, testnet only"],
-    ["Value transfer", "0 INJ in demo; no asset movement"],
+    ["If released", "Downstream transfer or strategy"],
     ["Agent role", "Detect evidence gaps before execution"],
   ],
 });
 
 const SCOPE_SUMMARY_ORDER = ["US-CLAIM-01", "EU-CLAIM-02", "HK-CLAIM-01", "SG-CLAIM-01"];
+
+// Procedural workstreams a reviewer can start BEFORE engaging counsel.
+// Derived from the same reviewed source anchors in rwaEvidence.js; preparation steps, not legal conclusions.
+const COUNSEL_PREP_TEMPLATES = Object.freeze({
+  "US-CLAIM-01": {
+    route: "Reg D private placement (Rule 506(c) candidate)",
+    steps: [
+      "Stand up the accredited-investor verification workflow (income or net-worth evidence, or third-party verification letters) required by Rule 506(c).",
+      "Prepare the Form D notice for the SEC and check state blue-sky notice filings.",
+      "Run the Rule 506(d) bad-actor disqualification check on all covered persons.",
+      "Draft subscription agreement and offering materials for counsel to review.",
+    ],
+    confirm: "Whether Rule 506(c) or another exemption fits the actual product and buyer set.",
+  },
+  "HK-CLAIM-01": {
+    route: "SFC tokenised-securities intermediary assessment",
+    steps: [
+      "Map which SFC regulated activities the product may trigger (for example Type 1 dealing or Type 4 advising).",
+      "Confirm the licensed intermediary and the distribution channel for any offer.",
+      "Prepare the suitability and client-onboarding workflow.",
+      "Document custody, control and transfer-restriction design.",
+    ],
+    confirm: "Whether the product is a tokenised security on the actual facts, and which SFC conditions apply.",
+  },
+  "SG-CLAIM-01": {
+    route: "Singapore SFA offer-path assessment",
+    steps: [
+      "Identify the specific SFA or MAS provision relied on; the reviewed pack does not establish one.",
+      "Map any collective-investment-scheme, prospectus or exemption requirements for the offer structure.",
+    ],
+    confirm: "Whether a concrete SFA provision supports the intended offer or transfer.",
+  },
+  "EU-CLAIM-02": {
+    route: "EU classification (MiCA with MiFID II)",
+    steps: [
+      "Assemble the product features needed for a MiFID II financial-instrument assessment.",
+      "Prepare MiCA scope-analysis inputs and note that MiCA alone does not resolve classification.",
+    ],
+    confirm: "Whether the product is a financial instrument, and which member-state rules apply.",
+  },
+});
 
 const REVIEW_SCORE_LABELS = [
   { key: "coverage", label: "Scope", title: "How much of the requested scope is covered by reviewed sources." },
@@ -115,6 +156,7 @@ export function App() {
   const [reviewScope, setReviewScope] = useState(() => createReviewScope());
   const [scopePanelOpen, setScopePanelOpen] = useState(false);
   const [handoffCopied, setHandoffCopied] = useState(false);
+  const [briefCopied, setBriefCopied] = useState(false);
   const [step, setStep] = useState(1); // 1 brief · 2 agent review · 3 decision · 4 anchor · 5 handoff
   const [decision, setDecision] = useState("review");
   const [receipt, setReceipt] = useState(null);
@@ -133,6 +175,9 @@ export function App() {
   const scopeLabel = reviewScope.label;
   const actionPlan = getScopedActionPlan(reviewScope);
   const reviewCouncil = buildReviewCouncil(reviewScope);
+  const scopeIsSingle = reviewScope.scopeType === "single-jurisdiction";
+  const councilSize = reviewCouncil.scorecards.length;
+  const councilSizeWord = councilSize === 3 ? "three" : String(councilSize);
   const chamberAgents = reviewCouncil.scorecards.slice(0, 3).map((card, index) => ({
     ...card,
     chamberLabel: ["Scope", "Source", "Risk"][index],
@@ -267,6 +312,70 @@ export function App() {
       "- **Execution boundary** — do not execute a transfer, order, strategy, or asset movement from this handoff alone.",
       ...buildScopeConstraints(),
     ].join("\n");
+  }
+
+  function buildCounselPrepBrief() {
+    const lines = [
+      "# Pre-counsel preparation brief",
+      "",
+      `**Case:** ${caseRef}`,
+      `**Review scope:** ${scopeLabel} (${reviewScope.reviewMode})`,
+      "",
+      "A preparation worksheet built from a held Sentinel decision. It helps you arrive at counsel prepared. It is not legal advice and does not establish compliance.",
+      "",
+      "## Start here, before you contact counsel",
+      actionPlan.startHere.text,
+      `Primary source: ${actionPlan.startHere.label} — ${actionPlan.startHere.url}`,
+      "",
+      "## What to assemble",
+      "### You need",
+      ...actionPlan.materials.need.map((m) => `- [ ] ${m.text}`),
+      "",
+      "### You likely already have",
+      ...actionPlan.materials.likelyHave.map((m) => `- [ ] ${m}`),
+      "",
+      "### Confirm with counsel",
+      ...actionPlan.materials.counsel.map((m) => `- ${m}`),
+      "",
+      "## Source-by-source workstream",
+    ];
+
+    scopedEvidence.forEach((item) => {
+      const tpl = COUNSEL_PREP_TEMPLATES[item.id];
+      lines.push("", `### ${item.title} — ${item.signal}`);
+      lines.push(`Source: ${item.sourceLabel} (${item.sourceUrl})`);
+      if (tpl) {
+        lines.push(`Route to prepare: ${tpl.route}`);
+        lines.push("Prepare before counsel:");
+        tpl.steps.forEach((s) => lines.push(`- [ ] ${s}`));
+        lines.push(`Confirm with counsel: ${tpl.confirm}`);
+      } else {
+        lines.push(item.summary);
+      }
+    });
+
+    lines.push(
+      "",
+      "## Boundary",
+      "This worksheet does not select a lead jurisdiction, establish compliance, or authorize issuing or transferring the asset. Those remain with counsel.",
+    );
+    return lines.join("\n");
+  }
+
+  function copyBrief() {
+    navigator.clipboard?.writeText(buildCounselPrepBrief());
+    setBriefCopied(true);
+    setTimeout(() => setBriefCopied(false), 1600);
+  }
+
+  function downloadBrief() {
+    const blob = new Blob([buildCounselPrepBrief()], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${receipt?.evidenceSet.decision.caseRef || "luo-case"}-counsel-prep.md`;
+    link.click();
+    URL.revokeObjectURL(url);
   }
 
   function copyHandoff() {
@@ -723,9 +832,9 @@ export function App() {
             onClick={(event) => event.stopPropagation()}
           >
             <button type="button" className="rail-close" onClick={() => setRailOpen(false)} aria-label="Close">✕</button>
-            <div className={`sheet-inner ${step === 3 ? "sheet-inner--wide" : ""}`}>
+            <div className="sheet-inner">
               <nav className="sheet-stepper" aria-label="Workflow steps">
-                {[["1", "Action plan"], ["2", "Agent review"], ["3", "Decision"], ["4", "Anchor"], ["5", "Handoff"]].map(([n, label]) => (
+                {[["1", "Action"], ["2", "Review"], ["3", "Decision"], ["4", "Receipt"], ["5", "Handoff"]].map(([n, label]) => (
                   <button
                     key={n}
                     type="button"
@@ -740,8 +849,8 @@ export function App() {
 
               {step === 1 && (
                 <div className="sheet-step-panel">
-                  <p className="sheet-kicker">Step 1 · Injective action preflight</p>
-                  <h2>Proposed financial action</h2>
+                  <p className="sheet-kicker">Step 1 · The held action</p>
+                  <h2>What Sentinel held</h2>
                   <section className="preflight-action-card" aria-label="Proposed Injective financial action">
                     <div>
                       <span>{PROPOSED_FINANCIAL_ACTION.network}</span>
@@ -791,7 +900,7 @@ export function App() {
                     </div>
                   </div>
                   <div className="sheet-nav">
-                    <button className="decision-button" onClick={() => setStep(2)}>Run agent preflight →</button>
+                    <button className="decision-button" onClick={() => setStep(2)}>Run the review →</button>
                   </div>
                 </div>
               )}
@@ -840,15 +949,16 @@ export function App() {
                   </div>
                   <p className="reco-disclaimer">Gate: {reviewCouncil.aggregate.gate.replaceAll("-", " ")}.</p>
                   <div className="sheet-nav">
-                    <button className="decision-button" onClick={() => setStep(3)}>Open human gate →</button>
+                    <button className="decision-button" onClick={() => setStep(3)}>Make the decision →</button>
                   </div>
                 </div>
               )}
 
               {step === 3 && (
                 <div className="sheet-step-panel sheet-step-panel--gate">
-                  <p className="sheet-kicker">Step 3 · Human gate</p>
-                  <h2>Preflight gate</h2>
+                  <p className="sheet-kicker">Step 3 · The Sentinel gate</p>
+                  <h2>You decide what happens</h2>
+                  <p className="rail-lede">Sentinel holds the action until a person decides. Neither choice issues the asset. Proceeding records an accountable, wallet-signed decision; issuing or transferring still requires counsel.</p>
 
                   <div className="scope-reference-bar">
                     <div>
@@ -887,58 +997,42 @@ export function App() {
 
                   <div className="gate-workspace">
                     <div className="gate-main">
-                      <section className="consultation-ledger" aria-label="Agent consultation ledger">
-                        <div className="ledger-meta-grid" aria-label="Intercepted action metadata">
-                          <div><span>Action source</span><strong>Injective Testnet</strong></div>
-                          <div><span>Action type</span><strong>MsgExec</strong></div>
-                          <div><span>Action id</span><strong>{caseRef}</strong></div>
-                        </div>
-                        <div className="ledger-action-line">
-                          <span>Intercepted Injective action</span>
-                          <strong>{receipt ? "Receipt ready" : decision === "hold" ? "Held for counsel" : "Blocked before execution"}</strong>
-                          <small>OUSG-like treasury sample · 0 INJ · Testnet</small>
-                        </div>
-
-                        <div className="review-matrix" aria-label="Agent score matrix">
-                          {chamberAgents.map((agent) => (
-                            <article className="review-matrix-cell" key={agent.agentId}>
-                              <div className="review-matrix-head">
-                                <span>{agent.chamberLabel}</span>
-                                <em>{agent.verdict}</em>
-                              </div>
-                              <div className="review-matrix-score">
-                                <strong>{agent.scores.claimSupport}</strong>
-                                <small>/100</small>
-                              </div>
-                              <div className="review-matrix-rail" aria-label={`${agent.name} claim support score`}>
-                                <span style={{ width: `${agent.scores.claimSupport}%` }} />
-                              </div>
-                              <p>{agent.name}</p>
-                              <small>{agent.objections[0]}</small>
-                            </article>
-                          ))}
-                        </div>
-
-                        <div className="matrix-gate-line">
-                          <span>Human gate</span>
-                          <strong>{reviewCouncil.aggregate.gate.replaceAll("-", " ")}</strong>
-                        </div>
-                      </section>
-
-                      <section className="gate-facts" aria-label="Preflight facts">
+                      <div className="gate-verdict-recap">
                         <div>
-                          <span>Source route</span>
-                          <strong>{reviewScope.evidenceIds.length} reviewed signal{reviewScope.evidenceIds.length === 1 ? "" : "s"}</strong>
+                          <span>Council verdict</span>
+                          <strong>All {councilSizeWord} agents flagged. Your call.</strong>
                         </div>
-                        <div>
-                          <span>Execution</span>
-                          <strong>Frozen</strong>
-                        </div>
-                        <div>
-                          <span>Receipt</span>
-                          <strong>Hash only</strong>
-                        </div>
-                      </section>
+                        <button type="button" onClick={() => setStep(2)}>Review again</button>
+                      </div>
+
+                      {scopeIsSingle && (
+                        <p className="gate-scope-note">Single-source review · this is one jurisdiction's anchor, not a jurisdiction-wide legal assessment.</p>
+                      )}
+
+                      <div className="gate-held-line">
+                        <span>Held action</span>
+                        <strong>{receipt ? "Receipt ready" : decision === "hold" ? "Held for counsel" : "OUSG-like treasury sample"}</strong>
+                        <small>0 INJ · Injective testnet · frozen until you decide</small>
+                      </div>
+
+                      <div className="gate-outcomes">
+                        <article className="gate-outcome">
+                          <div className="gate-outcome-head">
+                            <span className="gate-outcome-key">A</span>
+                            <strong>Hold for counsel</strong>
+                            <em>Stays frozen</em>
+                          </div>
+                          <p>The action stays frozen. The agents' flags are packaged for counsel review, and you can decide again later.</p>
+                        </article>
+                        <article className="gate-outcome gate-outcome--go">
+                          <div className="gate-outcome-head">
+                            <span className="gate-outcome-key gate-outcome-key--go">B</span>
+                            <strong>Proceed with sign-off</strong>
+                            <em>Decision recorded</em>
+                          </div>
+                          <p>You sign with your wallet that you reviewed the flags and chose to move forward. This anchors an accountable decision on-chain. It does <strong>not</strong> authorize issuing or transferring the asset; that still requires counsel.</p>
+                        </article>
+                      </div>
 
                       <label className="scenario-ref-field">
                         <span>Action reference</span>
@@ -965,18 +1059,18 @@ export function App() {
                         <button className="decision-button decision-button--quiet" onClick={() => setDecision("hold")}>Hold for counsel</button>
                         <button className="decision-button" onClick={prepareReceiptDraft} disabled={decision === "preparing" || wallet.status !== "connected"}>
                           {decision === "preparing"
-                            ? "Preparing commitment…"
+                            ? "Signing & preparing receipt…"
                             : wallet.status !== "connected"
-                              ? "② Proceed preflight (connect wallet first)"
-                              : "Proceed preflight — prepare receipt"}
+                              ? "Connect wallet to sign off"
+                              : "Sign and prepare receipt"}
                         </button>
                       </div>
 
                       <div className={`decision-state decision-state--${decision}`}>
-                        {decision === "review" && "Blocked · No transfer, order, or strategy is executed."}
+                        {decision === "review" && "Held · nothing is executed until you decide."}
                         {decision === "hold" && "Held for counsel. No Injective action is executed."}
-                        {decision === "preparing" && "Creating a local public commitment."}
-                        {decision === "draft" && "Proceed receipt ready. Preflight decision only."}
+                        {decision === "preparing" && "Creating your signed receipt."}
+                        {decision === "draft" && "Proceed receipt ready. Decision recorded."}
                         {decision === "wallet-required" && "Connect the reviewer wallet first."}
                         {decision === "error" && "Receipt could not be prepared. No wallet action occurred."}
                       </div>
@@ -1000,8 +1094,8 @@ export function App() {
 
               {step === 4 && (
                 <div className="sheet-step-panel">
-                  <p className="sheet-kicker">Step 4 · Anchor on testnet</p>
-                  <h2>Anchor the preflight receipt</h2>
+                  <p className="sheet-kicker">Step 4 · On-chain receipt</p>
+                  <h2>Seal the decision on-chain</h2>
                   {!receipt && <p className="sheet-hint">Complete the decision in step 3 first.</p>}
                   {receipt && (
                     <>
@@ -1057,8 +1151,8 @@ export function App() {
 
               {step === 5 && (
                 <div className="sheet-step-panel">
-                  <p className="sheet-kicker">Step 5 · On-chain proof &amp; agent handoff</p>
-                  <h2>Preflight proof &amp; bounded handoff</h2>
+                  <p className="sheet-kicker">Step 5 · Verified handoff</p>
+                  <h2>Hand off, inside the scope</h2>
                   {!receipt && <p className="sheet-hint">Complete the earlier steps first.</p>}
                   {receipt && (
                     <>
@@ -1071,18 +1165,41 @@ export function App() {
                           View testnet transaction ↗
                         </a>
                       )}
-                      <section className="agent-handoff" aria-label="Agent handoff brief">
-                        <span>Agent handoff · machine-actionable (off-chain)</span>
-                        <pre>{buildAgentHandoff()}</pre>
-                        <div className="handoff-actions">
-                          <button type="button" className="testnet-review-button" onClick={copyHandoff}>
-                            {handoffCopied ? "Copied ✓" : "Copy handoff"}
-                          </button>
-                          <button type="button" className="testnet-review-button" onClick={downloadHandoff}>Download .md</button>
-                          <button type="button" className="testnet-review-button" onClick={runDownstreamAgent}>Run bounded execution agent</button>
-                        </div>
-                        <p className="reco-disclaimer">Scope-bound handoff. Receipt hash only is anchored on-chain.</p>
-                      </section>
+                      <div className="handoff-templates">
+                        <p className="handoff-templates-intro">Two ready-to-use templates so you can move before counsel is engaged.</p>
+
+                        <section className="handoff-card handoff-card--human" aria-label="Pre-counsel preparation brief">
+                          <div className="handoff-card-head">
+                            <span className="handoff-card-for">For you · before counsel</span>
+                            <h3>Pre-counsel preparation brief</h3>
+                          </div>
+                          <p className="handoff-card-lede">A procedural worksheet: what to assemble, what you likely have, and exactly what to confirm with counsel for {scopeLabel}.</p>
+                          <pre>{buildCounselPrepBrief()}</pre>
+                          <div className="handoff-actions">
+                            <button type="button" className="testnet-review-button" onClick={copyBrief}>
+                              {briefCopied ? "Copied ✓" : "Copy brief"}
+                            </button>
+                            <button type="button" className="testnet-review-button" onClick={downloadBrief}>Download .md</button>
+                          </div>
+                        </section>
+
+                        <section className="handoff-card handoff-card--agent" aria-label="Downstream agent handoff">
+                          <div className="handoff-card-head">
+                            <span className="handoff-card-for">For a downstream agent</span>
+                            <h3>Scope-bound machine handoff</h3>
+                          </div>
+                          <p className="handoff-card-lede">Structured, verified facts plus hard limits, so an automated agent can prepare work without exceeding the reviewed scope.</p>
+                          <pre>{buildAgentHandoff()}</pre>
+                          <div className="handoff-actions">
+                            <button type="button" className="testnet-review-button" onClick={copyHandoff}>
+                              {handoffCopied ? "Copied ✓" : "Copy handoff"}
+                            </button>
+                            <button type="button" className="testnet-review-button" onClick={downloadHandoff}>Download .md</button>
+                            <button type="button" className="testnet-review-button" onClick={runDownstreamAgent}>Run counsel-prep agent</button>
+                          </div>
+                          <p className="reco-disclaimer">Only the receipt hash is anchored on-chain. This is not an issuance or a compliance determination.</p>
+                        </section>
+                      </div>
                       {downstreamResult && (
                         <section className="downstream-agent" aria-label="Bounded downstream agent output">
                           <span>{downstreamResult.mode}</span>
