@@ -91,6 +91,17 @@
       letter-spacing: .16em;
       text-transform: uppercase;
     }
+    .nav-right { display: flex; align-items: center; gap: 14px; }
+    .nav-lang {
+      color: #cdd6e6;
+      text-decoration: none;
+      font: 700 11px var(--mono);
+      letter-spacing: .12em;
+      padding: 6px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+    }
+    .nav-lang:hover { border-color: var(--green); color: var(--green); }
 
     .toc {
       position: fixed;
@@ -403,7 +414,10 @@
   <nav class="nav">
     <div class="nav-inner">
       <a class="brand" href="#top"><img src="/luo-mark.png" alt="" /> LUO Sentinel</a>
-      <span class="nav-meta">Evidence-bound AI Handoffs</span>
+      <div class="nav-right">
+        <span class="nav-meta">Evidence-bound AI Handoffs</span>
+        <a class="nav-lang" href="/">中文</a>
+      </div>
     </div>
   </nav>
 
@@ -421,13 +435,13 @@
   <header class="hero" id="top">
     <div class="shell">
       <img class="hero-mark" src="/luo-mark.png" alt="LUO" />
-      <p class="hero-eyebrow">LUO SENTINEL · RWA ON INJECTIVE · AGENT GUARD LAYER</p>
-      <h1>An Agent shouldn't talk itself into issuing an asset.</h1>
-      <p class="hero-dek">LUO Sentinel sits between a project's Agent and on-chain execution. It catches the RWA action before it runs, routes it to reviewed evidence, three reviewer Agents and a human wallet gate, and releases only a bounded downstream Agent handoff.</p>
+      <p class="hero-eyebrow">LUO SENTINEL · RWA ON INJECTIVE · AGENT × HUMAN COMPLIANCE LAYER</p>
+      <h1>Let the Agent get the prep right, and let a human hold the final gate.</h1>
+      <p class="hero-dek">LUO Sentinel is a compliance interlayer between an Agent and on-chain execution. The Agent aligns an RWA action to reviewed regulatory evidence and lays out the prep work; a human gives the final confirmation with their wallet; every step traces back to a concrete source.</p>
       <div class="hero-strip">
-        <div class="strip-item"><span>hold</span><strong>The action is held. Not a single transaction goes out.</strong></div>
-        <div class="strip-item"><span>review</span><strong>Every conclusion has to land on a clickable source, and disagreement stays on the record.</strong></div>
-        <div class="strip-item"><span>handoff</span><strong>Once a human signs, the downstream Agent can only do approved prep work — it never touches issuance or transfer.</strong></div>
+        <div class="strip-item"><span>prepare</span><strong>The Agent turns scattered regulatory sources into a ready-to-run prep checklist.</strong></div>
+        <div class="strip-item"><span>verify</span><strong>Every conclusion lands on a clickable source, and disagreement stays on the record.</strong></div>
+        <div class="strip-item"><span>confirm</span><strong>A human signs the final confirmation, leaving an accountable, traceable record.</strong></div>
       </div>
     </div>
   </header>
@@ -435,14 +449,14 @@
   <section class="section" id="problem">
     <div class="shell">
       <p class="kicker">01 · The problem</p>
-      <h2>The real risk is an Agent that gets it wrong and still pushes the action on-chain.</h2>
+      <h2>Agents are capable — but some calls should stay with a human.</h2>
       <div class="prose">
-        <p>RWA teams hand issuance, transfer and strategy prep to Agents. An Agent is good at filling in a path, and good at stitching plausible-looking fragments into a plan. The catch: cross-border regulation rarely gives one clean answer — it gives a set of source boundaries, classification questions and human judgment calls.</p>
-        <p>The moment an upstream Agent reads "the US looks viable" as "we can push the on-chain action now," the risk stops staying inside the chat window.</p>
+        <p>RWA teams have Agents prepare issuance, transfer and strategy. An Agent is great at filling in a path and stitching plausible-looking fragments into a plan — that's exactly its value. But cross-border regulation rarely has one answer; it's more about source boundaries, classification questions, and the points where a human has to make the call.</p>
+        <p>What's missing is a layer that keeps both the Agent's speed and the human's judgment intact.</p>
       </div>
       <div class="assert">
-        <p class="assert-label">Core problem</p>
-        <p>What needs holding back is an Agent that keeps wanting to act once the evidence runs thin.</p>
+        <p class="assert-label">Who does what</p>
+        <p>The Agent gets the prep right; whether to execute is left to a human.</p>
       </div>
     </div>
   </section>
@@ -450,10 +464,10 @@
   <section class="section" id="definition">
     <div class="shell">
       <p class="kicker">02 · The product</p>
-      <h2>Sentinel is an evidence gate between the Agent and on-chain execution.</h2>
+      <h2>Sentinel is a compliance interlayer between the Agent and on-chain execution.</h2>
       <div class="prose">
-        <p>LUO Sentinel doesn't hand out a "you may issue" legal conclusion. It does something narrower and checkable: hold the action, show which reviewed sources it can land on right now, and let the reviewer Agents check scope, source and risk.</p>
-        <p>Only after a human confirms with their wallet does the system mint a receipt and a handoff. That handoff permits exactly one thing — the downstream Agent preparing counsel-facing materials inside the approved boundary.</p>
+        <p>It doesn't hand out a "you may issue" conclusion. It does something more solid: align the action to reviewed sources, let the reviewer Agents lay out scope, source and risk, then pass it to a human to confirm.</p>
+        <p>After a human confirms with their wallet, the system mints a receipt and a handoff. That handoff only lets the downstream Agent prepare counsel-facing materials inside the approved boundary.</p>
       </div>
     </div>
   </section>
@@ -461,13 +475,13 @@
   <section class="section" id="flow">
     <div class="shell">
       <p class="kicker">03 · Guarded handoff chain</p>
-      <h2>It starts with an Agent trying to act, and step one is Sentinel catching it.</h2>
+      <h2>One chain where the Agent and the human each play their part.</h2>
       <div class="flow" aria-label="LUO Sentinel workflow">
-        <div class="flow-step"><span>01 upstream</span><h3>A project Agent moves to push an RWA action</h3><p>e.g. preparing an OUSG-like tokenized treasury to issue or transfer on Injective.</p></div>
-        <div class="flow-step"><span>02 sentinel</span><h3>Sentinel intercepts</h3><p>The action stays held — no transaction, no asset movement, no conclusion.</p></div>
-        <div class="flow-step"><span>03 evidence</span><h3>Routed to reviewed sources</h3><p>Only the four reviewed signals (US, HK, SG, EU) show; unreviewed jurisdictions stay dark.</p></div>
-        <div class="flow-step"><span>04 human gate</span><h3>Human wallet gate</h3><p>A person picks Hold or Proceed. Proceed only mints a bounded receipt.</p></div>
-        <div class="flow-step"><span>05 downstream</span><h3>Bounded downstream Agent</h3><p>The downstream Agent can only produce a counsel-prep checklist — never issuance, transfer or strategy.</p></div>
+        <div class="flow-step"><span>01 upstream</span><h3>The Agent starts an RWA action</h3><p>e.g. preparing an OUSG-like tokenized treasury to issue or transfer on Injective.</p></div>
+        <div class="flow-step"><span>02 sentinel</span><h3>Into the compliance layer</h3><p>The action aligns to evidence first and stays off-chain until a human confirms, leaving room to check every later step.</p></div>
+        <div class="flow-step"><span>03 evidence</span><h3>Aligned to reviewed sources</h3><p>Mapped to the four reviewed signals (US, HK, SG, EU), moving only within grounded scope.</p></div>
+        <div class="flow-step"><span>04 human gate</span><h3>A human holds the final gate</h3><p>After reading the evidence, a person picks Proceed or Hold and signs with their wallet.</p></div>
+        <div class="flow-step"><span>05 downstream</span><h3>The downstream Agent continues, in bounds</h3><p>Once approved, the downstream Agent produces a counsel-prep checklist within scope.</p></div>
       </div>
     </div>
   </section>
@@ -488,15 +502,15 @@
   <section class="section" id="review">
     <div class="shell">
       <p class="kicker">05 · Reviewer Agents</p>
-      <h2>Three reviewer Agents lay out scope, source and risk, then leave the call to a human.</h2>
+      <h2>Three reviewer Agents get scope, source and risk ready, then leave the judgment to a human.</h2>
       <div class="review-grid">
-        <div class="review-card"><span>scope agent</span><h3>Has the scope been quietly widened?</h3><p>Checks whether the request reaches past the reviewed jurisdictions and sources.</p><div class="score">70</div></div>
-        <div class="review-card"><span>source agent</span><h3>Can every claim point back to a source?</h3><p>Checks that each claim has a clickable source, not something the model filled in.</p><div class="score">72</div></div>
-        <div class="review-card"><span>risk agent</span><h3>Can this step skip a signature?</h3><p>Checks for issuance, transfer or strategy — the moves a human and counsel must decide.</p><div class="score">68</div></div>
+        <div class="review-card"><span>scope agent</span><h3>Is the scope fully covered?</h3><p>Confirms the request sits within the reviewed jurisdictions and sources.</p><div class="score">70</div></div>
+        <div class="review-card"><span>source agent</span><h3>Does every conclusion have a source?</h3><p>Confirms each claim points back to a source, not something the model filled in.</p><div class="score">72</div></div>
+        <div class="review-card"><span>risk agent</span><h3>Which moves need a human?</h3><p>Flags issuance, transfer and strategy — the calls a human and counsel should make.</p><div class="score">68</div></div>
       </div>
       <div class="assert">
         <p class="assert-label">Design boundary</p>
-        <p>This score is a review weight for a human to read — treat it as nothing more, not model confidence and not a compliance grade.</p>
+        <p>This score is a review weight to help a human see what matters faster; it isn't model confidence and it isn't a compliance grade.</p>
       </div>
     </div>
   </section>
@@ -512,7 +526,7 @@
         </div>
       </div>
       <div class="prose">
-        <p>The receipt proves one thing: a human reviewer accepted a bounded AI handoff under a specific evidence scope. It doesn't prove compliance, give a legal opinion, or authorize any asset transaction.</p>
+        <p>The receipt is an accountable, traceable record: a human, under a specific evidence scope, confirmed one bounded round of AI collaboration. It doesn't prove compliance, give a legal opinion, or authorize any asset transaction.</p>
       </div>
     </div>
   </section>
@@ -520,26 +534,26 @@
   <section class="section" id="demo">
     <div class="shell">
       <p class="kicker">07 · Demo path</p>
-      <h2>The demo shows one thing: the Agent's next step is boxed in.</h2>
+      <h2>The demo shows how an Agent and a human walk one RWA action through, safely.</h2>
       <div class="demo-acts">
         <div class="act">
           <h3>Main line · cross-border review</h3>
           <ol>
-            <li><b>01</b><span>The Agent request is held by Sentinel.</span></li>
-            <li><b>02</b><span>The map opens only the four reviewed source signals.</span></li>
-            <li><b>03</b><span>Three reviewer Agents surface scope, source and risk disagreements.</span></li>
-            <li><b>04</b><span>A human picks Proceed and signs with a testnet wallet.</span></li>
-            <li><b>05</b><span>The downstream Agent produces a counsel-prep checklist.</span></li>
+            <li><b>01</b><span>The Agent starts a cross-border request and enters the compliance layer.</span></li>
+            <li><b>02</b><span>The map opens the four reviewed source signals.</span></li>
+            <li><b>03</b><span>Three reviewer Agents get scope, source and risk ready.</span></li>
+            <li><b>04</b><span>A human confirms Proceed and signs with a testnet wallet.</span></li>
+            <li><b>05</b><span>The downstream Agent produces a counsel-prep checklist in scope.</span></li>
           </ol>
         </div>
         <div class="act">
-          <h3>Refusal branch · unreviewed scope</h3>
+          <h3>Protective branch · beyond reviewed scope</h3>
           <ol>
-            <li><b>01</b><span>The Agent request reaches past the reviewed source pack.</span></li>
-            <li><b>02</b><span>Sentinel won't draw a map, guess a jurisdiction, or hand back a "looks doable" answer.</span></li>
-            <li><b>03</b><span>The user can only go back to the cross-border scope or a single reviewed source.</span></li>
+            <li><b>01</b><span>The request reaches past the reviewed source pack.</span></li>
+            <li><b>02</b><span>Sentinel won't draw a map or guess a jurisdiction; it brings you back to grounded scope.</span></li>
+            <li><b>03</b><span>Go back to the cross-border scope or a single reviewed source.</span></li>
             <li><b>04</b><span>The receipt stays bound to the chosen source scope.</span></li>
-            <li><b>05</b><span>The handoff can't expand into unreviewed regions.</span></li>
+            <li><b>05</b><span>The handoff won't expand into unreviewed regions.</span></li>
           </ol>
         </div>
       </div>
@@ -561,8 +575,7 @@
 
   <footer class="footer">
     <div class="shell">
-      <p class="footer-q">LUO Sentinel leaves the call to a human. Before an Agent acts, it just has to clear an evidence-and-human checkpoint.</p>
-      <p class="footer-lang"><a href="/">中文 deck</a></p>
+      <p class="footer-q">LUO Sentinel lets the Agent get the prep right and lets a human hold the final gate — speed and safety, both kept.</p>
       <p class="boundary">Boundary: hackathon research demo only. Not legal advice, not a compliance determination, and not authorization to issue, transfer, trade, or move any asset.</p>
     </div>
   </footer>
