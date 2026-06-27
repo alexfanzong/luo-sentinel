@@ -40,7 +40,7 @@ test("explains that the map is a reviewed evidence snapshot", () => {
 
   assert.match(source, /RWA_EVIDENCE_PROVENANCE/);
   assert.match(source, /Last reviewed/);
-  assert.match(source, /Refresh required when primary sources change/);
+  assert.match(source, /reviewed source anchors/);
   assert.match(source, /not a live legal conclusion/);
 });
 

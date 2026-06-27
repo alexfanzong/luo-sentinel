@@ -891,7 +891,7 @@ export function App() {
             <div className="map-provenance" aria-label="Evidence map provenance">
               <strong>{RWA_EVIDENCE_PROVENANCE.packLabel}</strong>
               <small>
-                Last reviewed {RWA_EVIDENCE_PROVENANCE.reviewedAt} · {RWA_EVIDENCE_PROVENANCE.sourceType}. Refresh required when primary sources change.
+                Last reviewed {RWA_EVIDENCE_PROVENANCE.reviewedAt} · {RWA_EVIDENCE_PROVENANCE.sourceType}.
               </small>
             </div>
           </div>
