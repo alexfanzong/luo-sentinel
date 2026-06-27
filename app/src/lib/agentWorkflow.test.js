@@ -12,11 +12,22 @@ function appSource() {
 test("shows a source-bounded action plan instead of a lead-market recommendation", () => {
   const source = appSource();
 
-  assert.match(source, /What Sentinel held/);
-  assert.match(source, /Run the review/);
+  assert.match(source, /Sentinel stopped this before execution/);
+  assert.match(source, /Route to reviewers/);
   assert.match(source, /Take to local counsel/);
   assert.doesNotMatch(source, /Suggested lead market/);
   assert.doesNotMatch(source, /Most actionable/);
+});
+
+test("frames the entry as an upstream Agent request, not a human legal search box", () => {
+  const source = appSource();
+
+  assert.match(source, /Agent action firewall/);
+  assert.match(source, /Submit an upstream Agent request/);
+  assert.match(source, /Unreviewed Agent request refused/);
+  assert.match(source, /Guard layer between project Agents and tokenized RWA execution/);
+  assert.doesNotMatch(source, /Ask a reviewed RWA question/);
+  assert.doesNotMatch(source, /LUO Search/);
 });
 
 test("explains that the map is a reviewed evidence snapshot", () => {
@@ -78,10 +89,10 @@ test("frames the demo as a preflight for a proposed Injective financial action",
   const source = appSource();
 
   assert.match(source, /PROPOSED_FINANCIAL_ACTION/);
-  assert.match(source, /Proposed tokenized treasury action/);
+  assert.match(source, /Upstream Agent proposed RWA action/);
   assert.match(source, /Injective EVM testnet/);
-  assert.match(source, /Held by Sentinel\. Nothing executed/);
-  assert.match(source, /Held · nothing is executed until you decide/);
+  assert.match(source, /Intercepted by Sentinel\. Nothing executed/);
+  assert.match(source, /Intercepted · the upstream Agent cannot execute this action/);
   assert.match(source, /do not execute a transfer, order, strategy, or asset movement from this handoff alone/);
   assert.doesNotMatch(source, /Injective RWA market/);
 });

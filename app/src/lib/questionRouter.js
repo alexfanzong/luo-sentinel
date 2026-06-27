@@ -1,7 +1,7 @@
 import { RWA_EVIDENCE } from "./rwaEvidence.js";
 
 const REVIEWED_ASSET_PATTERN = /(ousg|tokeniz(?:ed)? treasury|treasury product|\brwa\b)/;
-const COMPARATIVE_SCOPE_PATTERN = /(jurisdiction|cross[ -]?border|offer|transfer|market|where|sell|distribut|abroad|four)/;
+const COMPARATIVE_SCOPE_PATTERN = /(jurisdiction|cross[ -]?border|offer|transfer|market|where|sell|distribut|abroad|four|issue|mint|execute|deploy)/;
 
 const JURISDICTION_PATTERNS = Object.freeze({
   "US-CLAIM-01": /\b(us|u\.s\.|united states|america|american)\b/,

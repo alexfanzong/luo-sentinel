@@ -8,6 +8,11 @@ test("routes the default cross-border OUSG question to the comparative evidence 
     getReviewedQuestionRoute("We're launching a tokenized US Treasury (OUSG) product, where can we legally offer and transfer it?"),
     { scopeType: "comparative", jurisdictionId: null },
   );
+
+  assert.deepEqual(
+    getReviewedQuestionRoute("Agent request: issue OUSG on Injective"),
+    { scopeType: "comparative", jurisdictionId: null },
+  );
 });
 
 test("routes a Hong Kong-only OUSG question directly to the Hong Kong evidence scope", () => {
