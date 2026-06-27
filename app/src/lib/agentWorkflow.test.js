@@ -27,7 +27,7 @@ test("frames the entry as an upstream Agent request, not a human legal search bo
   assert.match(source, /Agent request/);
   assert.match(source, /Submit an upstream Agent request/);
   assert.match(source, /Unreviewed Agent request refused/);
-  assert.match(source, /Guard layer between project Agents and tokenized RWA execution/);
+  assert.match(source, /Sentinel layer between project Agents and tokenized RWA execution/);
   assert.doesNotMatch(source, /Ask a reviewed RWA question/);
   assert.doesNotMatch(source, /LUO Search/);
   assert.doesNotMatch(source, /Agent action firewall/);

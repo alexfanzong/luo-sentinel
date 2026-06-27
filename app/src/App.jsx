@@ -862,7 +862,7 @@ export function App() {
           <span className="topbar-divider" />
           <div>
             <strong>LUO Sentinel</strong>
-            <span>Guard layer between project Agents and tokenized RWA execution · testnet demo</span>
+            <span>Sentinel layer between project Agents and tokenized RWA execution · testnet demo</span>
           </div>
         </div>
         <button

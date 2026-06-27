@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>LUO Sentinel — Evidence-bound AI Handoffs</title>
-  <meta name="description" content="LUO Sentinel deck: an evidence-bound guard layer between project Agents and on-chain RWA execution on Injective." />
+  <meta name="description" content="LUO Sentinel deck: an evidence-bound Sentinel layer between project Agents and on-chain RWA execution on Injective." />
   <style>
     :root {
       --bg: #050a14;
@@ -25,6 +25,7 @@
 
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
+    html, body { overflow-x: hidden; }
     body {
       margin: 0;
       color: var(--ink);
@@ -161,6 +162,7 @@
       color: #d7e0ef;
       font-size: clamp(18px, 2vw, 21px);
       line-height: 1.45;
+      overflow-wrap: anywhere;
     }
     .hero-strip {
       display: grid;
@@ -187,6 +189,7 @@
       color: var(--ink);
       font-size: 18px;
       line-height: 1.25;
+      overflow-wrap: anywhere;
     }
 
     .section {
@@ -202,6 +205,7 @@
       margin-top: 24px;
       color: #d5deee;
       font-size: 18px;
+      overflow-wrap: anywhere;
     }
     .prose strong { color: var(--ink); }
 
@@ -222,6 +226,7 @@
       margin: 0;
       font-size: 21px;
       line-height: 1.38;
+      overflow-wrap: anywhere;
     }
 
     .flow {
@@ -248,12 +253,14 @@
     .flow-step h3 {
       margin-top: 14px;
       font: 700 22px/1.15 var(--sans);
+      overflow-wrap: anywhere;
     }
     .flow-step p {
       margin: 12px 0 0;
       color: var(--muted);
       font-size: 15px;
       line-height: 1.5;
+      overflow-wrap: anywhere;
     }
 
     .matrix {
@@ -310,10 +317,12 @@
     .review-card h3 {
       margin-top: 18px;
       font: 700 22px/1.05 var(--sans);
+      overflow-wrap: anywhere;
     }
     .review-card p {
       color: var(--muted);
       font-size: 15px;
+      overflow-wrap: anywhere;
     }
     .score {
       margin-top: auto;
@@ -373,6 +382,7 @@
       gap: 12px;
       align-items: baseline;
     }
+    .act li span { overflow-wrap: anywhere; }
     .act b {
       color: var(--green);
       font: 800 13px var(--mono);
@@ -401,6 +411,7 @@
       margin: 0;
       font: 400 clamp(32px, 4.2vw, 52px)/1.06 var(--serif);
       text-wrap: balance;
+      overflow-wrap: anywhere;
     }
     .footer-bar {
       margin-top: 72px;
@@ -428,11 +439,42 @@
       .toc { display: none; }
     }
     @media (max-width: 760px) {
+      .nav-inner { width: min(100%, calc(100vw - 28px)); min-height: 58px; gap: 10px; }
+      .brand { gap: 8px; font-size: 11px; letter-spacing: .1em; }
+      .brand img { width: 22px; height: 22px; }
       .nav-meta { display: none; }
+      .nav-right { gap: 8px; }
+      .nav-lang { padding: 5px 9px; font-size: 10px; letter-spacing: .06em; }
+      .shell { width: min(100%, calc(100vw - 36px)); }
+      .hero { min-height: auto; align-items: flex-start; padding: 70px 0 54px; }
+      .hero-mark { width: 60px; margin-bottom: 22px; }
+      .hero-eyebrow, .kicker { letter-spacing: .14em; line-height: 1.5; }
+      h1 { font-size: clamp(38px, 12vw, 52px); line-height: 1.02; }
+      h2 { font-size: clamp(30px, 9vw, 42px); line-height: 1.08; }
+      .hero-dek, .prose { font-size: 16px; }
       .hero-strip, .review-grid, .demo-acts, .receipt-grid { grid-template-columns: 1fr; }
+      .hero-strip { width: 100%; }
+      .strip-item { min-height: 0; padding: 18px; }
+      .strip-item strong { font-size: 16px; }
+      .flow { grid-template-columns: 1fr; overflow-x: visible; }
+      .flow-step { min-width: 0; min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); }
+      .flow-step:last-child { border-bottom: 0; }
       .matrix-row { grid-template-columns: 1fr; gap: 8px; }
+      .matrix-row strong { font-size: 20px; }
       .status { justify-self: start; }
       .section { padding-top: 76px; }
+      .assert { padding: 22px 20px; }
+      .assert p:last-child { font-size: 18px; }
+      .review-card { min-height: 0; padding: 22px; }
+      .receipt, .act { padding: 20px; }
+      .source-list a { overflow-wrap: anywhere; }
+      .author { max-width: none; padding: 22px 20px; }
+      .footer { padding-top: 82px; }
+      .footer-bar { margin-top: 50px; }
+    }
+    @media (max-width: 390px) {
+      h1 { font-size: 36px; }
+      .brand { max-width: 210px; }
     }
   </style>
 </head>
@@ -462,9 +504,9 @@
   <header class="hero" id="top">
     <div class="shell">
       <img class="hero-mark" src="/luo-mark.png" alt="LUO" />
-      <p class="hero-eyebrow">LUO SENTINEL · RWA ON INJECTIVE · AGENT × HUMAN COMPLIANCE LAYER</p>
+      <p class="hero-eyebrow">LUO SENTINEL · RWA ON INJECTIVE · AGENT × HUMAN SENTINEL LAYER</p>
       <h1>Let the Agent get the prep right, and let a human hold the final gate.</h1>
-      <p class="hero-dek">LUO Sentinel is a compliance interlayer between an Agent and on-chain execution. The Agent aligns an RWA action to reviewed regulatory evidence and lays out the prep work; a human gives the final confirmation with their wallet; every step traces back to a concrete source.</p>
+      <p class="hero-dek">LUO Sentinel is a Sentinel layer between an Agent and on-chain execution. The Agent aligns an RWA action to reviewed regulatory evidence and lays out the prep work; a human gives the final confirmation with their wallet; every step traces back to a concrete source.</p>
       <div class="hero-strip">
         <div class="strip-item"><span>prepare</span><strong>The Agent turns scattered regulatory sources into a ready-to-run prep checklist.</strong></div>
         <div class="strip-item"><span>verify</span><strong>Every conclusion lands on a clickable source, and disagreement stays on the record.</strong></div>
@@ -479,7 +521,7 @@
       <h2>Agents are capable — but some calls should stay with a human.</h2>
       <div class="prose">
         <p>RWA teams have Agents prepare issuance, transfer and strategy. An Agent is great at filling in a path and stitching plausible-looking fragments into a plan — that's exactly its value. But cross-border regulation rarely has one answer; it's more about source boundaries, classification questions, and the points where a human has to make the call.</p>
-        <p>What's missing is a layer that keeps both the Agent's speed and the human's judgment intact.</p>
+        <p>What's missing is a Sentinel layer that keeps both the Agent's speed and the human's judgment intact.</p>
       </div>
       <div class="assert">
         <p class="assert-label">Who does what</p>
@@ -491,7 +533,7 @@
   <section class="section" id="definition">
     <div class="shell">
       <p class="kicker">02 · The product</p>
-      <h2>Sentinel is a compliance interlayer between the Agent and on-chain execution.</h2>
+      <h2>Sentinel sits between the Agent and on-chain execution, holding the boundary before anything runs.</h2>
       <div class="prose">
         <p>It doesn't hand out a "you may issue" conclusion. It does something more solid: align the action to reviewed sources, let the reviewer Agents lay out scope, source and risk, then pass it to a human to confirm.</p>
         <p>After a human confirms with their wallet, the system mints a receipt and a handoff. That handoff only lets the downstream Agent prepare counsel-facing materials inside the approved boundary.</p>
@@ -505,7 +547,7 @@
       <h2>One chain where the Agent and the human each play their part.</h2>
       <div class="flow" aria-label="LUO Sentinel workflow">
         <div class="flow-step"><span>01 upstream</span><h3>The Agent starts an RWA action</h3><p>e.g. preparing an OUSG-like tokenized treasury to issue or transfer on Injective.</p></div>
-        <div class="flow-step"><span>02 sentinel</span><h3>Into the compliance layer</h3><p>The action aligns to evidence first and stays off-chain until a human confirms, leaving room to check every later step.</p></div>
+        <div class="flow-step"><span>02 sentinel</span><h3>Into the Sentinel layer</h3><p>The action aligns to evidence first and stays off-chain until a human confirms, leaving room to check every later step.</p></div>
         <div class="flow-step"><span>03 evidence</span><h3>Aligned to reviewed sources</h3><p>Mapped to the four reviewed signals (US, HK, SG, EU), moving only within grounded scope.</p></div>
         <div class="flow-step"><span>04 human gate</span><h3>A human holds the final gate</h3><p>After reading the evidence, a person picks Proceed or Hold and signs with their wallet.</p></div>
         <div class="flow-step"><span>05 downstream</span><h3>The downstream Agent continues, in bounds</h3><p>Once approved, the downstream Agent produces a counsel-prep checklist within scope.</p></div>
@@ -566,7 +608,7 @@
         <div class="act">
           <h3>Main line · cross-border review</h3>
           <ol>
-            <li><b>01</b><span>The Agent starts a cross-border request and enters the compliance layer.</span></li>
+            <li><b>01</b><span>The Agent starts a cross-border request and enters the Sentinel layer.</span></li>
             <li><b>02</b><span>The map opens the four reviewed source signals.</span></li>
             <li><b>03</b><span>Three reviewer Agents get scope, source and risk ready.</span></li>
             <li><b>04</b><span>A human confirms Proceed and signs with a testnet wallet.</span></li>
@@ -606,7 +648,7 @@
       <h2>Turning compliance logic into something Agents can run.</h2>
       <div class="author">
         <strong>Alex Fan</strong>
-        <p>Cornell Law School · Programmable Compliance Architect. The seam between law and programmable compliance is exactly the line LUO Sentinel is built to hold.</p>
+        <p>Cornell Law School · Programmable Compliance Architect. The boundary between law and programmable compliance is exactly the line LUO Sentinel is built to hold.</p>
         <a href="https://x.com/itsAlexFan" target="_blank" rel="noreferrer">X · @itsAlexFan ↗</a>
       </div>
     </div>

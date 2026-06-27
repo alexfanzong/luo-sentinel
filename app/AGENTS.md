@@ -46,3 +46,6 @@ When implementing from a selected generated mock, treat that image as the source
   and Injective testnet status only.
 - Keep the right decision rail sparse: selected signal, human-review boundary,
   and two actions. Do not reintroduce dense workflow rows or dashboard chrome.
+- Keep the web deck as a source-controlled artifact in `app/public/deck.html`
+  and `app/public/deck.en.html`. After deck edits, publish the GitHub Pages
+  copy with `scripts/publish-deck.sh` so the judge-facing URL stays in sync.

@@ -8,11 +8,11 @@ not turn uncertainty into invented certainty.
 
 ## 0:20–0:45 — The scope
 
-Start from the LUO search box. Ask a question outside the reviewed source pack
-and show that LUO refuses to fabricate a map. Then choose the reviewed
-cross-border OUSG scope, or choose Hong Kong as a single-jurisdiction path. The
-first product proof is restraint: an agent can act only inside a verified
-evidence boundary.
+Start from the Agent request capsule. Ask for an action outside the reviewed
+source pack and show that Sentinel refuses to fabricate a map. Then choose the
+reviewed cross-border OUSG scope, or choose Hong Kong as a single-jurisdiction
+path. The first product proof is restraint: an Agent can act only inside a
+verified evidence boundary.
 
 ## 0:45–1:15 — The map
 
