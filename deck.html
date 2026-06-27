@@ -84,7 +84,7 @@
       letter-spacing: .18em;
       text-transform: uppercase;
     }
-    .brand img { width: 28px; height: 28px; }
+    .brand img { width: 28px; height: 28px; filter: brightness(0) invert(1); }
     .nav-meta {
       color: var(--green);
       font: 700 11px var(--mono);
@@ -102,7 +102,7 @@
       border-radius: 999px;
     }
     .nav-lang:hover { border-color: var(--green); color: var(--green); }
-    .author { display: grid; gap: 8px; max-width: 460px; padding: 22px 24px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); }
+    .author { display: grid; gap: 10px; max-width: 460px; margin-top: 34px; padding: 26px 28px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); }
     .author strong { font-size: 18px; color: #f3f6fc; letter-spacing: .01em; }
     .author p { margin: 0; color: #aab6cc; font-size: 14px; line-height: 1.6; }
     .author a { color: var(--green); text-decoration: none; font: 700 12px var(--mono); letter-spacing: .08em; }
@@ -141,7 +141,7 @@
     .hero-mark {
       width: 78px;
       margin-bottom: 28px;
-      filter: drop-shadow(0 18px 45px rgba(143, 199, 255, .24));
+      filter: brightness(0) invert(1) drop-shadow(0 18px 45px rgba(143, 199, 255, .24));
     }
     .kicker, .hero-eyebrow {
       margin: 0 0 18px;
@@ -298,6 +298,8 @@
       min-height: 260px;
       padding: 28px;
       background: rgba(8, 19, 38, .82);
+      display: flex;
+      flex-direction: column;
     }
     .review-card span {
       color: var(--violet);
@@ -314,7 +316,8 @@
       font-size: 17px;
     }
     .score {
-      margin-top: 28px;
+      margin-top: auto;
+      padding-top: 24px;
       color: var(--green);
       font: 800 42px/1 var(--mono);
     }
@@ -366,12 +369,13 @@
     }
     .act li {
       display: grid;
-      grid-template-columns: 38px 1fr;
+      grid-template-columns: 32px 1fr;
       gap: 12px;
+      align-items: baseline;
     }
     .act b {
       color: var(--green);
-      font: 800 12px var(--mono);
+      font: 800 13px var(--mono);
     }
 
     .source-list {
@@ -443,7 +447,7 @@
       <img class="hero-mark" src="luo-mark.png" alt="LUO" />
       <p class="hero-eyebrow">LUO SENTINEL · RWA ON INJECTIVE · AGENT × HUMAN COMPLIANCE LAYER</p>
       <h1>让 Agent 把准备做到位，让人守住最后一关。</h1>
-      <p class="hero-dek">LUO Sentinel 是 Agent 和链上执行之间的一层合规夹层。Agent 把 RWA 动作对齐到已审核的监管证据、整理出可执行的准备工作；人用钱包做最后确认；每一步都能追溯到具体来源。</p>
+      <p class="hero-dek">LUO Sentinel 是 Agent 和链上执行之间的一道合规夹层。Agent 把 RWA 动作对齐到已审核的监管证据、整理出可执行的准备工作；人用钱包做最后确认；每一步都能追溯到具体来源。</p>
       <div class="hero-strip">
         <div class="strip-item"><span>prepare</span><strong>Agent 把分散的监管来源，整理成一份可执行的准备清单。</strong></div>
         <div class="strip-item"><span>verify</span><strong>每个结论都落到能点开的来源，分歧也保留在记录里。</strong></div>
@@ -458,7 +462,7 @@
       <h2>Agent 很能干，但有些判断必须留给人。</h2>
       <div class="prose">
         <p>RWA 项目会让 Agent 准备发行、转让和策略。Agent 擅长补全路径，也擅长把“看起来合理”的片段串成计划——这正是它的价值。但跨境监管常常没有唯一答案，更多是来源边界、分类问题，和要靠人来拍板的地方。</p>
-        <p>要补的，是一层把 Agent 的速度和人的判断都留得住的合规夹层。</p>
+        <p>要补的，是一道把 Agent 的速度和人的判断都留得住的合规夹层。</p>
       </div>
       <div class="assert">
         <p class="assert-label">分工</p>
@@ -470,9 +474,9 @@
   <section class="section" id="definition">
     <div class="shell">
       <p class="kicker">02 · 产品定义</p>
-      <h2>Sentinel 是 Agent 和链上执行之间的一层合规夹层。</h2>
+      <h2>Sentinel 是 Agent 和链上执行之间的一道合规夹层。</h2>
       <div class="prose">
-        <p>它不下“可以发行”的结论。它做的是更扎实的一步：把动作对齐到已审核来源，让 reviewer Agent 把范围、来源、风险都准备清楚，再交给人确认。</p>
+        <p>它不下“可以发行”的结论。它做的是更扎实的一步：把动作对齐到已审核来源，让 reviewer Agents 把范围、来源、风险都准备清楚，再交给人确认。</p>
         <p>人用钱包确认后，系统生成 receipt 和 handoff。这个 handoff 只授权下游 Agent 在批准的边界内，准备给律师看的材料。</p>
       </div>
     </div>
@@ -508,7 +512,7 @@
   <section class="section" id="review">
     <div class="shell">
       <p class="kicker">05 · Reviewer Agents</p>
-      <h2>三个 reviewer Agent 把范围、来源、风险准备清楚，交给人来判断。</h2>
+      <h2>三个 reviewer Agents 把范围、来源、风险准备清楚，交给人来判断。</h2>
       <div class="review-grid">
         <div class="review-card"><span>scope agent</span><h3>范围有没有覆盖到位</h3><p>确认请求落在已审核的辖区和来源之内。</p><div class="score">70</div></div>
         <div class="review-card"><span>source agent</span><h3>每个结论是否都有出处</h3><p>确认每个 claim 都能点回来源，而不是模型自己补的。</p><div class="score">72</div></div>
@@ -547,7 +551,7 @@
           <ol>
             <li><b>01</b><span>Agent 发起跨境请求，进入合规夹层。</span></li>
             <li><b>02</b><span>地图打开四个已审核的来源信号。</span></li>
-            <li><b>03</b><span>三个 reviewer Agent 准备好范围、来源、风险。</span></li>
+            <li><b>03</b><span>三个 reviewer Agents 准备好范围、来源、风险。</span></li>
             <li><b>04</b><span>人确认 Proceed，并用测试网钱包签字。</span></li>
             <li><b>05</b><span>下游 Agent 在边界内生成 counsel-prep checklist。</span></li>
           </ol>
@@ -582,7 +586,7 @@
   <section class="section" id="author">
     <div class="shell">
       <p class="kicker">09 · 作者</p>
-      <h2>把合规写成 Agent 能用的程序。</h2>
+      <h2>把合规逻辑写成 Agent 能用的程序。</h2>
       <div class="author">
         <strong>Alex Fan</strong>
         <p>Cornell Law School · Programmable Compliance Architect。法律与可编程合规的交叉地带，正是 LUO Sentinel 想守住的那条线。</p>
