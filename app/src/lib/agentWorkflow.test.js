@@ -23,7 +23,8 @@ test("frames the entry as an upstream Agent request, not a human legal search bo
   const source = appSource();
 
   assert.match(source, /Sentinel for AI handoffs/);
-  assert.match(source, /landing-agent-console/);
+  assert.match(source, /landing-agent-pill/);
+  assert.match(source, /Agent request/);
   assert.match(source, /Submit an upstream Agent request/);
   assert.match(source, /Unreviewed Agent request refused/);
   assert.match(source, /Guard layer between project Agents and tokenized RWA execution/);
@@ -31,6 +32,7 @@ test("frames the entry as an upstream Agent request, not a human legal search bo
   assert.doesNotMatch(source, /LUO Search/);
   assert.doesNotMatch(source, /Agent action firewall/);
   assert.doesNotMatch(source, /className="landing-search"/);
+  assert.doesNotMatch(source, /landing-agent-console/);
 });
 
 test("explains that the map is a reviewed evidence snapshot", () => {
