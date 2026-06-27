@@ -37,7 +37,7 @@ The map is not a live legal conclusion. It is a snapshot of a reviewed evidence 
 
 Live app: [https://luo-sentinel.vercel.app](https://luo-sentinel.vercel.app)
 
-Deck draft: [https://luo-sentinel.vercel.app/deck.html](https://luo-sentinel.vercel.app/deck.html)
+Deck draft: [https://alexfanzong.github.io/luo-sentinel/](https://alexfanzong.github.io/luo-sentinel/)
 
 Suggested reviewer path:
 
@@ -112,7 +112,7 @@ In production, the evidence layer can connect to regulator websites, official le
 | Frontend | React, Vite, CSS |
 | Wallet / Testnet | ethers.js, MetaMask-compatible wallet |
 | Smart Contract | Solidity, Foundry |
-| Deployment | Vercel |
+| Deployment | Vercel app, GitHub Pages deck |
 
 ## Quick Start
 
@@ -140,7 +140,7 @@ npm run build
 ```text
 .
 ├── app/
-│   ├── public/                  # Logo and map assets
+│   ├── public/                  # Logo, map assets, and web deck
 │   ├── src/
 │   │   ├── lib/                 # Evidence, receipts, review council, wallet helpers
 │   │   ├── App.jsx              # Main demo flow

@@ -51,6 +51,7 @@ Use this checklist before recording the final demo or submitting the project.
 
 - Public GitHub repository URL.
 - Deployed app URL: `https://luo-sentinel.vercel.app`.
+- Public deck URL: `https://alexfanzong.github.io/luo-sentinel/`.
 - Three-minute demo video URL.
 - Pitch deck or pitch deck outline.
 - Testnet transaction URL for the non-value-moving receipt:
