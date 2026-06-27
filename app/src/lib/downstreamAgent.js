@@ -38,8 +38,8 @@ const SINGLE_JURISDICTION_PLANS = Object.freeze({
     jurisdiction: "Singapore",
     shortName: "Singapore",
     checklist: [
-      "Identify the exact SFA or MAS provision relied on before making any broader claim.",
-      "Map any collective-investment-scheme, prospectus or exemption requirements for the offer structure.",
+      "Identify the exact SFA Part 13 provision or exemption route before making any broader Singapore claim.",
+      "Map any capital-markets-product, collective-investment-scheme, prospectus or exemption requirements for the offer structure.",
       "Prepare the product and distribution facts a Singapore counsel review will need.",
     ],
   },
@@ -111,7 +111,7 @@ export function runBoundedDownstreamAgent({ handoffFacts }) {
       "Prepare the Rule 506(c) accredited-investor verification workstream for U.S. counsel review.",
       "Collect Form D, bad-actor check, offering document and subscription workflow materials.",
       "Prepare the Hong Kong licensed-intermediary, product-control, suitability and custody questions.",
-      "Flag Singapore as conditional: identify the exact MAS/SFA provision before any broader claim.",
+      "Flag Singapore as conditional: confirm CMP classification and the exact SFA Part 13 route before any broader claim.",
       "Do not infer EU classification from the current source pack; request MiFID II/local-law review.",
     ],
     constraints: [

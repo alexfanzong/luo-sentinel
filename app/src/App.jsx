@@ -64,6 +64,7 @@ const COUNSEL_PREP_TEMPLATES = Object.freeze({
     confirm: "Whether Rule 506(c) or another exemption fits the actual product and buyer set.",
     templates: [
       { label: "SEC · file Form D (EDGAR, no fee)", url: "https://www.sec.gov/resources-small-businesses/exempt-offerings/filing-form-d-notice" },
+      { label: "SEC · current Form D PDF", url: "https://www.sec.gov/files/formd.pdf" },
       { label: "SEC · what is Form D / building blocks", url: "https://www.sec.gov/files/form-d-building-blocks.pdf" },
       { label: "SEC · Rule 506(d) bad-actor disqualification guide", url: "https://www.sec.gov/resources-small-businesses/small-business-compliance-guides/disqualification-felons-other-bad-actors-rule-506-offerings-related-disclosure-requirements" },
       { label: "eCFR · 17 CFR §230.506", url: "https://www.ecfr.gov/current/title-17/section-230.506" },
@@ -86,14 +87,13 @@ const COUNSEL_PREP_TEMPLATES = Object.freeze({
   "SG-CLAIM-01": {
     route: "Singapore SFA capital-markets-product assessment",
     steps: [
-      "Classify whether the token is a capital markets product (security or CIS unit) on its economic substance, per MAS guidance.",
-      "If it is a CMP, map the SFA Part 13 offer structure and the section 243 prospectus or exemption requirements.",
-      "Prepare the complex-product distribution safeguards MAS expects for tokenised offers.",
+      "Classify whether the token is a capital markets product, such as a security or CIS unit, on the actual product facts.",
+      "If it is a CMP, map the SFA Part 13 offer path, prospectus need and any exemption counsel can rely on.",
+      "Prepare distribution, investor-profile and transfer-control questions before Singapore counsel reviews the route.",
     ],
     confirm: "Whether the token is a capital markets product on the actual facts, and which SFA offer route applies.",
     templates: [
-      { label: "MAS · A Guide to Digital Token Offerings", url: "https://www.mas.gov.sg/regulation/explainers/a-guide-to-digital-token-offerings" },
-      { label: "MAS · Guide on the Tokenisation of Capital Markets Products (PDF)", url: "https://www.mas.gov.sg/-/media/mas/sectors/guidance/guide-on-the-tokenisation-of-capital-markets-products.pdf" },
+      { label: "Singapore Statutes Online · Securities and Futures Act 2001", url: "https://sso.agc.gov.sg/Act/SFA2001" },
     ],
   },
   "EU-CLAIM-02": {
@@ -104,8 +104,9 @@ const COUNSEL_PREP_TEMPLATES = Object.freeze({
     ],
     confirm: "Whether the product is a financial instrument, and which member-state rules apply.",
     templates: [
-      { label: "EUR-Lex · MiFID II 2014/65/EU", url: "https://eur-lex.europa.eu/eli/dir/2014/65/oj" },
-      { label: "EUR-Lex · MiCA 2023/1114", url: "https://eur-lex.europa.eu/eli/reg/2023/1114/oj" },
+      { label: "EUR-Lex · MiCA Article 2(4)(a)", url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32023R1114#d1e1202-40-1" },
+      { label: "EUR-Lex · MiFID II Article 4(1)(15)", url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32014L0065#d1e2078-349-1" },
+      { label: "EUR-Lex · MiFID II Annex I Section C", url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32014L0065#d1e160-481-1" },
     ],
   },
 });
@@ -171,15 +172,15 @@ const SINGLE_JURISDICTION_ACTION_PLANS = {
   },
   "SG-CLAIM-01": {
     startHere: {
-      text: "Assess whether the token is a capital markets product under the SFA. MAS treats tokenised products the same as their non-tokenised equivalents, so the classification drives the offer path.",
-      url: "https://www.mas.gov.sg/regulation/explainers/a-guide-to-digital-token-offerings",
-      label: "MAS · A Guide to Digital Token Offerings",
+      text: "Assess whether the token is a capital markets product under the SFA. If it is, counsel maps the Part 13 offer path, prospectus need and any exemption before any Singapore-facing claim is made.",
+      url: "https://sso.agc.gov.sg/Act/SFA2001",
+      label: "Singapore Statutes Online · SFA 2001",
     },
     materials: {
       need: [
         { text: "CMP classification analysis (is the token a security or CIS unit?)" },
-        { text: "SFA Part 13 offer structure and section 243 prospectus assessment", url: "https://www.mas.gov.sg/-/media/mas/sectors/guidance/guide-on-the-tokenisation-of-capital-markets-products.pdf", label: "MAS · tokenisation guide" },
-        { text: "Distribution safeguards for complex products" },
+        { text: "SFA Part 13 offer-path, prospectus and exemption assessment", url: "https://sso.agc.gov.sg/Act/SFA2001", label: "SFA 2001" },
+        { text: "Distribution, investor-profile and transfer-control questions" },
       ],
       likelyHave: ["Product term sheet", "Issuer/operator structure", "Target investor profile"],
       counsel: [
@@ -191,13 +192,13 @@ const SINGLE_JURISDICTION_ACTION_PLANS = {
   "EU-CLAIM-02": {
     startHere: {
       text: "Determine whether the product is a MiFID II financial instrument. If it is, MiCA does not apply and the MiFID II / local-law regime governs; MiCA alone does not resolve classification.",
-      url: "https://eur-lex.europa.eu/eli/dir/2014/65/oj",
-      label: "MiFID II 2014/65/EU",
+      url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32014L0065#d1e2078-349-1",
+      label: "MiFID II Article 4(1)(15)",
     },
     materials: {
       need: [
         { text: "MiFID II financial-instrument classification inputs" },
-        { text: "MiCA scope analysis", url: "https://eur-lex.europa.eu/eli/reg/2023/1114/oj", label: "MiCA 2023/1114" },
+        { text: "MiCA scope analysis", url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32023R1114#d1e1202-40-1", label: "MiCA Article 2(4)(a)" },
         { text: "Member-state local-law review" },
       ],
       likelyHave: ["Product features and rights", "Issuer structure", "Target market and distribution"],
@@ -342,7 +343,7 @@ export function App() {
     return [
       "- **United States** — candidate Rule 506(c) workstream; counsel confirms availability and scope.",
       "- **Hong Kong** — licensed-intermediary and product-control questions remain conditionally scoped.",
-      "- **Singapore** — current source pack has no specific provision supporting a broader path.",
+      "- **Singapore** — SFA source anchor is available, but CMP classification and Part 13 offer route remain conditional.",
       "- **European Union** — classification remains unresolved in the current pack.",
     ];
   }

@@ -23,19 +23,20 @@ test("keeps the evidence copy scoped to the cited source instead of asserting a 
 
   assert.doesNotMatch(unitedStates.summary, /No retail distribution without further registration/i);
   assert.doesNotMatch(hongKong.summary, /possible only through/i);
-  assert.match(singapore.sourceLabel, /MAS · A Guide to Digital Token Offerings/);
+  assert.match(singapore.sourceLabel, /Singapore Statutes Online/);
   assert.match(singapore.summary, /capital markets product/i);
   assert.doesNotMatch(singapore.summary, /verified offer-path conclusion/i);
-  assert.equal(europeanUnion.secondarySourceLabel, "EU · MiFID II 2014/65/EU");
-  assert.equal(europeanUnion.secondarySourceUrl, "https://eur-lex.europa.eu/eli/dir/2014/65/oj");
+  assert.equal(europeanUnion.sourceLabel, "EU · MiCA Article 2(4)(a)");
+  assert.equal(europeanUnion.secondarySourceLabel, "EU · MiFID II Article 4(1)(15)");
+  assert.match(europeanUnion.secondarySourceUrl, /CELEX:32014L0065#d1e2078-349-1/);
 });
 
-test("anchors Singapore to the MAS digital-token guidance and Hong Kong to both Nov 2023 circulars", () => {
+test("anchors Singapore to the official SFA source and Hong Kong to both Nov 2023 circulars", () => {
   const singapore = RWA_EVIDENCE.find((item) => item.id === "SG-CLAIM-01");
   const hongKong = RWA_EVIDENCE.find((item) => item.id === "HK-CLAIM-01");
 
-  assert.equal(singapore.sourceUrl, "https://www.mas.gov.sg/regulation/explainers/a-guide-to-digital-token-offerings");
-  assert.match(singapore.secondarySourceUrl, /guide-on-the-tokenisation-of-capital-markets-products/);
+  assert.equal(singapore.sourceUrl, "https://sso.agc.gov.sg/Act/SFA2001");
+  assert.equal(singapore.secondarySourceUrl, undefined);
   assert.match(hongKong.secondarySourceUrl, /refNo=23EC53/);
 });
 

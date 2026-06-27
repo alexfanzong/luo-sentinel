@@ -63,7 +63,7 @@ test("keeps a Singapore-only handoff inside Singapore scope without inferring U.
   });
 
   assert.match(result.summary, /Singapore-only/);
-  assert.ok(result.checklist.some((item) => /SFA or MAS provision/.test(item)));
+  assert.ok(result.checklist.some((item) => /SFA Part 13 provision/.test(item)));
   // The core boundary: a single-jurisdiction handoff must not leak other markets.
   assert.equal(result.checklist.some((item) => /Rule 506\(c\)/.test(item)), false);
   assert.ok(result.constraints.some((item) => /Do not infer United States, Hong Kong, or EU coverage/.test(item)));
