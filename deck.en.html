@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -407,53 +407,53 @@
     </div>
   </nav>
 
-  <aside class="toc" aria-label="目录">
-    <a href="#problem">01 问题</a>
-    <a href="#definition">02 产品</a>
-    <a href="#flow">03 流程</a>
-    <a href="#evidence">04 证据</a>
-    <a href="#review">05 评审</a>
-    <a href="#receipt">06 回执</a>
+  <aside class="toc" aria-label="Contents">
+    <a href="#problem">01 Problem</a>
+    <a href="#definition">02 Product</a>
+    <a href="#flow">03 Flow</a>
+    <a href="#evidence">04 Evidence</a>
+    <a href="#review">05 Review</a>
+    <a href="#receipt">06 Receipt</a>
     <a href="#demo">07 Demo</a>
-    <a href="#sources">08 来源</a>
+    <a href="#sources">08 Sources</a>
   </aside>
 
   <header class="hero" id="top">
     <div class="shell">
       <img class="hero-mark" src="luo-mark.png" alt="LUO" />
       <p class="hero-eyebrow">LUO SENTINEL · RWA ON INJECTIVE · AGENT GUARD LAYER</p>
-      <h1>Agent 不该自己说服自己去发资产。</h1>
-      <p class="hero-dek">LUO Sentinel 夹在“项目方 Agent”和“链上执行”之间：先截停拟执行的 RWA 动作，再把它路由到已审核证据、三个 reviewer Agent、人工钱包关口，最后只释放一个有边界的下游 Agent handoff。</p>
+      <h1>An Agent shouldn't talk itself into issuing an asset.</h1>
+      <p class="hero-dek">LUO Sentinel sits between a project's Agent and on-chain execution. It catches the RWA action before it runs, routes it to reviewed evidence, three reviewer Agents and a human wallet gate, and releases only a bounded downstream Agent handoff.</p>
       <div class="hero-strip">
-        <div class="strip-item"><span>hold</span><strong>动作先被扣住，一笔交易都不发。</strong></div>
-        <div class="strip-item"><span>review</span><strong>每个结论都要落到能点开的来源，分歧不抹平。</strong></div>
-        <div class="strip-item"><span>handoff</span><strong>人签字之后，下游 Agent 只能做被批准的准备工作，碰不到发行和转账。</strong></div>
+        <div class="strip-item"><span>hold</span><strong>The action is held. Not a single transaction goes out.</strong></div>
+        <div class="strip-item"><span>review</span><strong>Every conclusion has to land on a clickable source, and disagreement stays on the record.</strong></div>
+        <div class="strip-item"><span>handoff</span><strong>Once a human signs, the downstream Agent can only do approved prep work — it never touches issuance or transfer.</strong></div>
       </div>
     </div>
   </header>
 
   <section class="section" id="problem">
     <div class="shell">
-      <p class="kicker">01 · 问题定义</p>
-      <h2>真正的风险，是 Agent 答错之后还会自己把动作推上链。</h2>
+      <p class="kicker">01 · The problem</p>
+      <h2>The real risk is an Agent that gets it wrong and still pushes the action on-chain.</h2>
       <div class="prose">
-        <p>RWA 项目会把发行、转让、策略准备交给 Agent。Agent 很会补全路径，也很会把“看起来合理”的片段串成一个行动计划。问题在于，跨境监管常常给不出一个确定答案，给你的是一组来源边界、分类问题和要人来拍的判断。</p>
-        <p>如果上游 Agent 把“美国看起来有路径”理解成“现在可以推进链上动作”，风险就不再停留在聊天窗口里。</p>
+        <p>RWA teams hand issuance, transfer and strategy prep to Agents. An Agent is good at filling in a path, and good at stitching plausible-looking fragments into a plan. The catch: cross-border regulation rarely gives one clean answer — it gives a set of source boundaries, classification questions and human judgment calls.</p>
+        <p>The moment an upstream Agent reads "the US looks viable" as "we can push the on-chain action now," the risk stops staying inside the chat window.</p>
       </div>
       <div class="assert">
-        <p class="assert-label">核心问题</p>
-        <p>要防的是这种 Agent：证据不够，照样想往下走。</p>
+        <p class="assert-label">Core problem</p>
+        <p>What needs holding back is an Agent that keeps wanting to act once the evidence runs thin.</p>
       </div>
     </div>
   </section>
 
   <section class="section" id="definition">
     <div class="shell">
-      <p class="kicker">02 · 产品定义</p>
-      <h2>Sentinel 是 Agent 和链上执行之间的一道证据闸门。</h2>
+      <p class="kicker">02 · The product</p>
+      <h2>Sentinel is an evidence gate between the Agent and on-chain execution.</h2>
       <div class="prose">
-        <p>LUO Sentinel 不给“可以发行”的法律结论。它做的是更窄、更可验证的事：把拟执行动作扣下，展示这个动作目前只能落到哪些已审核来源上，再让 reviewer Agent 检查范围、来源和风险。</p>
-        <p>只有人用钱包确认之后，系统才生成一个 receipt 和 handoff。这个 handoff 只允许一件事：下游 Agent 在这个边界内，准备给律师看的材料。它不等于授权发行。</p>
+        <p>LUO Sentinel doesn't hand out a "you may issue" legal conclusion. It does something narrower and checkable: hold the action, show which reviewed sources it can land on right now, and let the reviewer Agents check scope, source and risk.</p>
+        <p>Only after a human confirms with their wallet does the system mint a receipt and a handoff. That handoff permits exactly one thing — the downstream Agent preparing counsel-facing materials inside the approved boundary.</p>
       </div>
     </div>
   </section>
@@ -461,13 +461,13 @@
   <section class="section" id="flow">
     <div class="shell">
       <p class="kicker">03 · Guarded handoff chain</p>
-      <h2>起点是一个 Agent 想动手，第一步就是被 Sentinel 拦下。</h2>
+      <h2>It starts with an Agent trying to act, and step one is Sentinel catching it.</h2>
       <div class="flow" aria-label="LUO Sentinel workflow">
-        <div class="flow-step"><span>01 upstream</span><h3>项目方 Agent 拟推进 RWA 动作</h3><p>例如准备 OUSG-like tokenized treasury 在 Injective 上发行或转让。</p></div>
-        <div class="flow-step"><span>02 sentinel</span><h3>Sentinel 截停</h3><p>动作保持 held 状态，不发交易，不移动资产，不生成结论。</p></div>
-        <div class="flow-step"><span>03 evidence</span><h3>路由到已审核来源</h3><p>只显示 US、HK、SG、EU 四个已审核信号，不覆盖未审核辖区。</p></div>
-        <div class="flow-step"><span>04 human gate</span><h3>人工钱包关口</h3><p>人决定 Hold 或 Proceed。Proceed 也只是创建有边界回执。</p></div>
-        <div class="flow-step"><span>05 downstream</span><h3>受限下游 Agent</h3><p>下游 Agent 只能生成律师准备清单，不能执行发行、转让或策略。</p></div>
+        <div class="flow-step"><span>01 upstream</span><h3>A project Agent moves to push an RWA action</h3><p>e.g. preparing an OUSG-like tokenized treasury to issue or transfer on Injective.</p></div>
+        <div class="flow-step"><span>02 sentinel</span><h3>Sentinel intercepts</h3><p>The action stays held — no transaction, no asset movement, no conclusion.</p></div>
+        <div class="flow-step"><span>03 evidence</span><h3>Routed to reviewed sources</h3><p>Only the four reviewed signals (US, HK, SG, EU) show; unreviewed jurisdictions stay dark.</p></div>
+        <div class="flow-step"><span>04 human gate</span><h3>Human wallet gate</h3><p>A person picks Hold or Proceed. Proceed only mints a bounded receipt.</p></div>
+        <div class="flow-step"><span>05 downstream</span><h3>Bounded downstream Agent</h3><p>The downstream Agent can only produce a counsel-prep checklist — never issuance, transfer or strategy.</p></div>
       </div>
     </div>
   </section>
@@ -475,12 +475,12 @@
   <section class="section" id="evidence">
     <div class="shell">
       <p class="kicker">04 · Evidence map</p>
-      <h2>地图上每一格，都是人工审过的证据范围。</h2>
+      <h2>Every cell on the map is an evidence scope a human reviewed.</h2>
       <div class="matrix">
-        <div class="matrix-row"><strong>United States</strong><p>Rule 506(c) 可以作为候选 workstream，但需要 accredited-investor verification，不能推出任何产品都可发。</p><span class="status red">restricted</span></div>
-        <div class="matrix-row"><strong>Hong Kong</strong><p>SFC tokenised-securities circular 支持中介、适当性、托管和产品控制检查，不等于零条件发行路径。</p><span class="status">conditional</span></div>
-        <div class="matrix-row"><strong>Singapore</strong><p>SFA 是主锚点；先判断 token 是否为 capital markets product，再映射 Part 13 offer path。</p><span class="status">conditional</span></div>
-        <div class="matrix-row"><strong>European Union</strong><p>MiCA 排除 MiFID II financial instruments；当前 evidence pack 不能解决 OUSG-specific classification。</p><span class="status blue">unresolved</span></div>
+        <div class="matrix-row"><strong>United States</strong><p>Rule 506(c) can be a candidate workstream, but it needs accredited-investor verification and doesn't mean any product can be issued.</p><span class="status red">restricted</span></div>
+        <div class="matrix-row"><strong>Hong Kong</strong><p>The SFC tokenised-securities circular supports intermediary, suitability, custody and product-control checks; it stops short of a zero-condition issuance route.</p><span class="status">conditional</span></div>
+        <div class="matrix-row"><strong>Singapore</strong><p>The SFA is the anchor: first decide whether the token is a capital markets product, then map the Part 13 offer path.</p><span class="status">conditional</span></div>
+        <div class="matrix-row"><strong>European Union</strong><p>MiCA excludes MiFID II financial instruments; the current evidence pack can't resolve the OUSG-specific classification.</p><span class="status blue">unresolved</span></div>
       </div>
     </div>
   </section>
@@ -488,15 +488,15 @@
   <section class="section" id="review">
     <div class="shell">
       <p class="kicker">05 · Reviewer Agents</p>
-      <h2>三个 reviewer Agent 把范围、来源、风险摊开，剩下的交给人。</h2>
+      <h2>Three reviewer Agents lay out scope, source and risk, then leave the call to a human.</h2>
       <div class="review-grid">
-        <div class="review-card"><span>scope agent</span><h3>范围有没有被悄悄放大</h3><p>检查请求是否超出已审核辖区和来源范围。</p><div class="score">70</div></div>
-        <div class="review-card"><span>source agent</span><h3>每句话能不能点回来源</h3><p>检查每个 claim 是否有可点击来源，而不是模型自己补出来。</p><div class="score">72</div></div>
-        <div class="review-card"><span>risk agent</span><h3>这一步能不能不签字就放过</h3><p>检查是否出现发行、转让、策略执行等必须由人和律师决定的动作。</p><div class="score">68</div></div>
+        <div class="review-card"><span>scope agent</span><h3>Has the scope been quietly widened?</h3><p>Checks whether the request reaches past the reviewed jurisdictions and sources.</p><div class="score">70</div></div>
+        <div class="review-card"><span>source agent</span><h3>Can every claim point back to a source?</h3><p>Checks that each claim has a clickable source, not something the model filled in.</p><div class="score">72</div></div>
+        <div class="review-card"><span>risk agent</span><h3>Can this step skip a signature?</h3><p>Checks for issuance, transfer or strategy — the moves a human and counsel must decide.</p><div class="score">68</div></div>
       </div>
       <div class="assert">
-        <p class="assert-label">设计边界</p>
-        <p>这个分只是给人参考的审核权重，别当成模型置信度或合规分数。</p>
+        <p class="assert-label">Design boundary</p>
+        <p>This score is a review weight for a human to read — treat it as nothing more, not model confidence and not a compliance grade.</p>
       </div>
     </div>
   </section>
@@ -504,7 +504,7 @@
   <section class="section" id="receipt">
     <div class="shell">
       <p class="kicker">06 · Receipt protocol</p>
-      <h2>上链的只有一句话：谁、在什么边界下、点了同意。</h2>
+      <h2>One line goes on-chain: who accepted which boundary.</h2>
       <div class="receipt">
         <div class="receipt-grid">
           <code>receiptHash: 0x...<br />evidenceHash: reviewed OUSG pack<br />productRefHash: OUSG-like treasury sample<br />reviewerWallet: 0x...<br />decision: proceed</code>
@@ -512,7 +512,7 @@
         </div>
       </div>
       <div class="prose">
-        <p>这个 receipt 证明的是：人类审核者在特定 evidence scope 下接受了一个受限 AI handoff。它不证明合规，不构成法律意见，也不授权资产交易。</p>
+        <p>The receipt proves one thing: a human reviewer accepted a bounded AI handoff under a specific evidence scope. It doesn't prove compliance, give a legal opinion, or authorize any asset transaction.</p>
       </div>
     </div>
   </section>
@@ -520,26 +520,26 @@
   <section class="section" id="demo">
     <div class="shell">
       <p class="kicker">07 · Demo path</p>
-      <h2>Demo 只想让你看见一件事——Agent 的下一步被卡住了。</h2>
+      <h2>The demo shows one thing: the Agent's next step is boxed in.</h2>
       <div class="demo-acts">
         <div class="act">
-          <h3>主线 · 跨境 review</h3>
+          <h3>Main line · cross-border review</h3>
           <ol>
-            <li><b>01</b><span>Agent request 被 Sentinel 扣下。</span></li>
-            <li><b>02</b><span>地图只打开四个 reviewed source signals。</span></li>
-            <li><b>03</b><span>三个 reviewer Agent 给出范围、来源、风险分歧。</span></li>
-            <li><b>04</b><span>人选择 Proceed 并用测试网钱包签字。</span></li>
-            <li><b>05</b><span>下游 Agent 生成 counsel-prep checklist。</span></li>
+            <li><b>01</b><span>The Agent request is held by Sentinel.</span></li>
+            <li><b>02</b><span>The map opens only the four reviewed source signals.</span></li>
+            <li><b>03</b><span>Three reviewer Agents surface scope, source and risk disagreements.</span></li>
+            <li><b>04</b><span>A human picks Proceed and signs with a testnet wallet.</span></li>
+            <li><b>05</b><span>The downstream Agent produces a counsel-prep checklist.</span></li>
           </ol>
         </div>
         <div class="act">
-          <h3>拒绝分支 · 未审核范围</h3>
+          <h3>Refusal branch · unreviewed scope</h3>
           <ol>
-            <li><b>01</b><span>Agent 请求超出 reviewed source pack。</span></li>
-            <li><b>02</b><span>Sentinel 不编地图，不猜辖区，不给“看起来能做”的答案。</span></li>
-            <li><b>03</b><span>用户只能回到跨境范围或单一已审核来源。</span></li>
-            <li><b>04</b><span>receipt 仍绑定被选择的 source scope。</span></li>
-            <li><b>05</b><span>handoff 不允许扩大到未审核地区。</span></li>
+            <li><b>01</b><span>The Agent request reaches past the reviewed source pack.</span></li>
+            <li><b>02</b><span>Sentinel won't draw a map, guess a jurisdiction, or hand back a "looks doable" answer.</span></li>
+            <li><b>03</b><span>The user can only go back to the cross-border scope or a single reviewed source.</span></li>
+            <li><b>04</b><span>The receipt stays bound to the chosen source scope.</span></li>
+            <li><b>05</b><span>The handoff can't expand into unreviewed regions.</span></li>
           </ol>
         </div>
       </div>
@@ -549,7 +549,7 @@
   <section class="section" id="sources">
     <div class="shell">
       <p class="kicker">08 · Source anchors</p>
-      <h2>每个信号都必须能回到具体来源。</h2>
+      <h2>Every signal has to trace back to a concrete source.</h2>
       <div class="source-list">
         <a href="https://www.ecfr.gov/current/title-17/section-230.506" target="_blank" rel="noreferrer">United States · eCFR · 17 CFR §230.506</a>
         <a href="https://apps.sfc.hk/edistributionWeb/gateway/EN/circular/doc?refNo=23EC52" target="_blank" rel="noreferrer">Hong Kong · SFC tokenised-securities circular 23EC52</a>
@@ -561,8 +561,8 @@
 
   <footer class="footer">
     <div class="shell">
-      <p class="footer-q">LUO Sentinel 不替 Agent 拍板，只在它动手前加一道证据加人工的关卡。</p>
-      <p class="footer-lang"><a href="deck.en.html">English deck</a></p>
+      <p class="footer-q">LUO Sentinel leaves the call to a human. Before an Agent acts, it just has to clear an evidence-and-human checkpoint.</p>
+      <p class="footer-lang"><a href="index.html">中文 deck</a></p>
       <p class="boundary">Boundary: hackathon research demo only. Not legal advice, not a compliance determination, and not authorization to issue, transfer, trade, or move any asset.</p>
     </div>
   </footer>

@@ -425,9 +425,9 @@
       <h1>Agent 不该自己说服自己去发资产。</h1>
       <p class="hero-dek">LUO Sentinel 夹在“项目方 Agent”和“链上执行”之间：先截停拟执行的 RWA 动作，再把它路由到已审核证据、三个 reviewer Agent、人工钱包关口，最后只释放一个有边界的下游 Agent handoff。</p>
       <div class="hero-strip">
-        <div class="strip-item"><span>hold</span><strong>上游 Agent 的动作先被扣住，什么都不执行。</strong></div>
-        <div class="strip-item"><span>review</span><strong>结论必须落到具体来源，分歧不能被抹平。</strong></div>
-        <div class="strip-item"><span>handoff</span><strong>人签字后，下游 Agent 只能做被批准的准备工作。</strong></div>
+        <div class="strip-item"><span>hold</span><strong>动作先被扣住，一笔交易都不发。</strong></div>
+        <div class="strip-item"><span>review</span><strong>每个结论都要落到能点开的来源，分歧不抹平。</strong></div>
+        <div class="strip-item"><span>handoff</span><strong>人签字之后，下游 Agent 只能做被批准的准备工作，碰不到发行和转账。</strong></div>
       </div>
     </div>
   </header>
@@ -435,14 +435,14 @@
   <section class="section" id="problem">
     <div class="shell">
       <p class="kicker">01 · 问题定义</p>
-      <h2>AI 时代真正危险的不是回答错，而是错了还继续执行。</h2>
+      <h2>真正的风险，是 Agent 答错之后还会自己把动作推上链。</h2>
       <div class="prose">
-        <p>RWA 项目会把发行、转让、策略准备交给 Agent。Agent 很会补全路径，也很会把“看起来合理”的片段串成一个行动计划。问题是，跨境监管经常不是一个确定答案，而是一组来源边界、分类问题和人工判断。</p>
+        <p>RWA 项目会把发行、转让、策略准备交给 Agent。Agent 很会补全路径，也很会把“看起来合理”的片段串成一个行动计划。问题在于，跨境监管常常给不出一个确定答案，给你的是一组来源边界、分类问题和要人来拍的判断。</p>
         <p>如果上游 Agent 把“美国看起来有路径”理解成“现在可以推进链上动作”，风险就不再停留在聊天窗口里。</p>
       </div>
       <div class="assert">
         <p class="assert-label">核心问题</p>
-        <p>需要被管住的不是人问问题，而是 Agent 在证据不够时仍然想继续动手。</p>
+        <p>要防的是这种 Agent：证据不够，照样想往下走。</p>
       </div>
     </div>
   </section>
@@ -453,7 +453,7 @@
       <h2>Sentinel 是 Agent 和链上执行之间的一道证据闸门。</h2>
       <div class="prose">
         <p>LUO Sentinel 不给“可以发行”的法律结论。它做的是更窄、更可验证的事：把拟执行动作扣下，展示这个动作目前只能落到哪些已审核来源上，再让 reviewer Agent 检查范围、来源和风险。</p>
-        <p>只有人用钱包确认之后，系统才生成一个 receipt 和 handoff。这个 handoff 不是“授权发行”，而是“允许下游 Agent 在这个边界内准备给律师看的材料”。</p>
+        <p>只有人用钱包确认之后，系统才生成一个 receipt 和 handoff。这个 handoff 只允许一件事：下游 Agent 在这个边界内，准备给律师看的材料。它不等于授权发行。</p>
       </div>
     </div>
   </section>
@@ -461,7 +461,7 @@
   <section class="section" id="flow">
     <div class="shell">
       <p class="kicker">03 · Guarded handoff chain</p>
-      <h2>整条链不是人问 AI，而是 Agent 被 Sentinel 拦下。</h2>
+      <h2>起点是一个 Agent 想动手，第一步就是被 Sentinel 拦下。</h2>
       <div class="flow" aria-label="LUO Sentinel workflow">
         <div class="flow-step"><span>01 upstream</span><h3>项目方 Agent 拟推进 RWA 动作</h3><p>例如准备 OUSG-like tokenized treasury 在 Injective 上发行或转让。</p></div>
         <div class="flow-step"><span>02 sentinel</span><h3>Sentinel 截停</h3><p>动作保持 held 状态，不发交易，不移动资产，不生成结论。</p></div>
@@ -475,7 +475,7 @@
   <section class="section" id="evidence">
     <div class="shell">
       <p class="kicker">04 · Evidence map</p>
-      <h2>地图不是答案，是被审核过的证据范围。</h2>
+      <h2>地图上每一格，都是人工审过的证据范围。</h2>
       <div class="matrix">
         <div class="matrix-row"><strong>United States</strong><p>Rule 506(c) 可以作为候选 workstream，但需要 accredited-investor verification，不能推出任何产品都可发。</p><span class="status red">restricted</span></div>
         <div class="matrix-row"><strong>Hong Kong</strong><p>SFC tokenised-securities circular 支持中介、适当性、托管和产品控制检查，不等于零条件发行路径。</p><span class="status">conditional</span></div>
@@ -488,15 +488,15 @@
   <section class="section" id="review">
     <div class="shell">
       <p class="kicker">05 · Reviewer Agents</p>
-      <h2>三个 reviewer Agent 不“投票批准”，只负责把风险说清楚。</h2>
+      <h2>三个 reviewer Agent 把范围、来源、风险摊开，剩下的交给人。</h2>
       <div class="review-grid">
-        <div class="review-card"><span>scope agent</span><h3>范围是否被偷换</h3><p>检查请求是否超出已审核辖区和来源范围。</p><div class="score">70</div></div>
-        <div class="review-card"><span>source agent</span><h3>来源是否真能支撑</h3><p>检查每个 claim 是否有可点击来源，而不是模型自己补出来。</p><div class="score">72</div></div>
-        <div class="review-card"><span>risk agent</span><h3>行动风险是否过高</h3><p>检查是否出现发行、转让、策略执行等必须由人和律师决定的动作。</p><div class="score">68</div></div>
+        <div class="review-card"><span>scope agent</span><h3>范围有没有被悄悄放大</h3><p>检查请求是否超出已审核辖区和来源范围。</p><div class="score">70</div></div>
+        <div class="review-card"><span>source agent</span><h3>每句话能不能点回来源</h3><p>检查每个 claim 是否有可点击来源，而不是模型自己补出来。</p><div class="score">72</div></div>
+        <div class="review-card"><span>risk agent</span><h3>这一步能不能不签字就放过</h3><p>检查是否出现发行、转让、策略执行等必须由人和律师决定的动作。</p><div class="score">68</div></div>
       </div>
       <div class="assert">
         <p class="assert-label">设计边界</p>
-        <p>评分不是模型置信度，也不是合规分数；它是给人看的审核权重。</p>
+        <p>这个分只是给人参考的审核权重，别当成模型置信度或合规分数。</p>
       </div>
     </div>
   </section>
@@ -504,7 +504,7 @@
   <section class="section" id="receipt">
     <div class="shell">
       <p class="kicker">06 · Receipt protocol</p>
-      <h2>链上只记录“谁接受了哪个边界”，不把法律文本塞进链上。</h2>
+      <h2>上链的只有一句话：谁、在什么边界下、点了同意。</h2>
       <div class="receipt">
         <div class="receipt-grid">
           <code>receiptHash: 0x...<br />evidenceHash: reviewed OUSG pack<br />productRefHash: OUSG-like treasury sample<br />reviewerWallet: 0x...<br />decision: proceed</code>
@@ -520,7 +520,7 @@
   <section class="section" id="demo">
     <div class="shell">
       <p class="kicker">07 · Demo path</p>
-      <h2>Demo 只证明一件事：Agent 的下一步被约束住了。</h2>
+      <h2>Demo 只想让你看见一件事——Agent 的下一步被卡住了。</h2>
       <div class="demo-acts">
         <div class="act">
           <h3>主线 · 跨境 review</h3>
@@ -561,7 +561,8 @@
 
   <footer class="footer">
     <div class="shell">
-      <p class="footer-q">LUO Sentinel 不替 Agent 做判断；它让 Agent 在动手前先被证据和人类闸门拦住。</p>
+      <p class="footer-q">LUO Sentinel 不替 Agent 拍板，只在它动手前加一道证据加人工的关卡。</p>
+      <p class="footer-lang"><a href="deck.en.html">English deck</a></p>
       <p class="boundary">Boundary: hackathon research demo only. Not legal advice, not a compliance determination, and not authorization to issue, transfer, trade, or move any asset.</p>
     </div>
   </footer>
