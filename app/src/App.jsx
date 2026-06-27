@@ -15,14 +15,14 @@ import { getReviewedQuestionRoute } from "./lib/questionRouter.js";
 // does not select a market or determine an offer path.
 const ACTION_PLAN = {
   startHere: {
-    text: "Assess whether a Rule 506(c) private-placement route could fit the reviewed U.S. source. This is a scoped research starting point, not an eligibility or offering finding.",
+    text: "One suggested first workstream is the U.S. Rule 506(c) private-placement route for the reviewed U.S. source; the Hong Kong, Singapore and EU workstreams are covered per-source below. This is a scoped research starting point, not an eligibility or offering finding.",
     url: "https://www.ecfr.gov/current/title-17/section-230.506",
     label: "17 CFR §230.506",
   },
   materials: {
     need: [
       { text: "Accredited-investor verification design" },
-      { text: "Form D filing workflow (if counsel confirms an exempt path)" },
+      { text: "Form D filing workflow (if counsel confirms an exempt path)", url: "https://www.sec.gov/resources-small-businesses/exempt-offerings/filing-form-d-notice", label: "SEC · file Form D" },
       { text: "Offering and subscription materials" },
       { text: "Rule 506(d) bad-actor checks", url: "https://www.ecfr.gov/current/title-17/section-230.506", label: "17 CFR §230.506" },
     ],
@@ -62,6 +62,12 @@ const COUNSEL_PREP_TEMPLATES = Object.freeze({
       "Draft subscription agreement and offering materials for counsel to review.",
     ],
     confirm: "Whether Rule 506(c) or another exemption fits the actual product and buyer set.",
+    templates: [
+      { label: "SEC · file Form D (EDGAR, no fee)", url: "https://www.sec.gov/resources-small-businesses/exempt-offerings/filing-form-d-notice" },
+      { label: "SEC · what is Form D / building blocks", url: "https://www.sec.gov/files/form-d-building-blocks.pdf" },
+      { label: "SEC · Rule 506(d) bad-actor disqualification guide", url: "https://www.sec.gov/resources-small-businesses/small-business-compliance-guides/disqualification-felons-other-bad-actors-rule-506-offerings-related-disclosure-requirements" },
+      { label: "eCFR · 17 CFR §230.506", url: "https://www.ecfr.gov/current/title-17/section-230.506" },
+    ],
   },
   "HK-CLAIM-01": {
     route: "SFC tokenised-securities intermediary assessment",
@@ -72,22 +78,35 @@ const COUNSEL_PREP_TEMPLATES = Object.freeze({
       "Document custody, control and transfer-restriction design.",
     ],
     confirm: "Whether the product is a tokenised security on the actual facts, and which SFC conditions apply.",
+    templates: [
+      { label: "SFC · intermediaries in tokenised securities (23EC52)", url: "https://apps.sfc.hk/edistributionWeb/gateway/EN/circular/doc?refNo=23EC52" },
+      { label: "SFC · tokenisation of authorised products (23EC53)", url: "https://apps.sfc.hk/edistributionWeb/gateway/EN/circular/doc?refNo=23EC53" },
+    ],
   },
   "SG-CLAIM-01": {
-    route: "Singapore SFA offer-path assessment",
+    route: "Singapore SFA capital-markets-product assessment",
     steps: [
-      "Identify the specific SFA or MAS provision relied on; the reviewed pack does not establish one.",
-      "Map any collective-investment-scheme, prospectus or exemption requirements for the offer structure.",
+      "Classify whether the token is a capital markets product (security or CIS unit) on its economic substance, per MAS guidance.",
+      "If it is a CMP, map the SFA Part 13 offer structure and the section 243 prospectus or exemption requirements.",
+      "Prepare the complex-product distribution safeguards MAS expects for tokenised offers.",
     ],
-    confirm: "Whether a concrete SFA provision supports the intended offer or transfer.",
+    confirm: "Whether the token is a capital markets product on the actual facts, and which SFA offer route applies.",
+    templates: [
+      { label: "MAS · A Guide to Digital Token Offerings", url: "https://www.mas.gov.sg/regulation/explainers/a-guide-to-digital-token-offerings" },
+      { label: "MAS · Guide on the Tokenisation of Capital Markets Products (PDF)", url: "https://www.mas.gov.sg/-/media/mas/sectors/guidance/guide-on-the-tokenisation-of-capital-markets-products.pdf" },
+    ],
   },
   "EU-CLAIM-02": {
     route: "EU classification (MiCA with MiFID II)",
     steps: [
       "Assemble the product features needed for a MiFID II financial-instrument assessment.",
-      "Prepare MiCA scope-analysis inputs and note that MiCA alone does not resolve classification.",
+      "Prepare MiCA scope-analysis inputs and note that a token that is a MiFID II financial instrument is excluded from MiCA.",
     ],
     confirm: "Whether the product is a financial instrument, and which member-state rules apply.",
+    templates: [
+      { label: "EUR-Lex · MiFID II 2014/65/EU", url: "https://eur-lex.europa.eu/eli/dir/2014/65/oj" },
+      { label: "EUR-Lex · MiCA 2023/1114", url: "https://eur-lex.europa.eu/eli/reg/2023/1114/oj" },
+    ],
   },
 });
 
@@ -97,32 +116,97 @@ const REVIEW_SCORE_LABELS = [
   { key: "claimSupport", label: "Claim support", title: "How directly the source supports the next workstream." },
 ];
 
+// Bespoke single-jurisdiction Step 1 plans, one per reviewed source. Each stays
+// scoped to its own jurisdiction so a US/SG/EU single review is as specific as
+// the Hong Kong one (and matches the per-source brief in step 5).
+const SINGLE_JURISDICTION_ACTION_PLANS = {
+  "US-CLAIM-01": {
+    startHere: {
+      text: "Review whether the reviewed U.S. source — Rule 506(c) — fits the product as a private-placement route: general solicitation is allowed only if every purchaser is a verified accredited investor.",
+      url: "https://www.ecfr.gov/current/title-17/section-230.506",
+      label: "17 CFR §230.506",
+    },
+    materials: {
+      need: [
+        { text: "Accredited-investor verification design (income/net-worth evidence or third-party letters)" },
+        { text: "Form D filing workflow", url: "https://www.sec.gov/resources-small-businesses/exempt-offerings/filing-form-d-notice", label: "SEC · file Form D" },
+        { text: "Rule 506(d) bad-actor disqualification checks", url: "https://www.ecfr.gov/current/title-17/section-230.506", label: "17 CFR §230.506(d)" },
+        { text: "Offering and subscription materials" },
+      ],
+      likelyHave: ["Product rights and token terms", "Entity and cap-table materials", "Intended investor profile"],
+      counsel: [
+        "Whether Rule 506(c) or another exemption fits the actual product and buyer set",
+        "Non-U.S. buyer treatment, state blue-sky notices and secondary-transfer controls",
+      ],
+    },
+  },
+  "HK-CLAIM-01": {
+    startHere: {
+      text: "Review the Hong Kong tokenised-securities source as an applicability question: licensed intermediary, product controls, suitability and custody are the first workstream.",
+      url: "https://apps.sfc.hk/edistributionWeb/gateway/EN/circular/doc?refNo=23EC52",
+      label: "SFC · tokenised-securities circular (Nov 2023)",
+    },
+    materials: {
+      need: [
+        { text: "Product token rights and redemption mechanics" },
+        { text: "Target client type and distribution channel" },
+        { text: "Licensed-intermediary, suitability and onboarding workflow" },
+        { text: "Custody, control and transfer-restriction design" },
+      ],
+      likelyHave: ["Product term sheet", "Issuer/operator structure", "Wallet and transfer-control design"],
+      counsel: [
+        "Whether the product is treated as a tokenised security in the actual facts",
+        "Which Hong Kong regulated activities may be triggered",
+        "Whether marketing, custody or secondary transfer needs additional controls",
+      ],
+    },
+  },
+  "SG-CLAIM-01": {
+    startHere: {
+      text: "Assess whether the token is a capital markets product under the SFA. MAS treats tokenised products the same as their non-tokenised equivalents, so the classification drives the offer path.",
+      url: "https://www.mas.gov.sg/regulation/explainers/a-guide-to-digital-token-offerings",
+      label: "MAS · A Guide to Digital Token Offerings",
+    },
+    materials: {
+      need: [
+        { text: "CMP classification analysis (is the token a security or CIS unit?)" },
+        { text: "SFA Part 13 offer structure and section 243 prospectus assessment", url: "https://www.mas.gov.sg/-/media/mas/sectors/guidance/guide-on-the-tokenisation-of-capital-markets-products.pdf", label: "MAS · tokenisation guide" },
+        { text: "Distribution safeguards for complex products" },
+      ],
+      likelyHave: ["Product term sheet", "Issuer/operator structure", "Target investor profile"],
+      counsel: [
+        "Whether the token is a capital markets product on the actual facts",
+        "Which prospectus or exemption route applies under SFA Part 13",
+      ],
+    },
+  },
+  "EU-CLAIM-02": {
+    startHere: {
+      text: "Determine whether the product is a MiFID II financial instrument. If it is, MiCA does not apply and the MiFID II / local-law regime governs; MiCA alone does not resolve classification.",
+      url: "https://eur-lex.europa.eu/eli/dir/2014/65/oj",
+      label: "MiFID II 2014/65/EU",
+    },
+    materials: {
+      need: [
+        { text: "MiFID II financial-instrument classification inputs" },
+        { text: "MiCA scope analysis", url: "https://eur-lex.europa.eu/eli/reg/2023/1114/oj", label: "MiCA 2023/1114" },
+        { text: "Member-state local-law review" },
+      ],
+      likelyHave: ["Product features and rights", "Issuer structure", "Target market and distribution"],
+      counsel: [
+        "Whether the product is a financial instrument under MiFID II",
+        "Which member-state rules apply if MiCA is excluded",
+      ],
+    },
+  },
+};
+
 function getScopedActionPlan(reviewScope) {
   if (reviewScope.scopeType !== "single-jurisdiction") return ACTION_PLAN;
 
   const item = RWA_EVIDENCE.find((entry) => entry.id === reviewScope.evidenceIds[0]);
-  if (item?.id === "HK-CLAIM-01") {
-    return {
-      startHere: {
-        text: "Review the Hong Kong tokenised-securities source as an applicability question: licensed intermediary, product controls, suitability and custody are the first workstream.",
-        url: item.sourceUrl,
-        label: item.sourceLabel,
-      },
-      materials: {
-        need: [
-          { text: "Product token rights and redemption mechanics" },
-          { text: "Target client type and distribution channel" },
-          { text: "Licensed-intermediary, suitability and onboarding workflow" },
-          { text: "Custody, control and transfer-restriction design" },
-        ],
-        likelyHave: ["Product term sheet", "Issuer/operator structure", "Wallet and transfer-control design"],
-        counsel: [
-          "Whether the product is treated as a tokenised security in the actual facts",
-          "Which Hong Kong regulated activities may be triggered",
-          "Whether marketing, custody or secondary transfer needs additional controls",
-        ],
-      },
-    };
+  if (item && SINGLE_JURISDICTION_ACTION_PLANS[item.id]) {
+    return SINGLE_JURISDICTION_ACTION_PLANS[item.id];
   }
 
   return {
@@ -157,6 +241,7 @@ export function App() {
   const [scopePanelOpen, setScopePanelOpen] = useState(false);
   const [handoffCopied, setHandoffCopied] = useState(false);
   const [briefCopied, setBriefCopied] = useState(false);
+  const [manualAddress, setManualAddress] = useState("");
   const [step, setStep] = useState(1); // 1 brief · 2 agent review · 3 decision · 4 anchor · 5 handoff
   const [decision, setDecision] = useState("review");
   const [receipt, setReceipt] = useState(null);
@@ -264,6 +349,8 @@ export function App() {
       caseRef: receipt.evidenceSet.decision.caseRef,
       reviewScope: scopeLabel,
       reviewMode: reviewScope.reviewMode,
+      scopeType: reviewScope.scopeType,
+      evidenceIds: reviewScope.evidenceIds,
       proposedAction: {
         label: PROPOSED_FINANCIAL_ACTION.label,
         network: PROPOSED_FINANCIAL_ACTION.network,
@@ -344,10 +431,17 @@ export function App() {
       const tpl = COUNSEL_PREP_TEMPLATES[item.id];
       lines.push("", `### ${item.title} — ${item.signal}`);
       lines.push(`Source: ${item.sourceLabel} (${item.sourceUrl})`);
+      if (item.secondarySourceUrl) {
+        lines.push(`Also: ${item.secondarySourceLabel} (${item.secondarySourceUrl})`);
+      }
       if (tpl) {
         lines.push(`Route to prepare: ${tpl.route}`);
         lines.push("Prepare before counsel:");
         tpl.steps.forEach((s) => lines.push(`- [ ] ${s}`));
+        if (tpl.templates?.length) {
+          lines.push("Templates & official sources:");
+          tpl.templates.forEach((t) => lines.push(`- ${t.label}: ${t.url}`));
+        }
         lines.push(`Confirm with counsel: ${tpl.confirm}`);
       } else {
         lines.push(item.summary);
@@ -569,6 +663,36 @@ export function App() {
         estimate: null,
         txHash: transaction.hash,
         message: "Contract is visible on-chain and verified. Review the receipt anchor next.",
+      });
+    } catch (error) {
+      setAnchor((current) => ({ ...current, status: "error", message: getErrorMessage(error) }));
+    }
+  }
+
+  // Recovery path for the known Injective-testnet case where a deployment is
+  // visible on the explorer but the wallet/RPC reported it late or as failed.
+  // The pasted address is only accepted after its runtime bytecode is verified.
+  async function recoverDeployedContract(address) {
+    const candidate = (address || "").trim();
+    if (!candidate) return;
+
+    setAnchor((current) => ({ ...current, status: "estimating", message: "Verifying the pasted contract address…" }));
+    try {
+      const receiptAnchorClient = await getReceiptAnchorClient();
+      const reader = await getTestnetReceiptReader();
+      const { contractAddress } = await receiptAnchorClient.verifyDeployedRuntimeBytecode({
+        provider: reader,
+        contractAddress: candidate,
+      });
+      setManualAddress("");
+      setAnchor({
+        status: "deployed",
+        contractAddress,
+        unverifiedContractAddress: null,
+        preview: null,
+        estimate: null,
+        txHash: null,
+        message: "Pasted contract verified on-chain. Review the receipt anchor next.",
       });
     } catch (error) {
       setAnchor((current) => ({ ...current, status: "error", message: getErrorMessage(error) }));
@@ -878,27 +1002,13 @@ export function App() {
                   </div>
                   <div className="reco-materials">
                     <div>
-                      <h4>Need</h4>
-                      <ul>
-                        {actionPlan.materials.need.map((m) => (
-                          <li key={m.text}>
-                            {m.text}
-                            {m.url && (
-                              <a className="template-link" href={m.url} target="_blank" rel="noreferrer"> · {m.label} ↗</a>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div>
-                      <h4>Likely have</h4>
-                      <ul>{actionPlan.materials.likelyHave.map((m) => <li key={m}>{m}</li>)}</ul>
-                    </div>
-                    <div>
                       <h4>Take to local counsel</h4>
                       <ul>{actionPlan.materials.counsel.map((m) => <li key={m}>{m}</li>)}</ul>
                     </div>
                   </div>
+                  <p className="sheet-hint">
+                    The full assembly checklist and per-source workstreams are generated as a downloadable brief in step 5, scoped to your decision.
+                  </p>
                   <div className="sheet-nav">
                     <button className="decision-button" onClick={() => setStep(2)}>Run the review →</button>
                   </div>
@@ -958,7 +1068,7 @@ export function App() {
                 <div className="sheet-step-panel sheet-step-panel--gate">
                   <p className="sheet-kicker">Step 3 · The Sentinel gate</p>
                   <h2>You decide what happens</h2>
-                  <p className="rail-lede">Sentinel holds the action until a person decides. Neither choice issues the asset. Proceeding records an accountable, wallet-signed decision; issuing or transferring still requires counsel.</p>
+                  <p className="rail-lede">Sentinel holds the action until you decide. Neither choice moves the asset.</p>
 
                   <div className="scope-reference-bar">
                     <div>
@@ -1012,7 +1122,7 @@ export function App() {
                       <div className="gate-held-line">
                         <span>Held action</span>
                         <strong>{receipt ? "Receipt ready" : decision === "hold" ? "Held for counsel" : "OUSG-like treasury sample"}</strong>
-                        <small>0 INJ · Injective testnet · frozen until you decide</small>
+                        <small>0 INJ · Injective testnet</small>
                       </div>
 
                       <div className="gate-outcomes">
@@ -1107,6 +1217,11 @@ export function App() {
                           {anchor.status === "estimating" ? "Estimating deployment fee…" : "① Review contract deployment"}
                         </button>
                       )}
+                      {wallet.status === "connected" && !anchor.contractAddress && (
+                        <p className="sheet-hint">
+                          On Injective EVM testnet some wallets show a successful deployment as “failed.” This app confirms the contract from its on-chain code, so trust the explorer and this check over the wallet status.
+                        </p>
+                      )}
                       {anchor.contractAddress && (
                         <div className="testnet-result">
                           <span>Contract verified ✓</span>
@@ -1139,6 +1254,27 @@ export function App() {
                         </section>
                       )}
                       {anchor.message && <p className={`testnet-message testnet-message--${anchor.status}`}>{anchor.message}</p>}
+                      {!anchor.contractAddress && anchor.status === "error" && (
+                        <div className="manual-recovery">
+                          <label>
+                            <span>Already deployed? Paste the contract address from the explorer to continue.</span>
+                            <input
+                              value={manualAddress || anchor.unverifiedContractAddress || ""}
+                              onChange={(event) => setManualAddress(event.target.value)}
+                              placeholder="0x…"
+                              spellCheck={false}
+                              autoComplete="off"
+                            />
+                          </label>
+                          <button
+                            type="button"
+                            className="testnet-review-button"
+                            onClick={() => recoverDeployedContract(manualAddress || anchor.unverifiedContractAddress)}
+                          >
+                            Verify pasted contract
+                          </button>
+                        </div>
+                      )}
                       {anchor.status === "anchored" && (
                         <div className="sheet-nav">
                           <button className="decision-button" onClick={() => setStep(5)}>Continue to handoff →</button>

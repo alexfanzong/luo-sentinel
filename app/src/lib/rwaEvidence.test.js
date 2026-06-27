@@ -23,9 +23,20 @@ test("keeps the evidence copy scoped to the cited source instead of asserting a 
 
   assert.doesNotMatch(unitedStates.summary, /No retail distribution without further registration/i);
   assert.doesNotMatch(hongKong.summary, /possible only through/i);
-  assert.match(singapore.sourceLabel, /specific provision required/i);
+  assert.match(singapore.sourceLabel, /MAS · A Guide to Digital Token Offerings/);
+  assert.match(singapore.summary, /capital markets product/i);
+  assert.doesNotMatch(singapore.summary, /verified offer-path conclusion/i);
   assert.equal(europeanUnion.secondarySourceLabel, "EU · MiFID II 2014/65/EU");
   assert.equal(europeanUnion.secondarySourceUrl, "https://eur-lex.europa.eu/eli/dir/2014/65/oj");
+});
+
+test("anchors Singapore to the MAS digital-token guidance and Hong Kong to both Nov 2023 circulars", () => {
+  const singapore = RWA_EVIDENCE.find((item) => item.id === "SG-CLAIM-01");
+  const hongKong = RWA_EVIDENCE.find((item) => item.id === "HK-CLAIM-01");
+
+  assert.equal(singapore.sourceUrl, "https://www.mas.gov.sg/regulation/explainers/a-guide-to-digital-token-offerings");
+  assert.match(singapore.secondarySourceUrl, /guide-on-the-tokenisation-of-capital-markets-products/);
+  assert.match(hongKong.secondarySourceUrl, /refNo=23EC53/);
 });
 
 test("links Hong Kong to the SFC tokenised-securities circular, not an AML circular", () => {

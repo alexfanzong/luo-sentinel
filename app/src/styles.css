@@ -142,6 +142,12 @@ button { font: inherit; }
 .sheet-nav { margin-top: 6px; }
 .sheet-nav .decision-button { width: auto; }
 .sheet-hint { color: #9aa7bd; font-size: 14px; }
+.manual-recovery { display: grid; gap: 9px; margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(194, 207, 235, .14); }
+.manual-recovery label { display: grid; gap: 6px; }
+.manual-recovery label span { color: #afbad0; font-size: 12px; line-height: 1.4; }
+.manual-recovery input { width: 100%; padding: 10px 11px; color: #e7ebf5; border: 1px solid rgba(194, 207, 235, .3); border-radius: 6px; outline: none; background: rgba(255,255,255,.03); font: 13px 'DM Mono', monospace; }
+.manual-recovery input:focus { border-color: #b9b4ff; }
+.manual-recovery .testnet-review-button { margin-top: 0; border-top: 0; padding: 4px 0; }
 .reviewer-id { margin: 0; color: #8fe3b0; font: 12px 'DM Mono', monospace; }
 .reco-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
 .reco-list li { padding: 14px 16px; border: 1px solid rgba(194, 207, 235, .16); border-radius: 10px; background: rgba(255, 255, 255, .02); }

@@ -142,7 +142,7 @@ export async function waitForDeployedContract({
   provider,
   deployer,
   nonce,
-  attempts = 30,
+  attempts = 60,
   pollIntervalMs = 1000,
   onAttempt,
 }) {
@@ -226,7 +226,7 @@ export async function waitForAnchoredReceipt({
   contractAddress,
   receiptHash,
   expectedReceipt,
-  attempts = 30,
+  attempts = 60,
   pollIntervalMs = 1000,
 }) {
   try {
