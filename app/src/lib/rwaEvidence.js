@@ -4,7 +4,7 @@ export const RWA_EVIDENCE_PROVENANCE = Object.freeze({
   packLabel: "Reviewed OUSG evidence pack",
   reviewedAt: "2026-06-07",
   sourceType: "Human-reviewed source anchors",
-  refreshPolicy: "Refresh when primary sources change; stale signals must be re-reviewed before use.",
+  refreshPolicy: "Refresh when primary sources change.",
 });
 
 export const RWA_EVIDENCE = Object.freeze([
