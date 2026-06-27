@@ -786,35 +786,42 @@ export function App() {
         <span className="landing-status"><span /> Testnet demo</span>
         <div className="landing-inner">
           <img className="landing-logo" src="/luo-mark.png" alt="LUO" />
-          <p className="landing-tagline">Agent action firewall</p>
+          <p className="landing-tagline">Sentinel for AI handoffs</p>
           <form
-            className="landing-search"
+            className="landing-agent-console"
             onSubmit={(event) => {
               event.preventDefault();
               runSearch();
             }}
           >
-            <span className="landing-search-icon" aria-hidden="true">⌕</span>
-            <input
-              value={agentQuestion}
-              onChange={(event) => {
-                setAgentQuestion(event.target.value);
-                if (searchStatus === "refused") resetSearch();
-              }}
-              placeholder="Agent request: issue or transfer OUSG on Injective…"
-              aria-label="Submit an upstream Agent request"
-              autoFocus
-            />
-            <button type="submit" disabled={searchStatus === "running"}>
-              {searchStatus === "running" ? (
-                "Routing…"
-              ) : (
-                <>
-                  <span className="search-label-full">Intercept</span>
-                  <span className="search-label-short">Hold</span>
-                </>
-              )}
-            </button>
+            <div className="agent-console-meta">
+              <span className="agent-console-dot" aria-hidden="true" />
+              <span>Upstream Agent request</span>
+              <em>Execution paused</em>
+            </div>
+            <div className="agent-console-command">
+              <span className="agent-console-prompt" aria-hidden="true">run</span>
+              <input
+                value={agentQuestion}
+                onChange={(event) => {
+                  setAgentQuestion(event.target.value);
+                  if (searchStatus === "refused") resetSearch();
+                }}
+                placeholder="Agent payload: issue or transfer OUSG on Injective…"
+                aria-label="Submit an upstream Agent request"
+                autoFocus
+              />
+              <button type="submit" disabled={searchStatus === "running"}>
+                {searchStatus === "running" ? (
+                  "Routing…"
+                ) : (
+                  <>
+                    <span className="agent-label-full">Hold in Sentinel</span>
+                    <span className="agent-label-short">Hold</span>
+                  </>
+                )}
+              </button>
+            </div>
           </form>
           {searchStatus === "refused" && (
             <div className="landing-suggest">

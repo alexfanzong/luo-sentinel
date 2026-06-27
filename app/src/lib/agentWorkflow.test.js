@@ -22,12 +22,15 @@ test("shows a source-bounded action plan instead of a lead-market recommendation
 test("frames the entry as an upstream Agent request, not a human legal search box", () => {
   const source = appSource();
 
-  assert.match(source, /Agent action firewall/);
+  assert.match(source, /Sentinel for AI handoffs/);
+  assert.match(source, /landing-agent-console/);
   assert.match(source, /Submit an upstream Agent request/);
   assert.match(source, /Unreviewed Agent request refused/);
   assert.match(source, /Guard layer between project Agents and tokenized RWA execution/);
   assert.doesNotMatch(source, /Ask a reviewed RWA question/);
   assert.doesNotMatch(source, /LUO Search/);
+  assert.doesNotMatch(source, /Agent action firewall/);
+  assert.doesNotMatch(source, /className="landing-search"/);
 });
 
 test("explains that the map is a reviewed evidence snapshot", () => {
