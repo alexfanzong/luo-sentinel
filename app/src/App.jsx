@@ -1134,7 +1134,7 @@ export function App() {
                       <div className="gate-held-line">
                         <span>Upstream action scope</span>
                         <strong>{receipt ? "Receipt ready" : decision === "hold" ? "Held for counsel" : "OUSG-like treasury sample"}</strong>
-                        <small>0 INJ · Injective testnet</small>
+                        <small>No asset transfer · Injective testnet</small>
                       </div>
 
                       <div className="gate-outcomes">

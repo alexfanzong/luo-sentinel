@@ -38,7 +38,7 @@ function toTransactionRequest(preview, walletAddress) {
     throw new Error("The transaction preview is not for Injective EVM Testnet.");
   }
   if (preview.value !== 0n) {
-    throw new Error("LUO Sentinel only permits zero-value testnet transactions.");
+    throw new Error("LUO Sentinel only permits testnet transactions with 0 INJ transfer value.");
   }
   if (typeof preview.data !== "string" || !/^0x[0-9a-f]+$/i.test(preview.data)) {
     throw new Error("The transaction preview has invalid calldata.");

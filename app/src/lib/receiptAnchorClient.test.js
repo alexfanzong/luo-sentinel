@@ -21,7 +21,7 @@ const RECEIPT = createProceedReceiptDraft({
   caseRef: "RWA-DEMO-001",
 });
 
-test("creates a zero-value Injective deployment preview without prompting a wallet", () => {
+test("creates an Injective deployment preview with 0 INJ transfer value without prompting a wallet", () => {
   const preview = createDeploymentTransactionPreview();
 
   assert.equal(preview.kind, "contract-deployment");
@@ -32,7 +32,7 @@ test("creates a zero-value Injective deployment preview without prompting a wall
   assert.ok(preview.data.length > 1000);
 });
 
-test("encodes a zero-value anchorProceed call without legal source text", () => {
+test("encodes a no-asset-transfer anchorProceed call without legal source text", () => {
   const preview = createAnchorProceedTransactionPreview({
     contractAddress: CONTRACT,
     receipt: RECEIPT,
@@ -54,7 +54,7 @@ test("refuses to create a write preview for an invalid contract address", () => 
   );
 });
 
-test("estimates a zero-value transaction only on Injective EVM Testnet", async () => {
+test("estimates a 0 INJ transfer-value transaction only on Injective EVM Testnet", async () => {
   const estimate = await estimateTestnetTransaction({
     preview: createDeploymentTransactionPreview(),
     walletAddress: REVIEWER,

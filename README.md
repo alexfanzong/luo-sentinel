@@ -86,15 +86,15 @@ LUO Sentinel demonstrates a minimal AI x Web3 Sentinel loop:
 - **Human-gated receipt**  
   The Sentinel receipt creates a reviewer-wallet decision record for the approved evidence scope.
 
-- **Zero-value testnet anchoring**  
-  Wallet confirmation is real for contract deployment and receipt anchoring, but no asset is moved.
+- **No-asset-movement testnet anchoring**  
+  Wallet confirmation is real for contract deployment and receipt anchoring, but the transaction does not transfer assets.
 
 - **Bounded downstream Agent**  
   The downstream Agent can only generate a counsel-preparation checklist inside the approved scope.
 
 ## Receipt Boundary
 
-LUO Sentinel anchors a zero-value decision receipt on testnet. The receipt commits to the reviewed evidence scope, product reference, reviewer wallet, and decision time without putting legal analysis or source text on-chain.
+LUO Sentinel anchors a no-asset-movement decision receipt on testnet. The receipt commits to the reviewed evidence scope, product reference, reviewer wallet, and decision time without putting legal analysis or source text on-chain.
 
 It proves that a wallet accepted a scoped Sentinel decision after review. It does not prove legal compliance, create a legal opinion, or authorize an asset transaction. The implementation can be inspected in the contract and tests.
 

@@ -14,7 +14,7 @@
   - RPC: `https://k8s.testnet.json-rpc.injective.network/`
   - Native currency: `INJ`
   - Explorer: `https://testnet.blockscout.injective.network/`
-- A user-confirmed, zero-value testnet contract interaction has been recorded:
+- A user-confirmed, no-asset-movement testnet contract interaction has been recorded:
   `0x17ae3d575955edb1c2e8d608641fb36d03a5c456dcacf0ca245bc0f9ed34c2eb`.
   Read-only RPC verification returned `status: 0x1`, `value: 0x0`,
   chain ID `0x59f`, and target
@@ -64,7 +64,7 @@ value transfer and Injective EVM Testnet (`1439`) before it can open the wallet.
 After a deployment is mined, the app reads the deployed runtime bytecode and
 compares its Keccak-256 hash with the reviewed local Forge artifact. A mismatch
 is visibly marked as unverified and cannot be used for receipt anchoring.
-The live receipt interaction transfers `0 INJ`; the user still pays normal
+The live receipt interaction has `0 INJ` transfer value; the user still pays normal
 testnet gas for the contract call.
 
 ## Implemented browser-wallet connection

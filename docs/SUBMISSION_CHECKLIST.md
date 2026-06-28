@@ -40,7 +40,7 @@ Use this checklist before recording the final demo or submitting the project.
    signal stays source-bound.
 4. Review Council: Scope, Source, and Risk agents score the selected evidence.
 5. Human gate: a reviewer chooses Hold or prepares a Proceed receipt.
-6. Injective receipt: the app shows target, fee estimate, zero value, and
+6. Injective receipt: the app shows target, fee estimate, no asset transfer, and
    runtime-verified contract use before wallet confirmation.
 7. Protocol packet: the downstream agent receives bounded facts, receipt proof, and
    unresolved constraints.
