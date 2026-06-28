@@ -822,9 +822,9 @@ export function App() {
           </form>
           {searchStatus === "refused" && (
             <div className="landing-suggest">
-              <p className="landing-suggest-title">Unreviewed Agent request refused.</p>
+              <p className="landing-suggest-title">Request outside reviewed scope.</p>
               <p className="landing-suggest-body">
-                Sentinel will not fabricate a route another Agent could execute. Use a reviewed scope:
+                Sentinel can continue only with reviewed evidence. Choose a scope:
               </p>
               <button
                 type="button"
@@ -833,7 +833,7 @@ export function App() {
               >
                 Cross-border · US · HK · SG · EU
               </button>
-              <p className="landing-suggest-label">Or a single jurisdiction</p>
+              <p className="landing-suggest-label">Or choose one jurisdiction</p>
               <div className="suggest-chips">
                 {RWA_EVIDENCE.map((item) => (
                   <button

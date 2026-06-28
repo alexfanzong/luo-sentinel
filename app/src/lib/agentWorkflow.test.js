@@ -26,10 +26,12 @@ test("frames the entry as an upstream Agent request, not a human legal search bo
   assert.match(source, /landing-agent-pill/);
   assert.match(source, /Agent request/);
   assert.match(source, /Submit an upstream Agent request/);
-  assert.match(source, /Unreviewed Agent request refused/);
+  assert.match(source, /Request outside reviewed scope/);
+  assert.match(source, /Sentinel can continue only with reviewed evidence/);
   assert.match(source, /Evidence-aligned Sentinel flow for tokenized RWA execution/);
   assert.doesNotMatch(source, /Ask a reviewed RWA question/);
   assert.doesNotMatch(source, /LUO Search/);
+  assert.doesNotMatch(source, /fabricate a route/);
   assert.doesNotMatch(source, /className="landing-search"/);
   assert.doesNotMatch(source, /landing-agent-console/);
 });
