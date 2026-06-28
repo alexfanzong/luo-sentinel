@@ -1,6 +1,6 @@
 # LUO Sentinel — Three-Minute Demo Script
 
-## 0:00–0:20 — The failure
+## 0:00–0:20 — The starting point
 
 An AI agent proposes a tokenized-asset action. A fluent answer is not enough:
 different jurisdictions can signal different constraints, and a product must
@@ -33,8 +33,8 @@ residual risk.
 
 ## 1:50–2:15 — The human gate
 
-Show the Decision Rail. The product offers no legal conclusion and requires a
-human to choose whether to hold the action for counsel or prepare a testnet
+Show the Decision Rail. The product offers no legal conclusion and asks a
+human to choose whether to send the action to counsel or prepare a testnet
 decision receipt. The action plan stays source-bounded: what to prepare, what
 materials are missing, and what must go to local counsel.
 

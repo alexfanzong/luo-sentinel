@@ -38,12 +38,12 @@ const ACTION_PLAN = {
 const PROPOSED_FINANCIAL_ACTION = Object.freeze({
   label: "Upstream Agent proposed RWA action",
   network: "Injective EVM testnet",
-  execution: "Intercepted by Sentinel. Nothing executed",
+  execution: "Routed to Sentinel. Nothing executed",
   intent: "A project Agent wants to prepare an OUSG-like tokenized asset for an Injective transfer or strategy workflow.",
   constraints: [
     ["Asset context", "Tokenized U.S. Treasury sample"],
     ["Upstream request", "Automated Injective action, testnet only"],
-    ["Sentinel role", "Stop execution before evidence review"],
+    ["Sentinel role", "Align evidence before execution"],
     ["If released", "Bounded handoff, not asset movement"],
   ],
 });
@@ -418,7 +418,7 @@ export function App() {
       `**Case:** ${caseRef}`,
       `**Review scope:** ${scopeLabel} (${reviewScope.reviewMode})`,
       "",
-      "A preparation worksheet built from a held Sentinel decision. It helps you arrive at counsel prepared. It is not legal advice and does not establish compliance.",
+      "A preparation worksheet built from a human-confirmed Sentinel decision. It helps you arrive at counsel prepared. It is not legal advice and does not establish compliance.",
       "",
       "## Start here, before you contact counsel",
       actionPlan.startHere.text,
@@ -814,8 +814,8 @@ export function App() {
                 "Routing…"
               ) : (
                 <>
-                  <span className="agent-label-full">Hold in Sentinel</span>
-                  <span className="agent-label-short">Hold</span>
+                  <span className="agent-label-full">Send to Sentinel</span>
+                  <span className="agent-label-short">Send</span>
                 </>
               )}
             </button>
@@ -849,7 +849,7 @@ export function App() {
             </div>
           )}
         </div>
-        <p className="landing-note">Upstream Agent held · human gate required · bounded handoff only</p>
+        <p className="landing-note">Agent request routed · human gate required · bounded handoff only</p>
       </div>
     );
   }
@@ -862,7 +862,7 @@ export function App() {
           <span className="topbar-divider" />
           <div>
             <strong>LUO Sentinel</strong>
-            <span>Sentinel layer between project Agents and tokenized RWA execution · testnet demo</span>
+            <span>Evidence-aligned Sentinel flow for tokenized RWA execution · testnet demo</span>
           </div>
         </div>
         <button
@@ -971,7 +971,7 @@ export function App() {
             <button type="button" className="rail-close" onClick={() => setRailOpen(false)} aria-label="Close">✕</button>
             <div className="sheet-inner">
               <nav className="sheet-stepper" aria-label="Workflow steps">
-                {[["1", "Intercept"], ["2", "Review"], ["3", "Gate"], ["4", "Receipt"], ["5", "Handoff"]].map(([n, label]) => (
+                {[["1", "Align"], ["2", "Review"], ["3", "Gate"], ["4", "Receipt"], ["5", "Handoff"]].map(([n, label]) => (
                   <button
                     key={n}
                     type="button"
@@ -986,8 +986,8 @@ export function App() {
 
               {step === 1 && (
                 <div className="sheet-step-panel">
-                  <p className="sheet-kicker">Step 1 · Agent action intercepted</p>
-                  <h2>Sentinel stopped this before execution</h2>
+                  <p className="sheet-kicker">Step 1 · Agent action routed</p>
+                  <h2>Sentinel aligns this before execution</h2>
                   <section className="preflight-action-card" aria-label="Proposed Injective financial action">
                     <div>
                       <span>{PROPOSED_FINANCIAL_ACTION.network}</span>
@@ -1042,7 +1042,7 @@ export function App() {
                   </p>
                   <div className="preflight-flow" aria-label="Agent preflight sequence">
                     <span>Upstream request</span>
-                    <span>Sentinel intercept</span>
+                    <span>Sentinel alignment</span>
                     <span>Human gate required</span>
                   </div>
                   <div className="review-council review-council--preflight" aria-label="Agent review council scorecards">
@@ -1080,7 +1080,7 @@ export function App() {
                 <div className="sheet-step-panel sheet-step-panel--gate">
                   <p className="sheet-kicker">Step 3 · Human gate</p>
                   <h2>Release only a bounded handoff</h2>
-                  <p className="rail-lede">The upstream Agent stays blocked. Your signature records a reviewed decision; it does not move the asset.</p>
+                  <p className="rail-lede">The upstream Agent can continue only through a bounded handoff. Your signature records a reviewed decision; it does not move the asset.</p>
 
                   <div className="scope-reference-bar">
                     <div>
@@ -1132,7 +1132,7 @@ export function App() {
                       )}
 
                       <div className="gate-held-line">
-                        <span>Blocked upstream action</span>
+                        <span>Upstream action scope</span>
                         <strong>{receipt ? "Receipt ready" : decision === "hold" ? "Held for counsel" : "OUSG-like treasury sample"}</strong>
                         <small>0 INJ · Injective testnet</small>
                       </div>
@@ -1189,8 +1189,8 @@ export function App() {
                       </div>
 
                       <div className={`decision-state decision-state--${decision}`}>
-                        {decision === "review" && "Intercepted · the upstream Agent cannot execute this action."}
-                        {decision === "hold" && "Held for counsel. No Injective action is executed."}
+                        {decision === "review" && "Routed · the upstream Agent cannot execute from this request alone."}
+                        {decision === "hold" && "Counsel review selected. No Injective action is executed."}
                         {decision === "preparing" && "Creating your signed receipt."}
                         {decision === "draft" && "Receipt ready. Only a bounded handoff can be released."}
                         {decision === "wallet-required" && "Connect the reviewer wallet first."}
