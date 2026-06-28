@@ -9,6 +9,18 @@ out/
 
 # Product Design exploration artifacts
 .superpowers/
+docs/superpowers/
+app/AGENTS.md
+
+# Local review notes and generated submission artifacts
+docs/CODEX-HANDOFF.md
+*.HANDOFF.md
+*分镜*
+tmp/
+output/
+Demo Video/
+Claude给的文件/
+Luo Sentinel UI改进建议/
 
 # OS files
 .DS_Store
