@@ -3,7 +3,7 @@
 ## Purpose
 
 LUO Sentinel is an independent Injective Nova hackathon project. It turns a
-cross-border RWA action request into an evidence-bound compliance preflight,
+cross-border RWA action request into a pre-execution compliance control protocol,
 then lets a human record their decision as a minimal receipt on the Injective
 testnet.
 
@@ -40,7 +40,7 @@ agent or operator takes an on-chain action.
 
 ```text
 RWA action request
-  -> LUO creates an evidence-bound preflight
+  -> LUO creates a pre-execution compliance control record
   -> user sees jurisdictional divergence and uncertainty
   -> user chooses Approve for testnet receipt or Hold for counsel
   -> wallet asks the user to sign a testnet-only transaction

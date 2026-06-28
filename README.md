@@ -1,6 +1,6 @@
 # LUO Sentinel
 
-> Evidence-aligned Sentinel workflow for project Agents preparing RWA actions on Injective.
+> Pre-execution compliance control protocol for RWA Agents on Injective.
 
 <p align="center">
   <img src="app/public/luo-mark.png" alt="LUO Sentinel logo" width="170" />
@@ -8,22 +8,23 @@
 
 <p align="center">
   <a href="README.zh-CN.md">中文</a> ·
-  <a href="https://luo-sentinel.vercel.app">Live Demo</a>
+  <a href="https://luo-sentinel.vercel.app">Live Demo</a> ·
+  <a href="https://drive.google.com/file/d/1gFE7u5ghsF2feuOkzjQJBigxNHVoIOhj/view">Demo Video</a>
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/RWA-Compliance-111827?style=for-the-badge" alt="RWA Compliance" />
-  <img src="https://img.shields.io/badge/AI-Agent%20Handoff-0f766e?style=for-the-badge" alt="AI Agent Handoff" />
+  <img src="https://img.shields.io/badge/AI-Agent%20Protocol-0f766e?style=for-the-badge" alt="AI Agent Protocol" />
   <img src="https://img.shields.io/badge/React-19-149eca?style=for-the-badge&logo=react&logoColor=white" alt="React 19" />
   <img src="https://img.shields.io/badge/Solidity-0.8.33-363636?style=for-the-badge&logo=solidity&logoColor=white" alt="Solidity 0.8.33" />
   <img src="https://img.shields.io/badge/License-Apache--2.0-5aa000?style=for-the-badge" alt="Apache-2.0 license" />
 </p>
 
-LUO Sentinel is an evidence-alignment and handoff workflow for RWA actions on Injective. It turns reviewed regulatory source anchors into a visual evidence map, then routes the Agent through Sentinel review, human confirmation, and a verifiable receipt before any downstream agent acts.
+LUO Sentinel is a pre-execution compliance control protocol for RWA Agents on Injective. It turns reviewed regulatory source anchors into a visual evidence map, then routes the Agent through Sentinel review, human confirmation, and a verifiable receipt before any downstream Agent acts.
 
-The asker here is an upstream project Agent, not a human running a legal search. When that Agent prepares an RWA action, Sentinel brings the request back to reviewed source scopes, preserves the human confirmation point before execution, and only then creates a bounded downstream handoff.
+The asker here is an upstream project Agent, not a human running a legal search. When that Agent prepares an RWA action, Sentinel brings the request back to reviewed source scopes, preserves the human confirmation point before execution, and only then creates a scope-bound protocol packet for the downstream Agent.
 
-LUO Sentinel doesn't ask AI to produce a legal conclusion like "this asset can be issued or transferred here." It demonstrates a more accountable division of labor: the Agent gets the prep right against reviewed sources, Sentinel keeps the execution boundary explicit, and a human confirms the next step before another AI agent does anything.
+LUO Sentinel does not provide legal advice, create a legal opinion, or ask AI to produce a conclusion like "this asset can be issued or transferred here." It demonstrates a more accountable division of labor: the Agent prepares against reviewed sources, Sentinel keeps the execution boundary explicit, and a human confirms the next step before another AI Agent is allowed to continue.
 
 Each cell on the map is a snapshot of a reviewed evidence pack, not a live legal conclusion. When regulatory sources change, affected signals must be reviewed again.
 
@@ -39,16 +40,21 @@ Live app: [https://luo-sentinel.vercel.app](https://luo-sentinel.vercel.app)
 
 Judge deck: [https://alexfanzong.github.io/luo-sentinel/](https://alexfanzong.github.io/luo-sentinel/)
 
+Demo video: [Google Drive](https://drive.google.com/file/d/1gFE7u5ghsF2feuOkzjQJBigxNHVoIOhj/view)
+
 Suggested reviewer path:
 
 1. In the Agent request capsule, submit a proposed RWA action:
    `Prepare an OUSG-like tokenized treasury asset for Injective issuance or transfer.`
 2. Open the jurisdiction markers and check that each signal links to its cited source anchor.
-3. Continue through Action Plan, Agent Review, Human Gate, Testnet Anchor, and Handoff.
+3. Continue through Action Plan, Agent Review, Human Gate, Testnet Anchor, and Protocol Packet.
 4. Run the bounded downstream agent and confirm that it creates a counsel-preparation checklist, not a legal conclusion.
 5. Restart and submit the Hong Kong-only scope:
    `Prepare the OUSG handoff for Hong Kong only.`
 6. Confirm that the map narrows to the Hong Kong source scope and does not infer U.S., Singapore, or EU coverage.
+7. Restart and submit an unsupported scope:
+   `Can we launch OUSG in Switzerland?`
+8. Confirm that Sentinel refuses to fabricate coverage and routes the reviewer back to reviewed scopes.
 
 ## About The Project
 
@@ -61,12 +67,12 @@ LUO Sentinel demonstrates a minimal AI x Web3 Sentinel loop:
 5. The Review Council checks whether a source is being over-interpreted.
 6. A human gate decides whether to Proceed.
 7. A bounded Sentinel receipt can be anchored on testnet.
-8. A downstream agent can only produce a counsel-preparation checklist within the approved scope.
+8. A downstream Agent can only produce a counsel-preparation checklist within the approved scope.
 
 ## Core Features
 
 - **Agent prepares, Sentinel aligns, human decides**
-  The demo starts from a proposed Agent action; the system reviews the evidence and gets a human signature before the next handoff is released.
+  The demo starts from a proposed Agent action; the system reviews the evidence and gets a human signature before the constrained protocol packet is released.
 
 - **Reviewed evidence map**  
   The map comes from reviewed source anchors, not live model-generated legal conclusions.
@@ -83,14 +89,14 @@ LUO Sentinel demonstrates a minimal AI x Web3 Sentinel loop:
 - **Zero-value testnet anchoring**  
   Wallet confirmation is real for contract deployment and receipt anchoring, but no asset is moved.
 
-- **Bounded downstream agent**  
-  The downstream agent can only generate a counsel-preparation checklist inside the approved scope.
+- **Bounded downstream Agent**  
+  The downstream Agent can only generate a counsel-preparation checklist inside the approved scope.
 
 ## Receipt Boundary
 
 LUO Sentinel anchors a zero-value decision receipt on testnet. The receipt commits to the reviewed evidence scope, product reference, reviewer wallet, and decision time without putting legal analysis or source text on-chain.
 
-It proves that a wallet accepted a bounded AI handoff after review. It does not prove legal compliance, create a legal opinion, or authorize an asset transaction. The implementation can be inspected in the contract and tests.
+It proves that a wallet accepted a scoped Sentinel decision after review. It does not prove legal compliance, create a legal opinion, or authorize an asset transaction. The implementation can be inspected in the contract and tests.
 
 ## How The Evidence Map Is Built
 
@@ -174,7 +180,7 @@ On-chain, the demo anchors only:
 - reviewer wallet;
 - decision timestamp.
 
-Off-chain, the app keeps legal source text, action-plan narrative, reviewer scorecards, downstream handoff brief, and counsel-preparation checklist.
+Off-chain, the app keeps legal source text, action-plan narrative, reviewer scorecards, downstream protocol-packet brief, and counsel-preparation checklist.
 
 Singapore uses the official Securities and Futures Act 2001 as the primary source anchor. MAS digital-token guidance may be useful as secondary operational reading, but it is not treated as the source that authorizes an RWA offer or transfer.
 
@@ -192,9 +198,9 @@ Singapore uses the official Securities and Futures Act 2001 as the primary sourc
 - Track reviewer reputation, evaluation records, and disagreement history.
 - Support multi-agent review for source fit, jurisdiction scope, claim support, and action risk.
 
-### 3. Handoff And Receipt Protocol
+### 3. Compliance Control And Receipt Protocol
 
-- Standardize machine-readable handoff formats for downstream agents.
+- Standardize machine-readable protocol packets for downstream Agents.
 - Add receipt verification endpoints and explorer-friendly receipt views.
 - Support policy-controlled agent execution after human-approved scope.
 

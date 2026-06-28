@@ -49,7 +49,7 @@ The repository contains a locally tested `LUOReceiptAnchor` contract for a
 `Proceed` receipt. It binds the receipt hash to the submitting wallet, uses no
 value transfer, and keeps `Hold for counsel` off-chain. The public boundary is
 intentionally narrow: the receipt proves that a wallet accepted a bounded,
-reviewed AI handoff; it does not prove legal compliance, create a legal
+reviewed Sentinel decision; it does not prove legal compliance, create a legal
 opinion, or authorize an asset transaction. The current demo uses the verified
 testnet receipt-anchor contract at
 `0xc7AE2D5e83d5Fc3fC05e618E60807E05D5E57e15`.

@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>LUO Sentinel — Evidence-Aligned AI Handoffs</title>
-  <meta name="description" content="LUO Sentinel deck: an evidence-aligned Sentinel workflow for project Agents preparing RWA actions on Injective." />
+  <title>LUO Sentinel — Pre-execution Compliance Protocol</title>
+  <meta name="description" content="LUO Sentinel deck: a pre-execution compliance control protocol for project Agents preparing RWA actions on Injective." />
   <style>
     :root {
       --bg: #050a14;
@@ -483,7 +483,7 @@
     <div class="nav-inner">
       <a class="brand" href="#top"><img src="/luo-mark.png" alt="" /> LUO Sentinel</a>
       <div class="nav-right">
-        <span class="nav-meta">Evidence-aligned AI Handoffs</span>
+        <span class="nav-meta">执行前合规控制协议</span>
         <a class="nav-lang" href="/deck.en.html">English</a>
       </div>
     </div>
@@ -504,9 +504,9 @@
   <header class="hero" id="top">
     <div class="shell">
       <img class="hero-mark" src="/luo-mark.png" alt="LUO" />
-      <p class="hero-eyebrow">LUO SENTINEL · RWA ON INJECTIVE · AGENT × HUMAN SENTINEL LAYER</p>
+      <p class="hero-eyebrow">LUO SENTINEL · RWA ON INJECTIVE · AGENT COMPLIANCE PROTOCOL</p>
       <h1>让 Agent 把准备做到位，让每一步都可追溯。</h1>
-      <p class="hero-dek">LUO Sentinel 让项目方 Agent 在进入链上执行前，先完成已审核来源对齐、准备工作整理和人工钱包确认。通过后，系统才生成下游 Agent 可以读取的有边界 handoff，每一步都能追溯到具体来源。</p>
+      <p class="hero-dek">LUO Sentinel 是面向 RWA Agent 的执行前合规控制协议。项目方 Agent 在进入链上执行前，先完成已审核来源对齐、准备工作整理和人工钱包确认；通过后，系统才生成下游 Agent 可以读取的范围约束包。</p>
       <div class="hero-strip">
         <div class="strip-item"><span>prepare</span><strong>Agent 把分散的监管来源，整理成一份可执行的准备清单。</strong></div>
         <div class="strip-item"><span>verify</span><strong>每个结论都落到能点开的来源，分歧也保留在记录里。</strong></div>
@@ -521,7 +521,7 @@
       <h2>Agent 很能干，但有些判断必须留给人。</h2>
       <div class="prose">
         <p>RWA 项目会让 Agent 准备发行、转让和策略。Agent 擅长补全路径，也擅长把“看起来合理”的片段串成计划，这正是它的价值。但跨境监管常常没有唯一答案，更多是来源边界、分类问题，和要靠人来拍板的地方。</p>
-        <p>要补的，是一层 Sentinel：保留 Agent 的速度，也保留人的判断。</p>
+        <p>要补的，是一层执行前合规控制协议：保留 Agent 的速度，也保留人的判断。</p>
       </div>
       <div class="assert">
         <p class="assert-label">分工</p>
@@ -533,24 +533,24 @@
   <section class="section" id="definition">
     <div class="shell">
       <p class="kicker">02 · 产品定义</p>
-      <h2>Sentinel 让 Agent 的下一步先对齐证据，再进入人工确认。</h2>
+      <h2>Sentinel 把 Agent 的下一步纳入执行前合规控制协议。</h2>
       <div class="prose">
-        <p>它不下“可以发行”的结论。它做的是更扎实的一步：把动作对齐到已审核来源，让 reviewer Agents 把范围、来源、风险都准备清楚，再交给人确认。</p>
-        <p>人用钱包确认后，系统生成 receipt 和 handoff。这个 handoff 只授权下游 Agent 在批准的边界内，准备给律师看的材料。</p>
+        <p>它不下“可以发行”的结论，也不构成法律意见。它做的是更扎实的一步：把动作对齐到已审核来源，让 reviewer Agents 把范围、来源、风险都准备清楚，再交给人确认。</p>
+        <p>人用钱包确认后，系统生成 receipt 和范围约束包。这个协议包只允许下游 Agent 在批准的边界内，准备给律师看的材料。</p>
       </div>
     </div>
   </section>
 
   <section class="section" id="flow">
     <div class="shell">
-      <p class="kicker">03 · Guarded handoff chain</p>
+      <p class="kicker">03 · Guarded protocol flow</p>
       <h2>一条让 Agent 和人各司其职的链路。</h2>
       <div class="flow" aria-label="LUO Sentinel workflow">
         <div class="flow-step"><span>01 upstream</span><h3>Agent 发起 RWA 动作</h3><p>例如准备 OUSG-like tokenized treasury 在 Injective 上发行或转让。</p></div>
         <div class="flow-step"><span>02 sentinel</span><h3>Sentinel 对齐证据</h3><p>动作先对齐证据，在人确认前不上链，给后面每一步留出可核查的空间。</p></div>
         <div class="flow-step"><span>03 evidence</span><h3>对齐已审核来源</h3><p>映射到 US、HK、SG、EU 四个已审核信号，只在有据可依的范围内推进。</p></div>
         <div class="flow-step"><span>04 human gate</span><h3>人做最后确认</h3><p>人看过证据后决定 Proceed 或 Hold，并用钱包签字负责。</p></div>
-        <div class="flow-step"><span>05 downstream</span><h3>下游 Agent 在边界内继续</h3><p>拿到批准后，下游 Agent 在授权范围内生成律师准备清单。</p></div>
+        <div class="flow-step"><span>05 downstream</span><h3>下游 Agent 在协议边界内继续</h3><p>拿到批准后，下游 Agent 在授权范围内生成律师准备清单。</p></div>
       </div>
     </div>
   </section>
@@ -595,7 +595,7 @@
         </div>
       </div>
       <div class="prose">
-        <p>这份 receipt 是一条可追溯的负责记录：人在特定证据范围下，确认了一次有边界的 AI 协作。它不证明合规，不构成法律意见，也不授权资产交易。</p>
+        <p>这份 receipt 是一条可追溯的负责记录：人在特定证据范围下，确认了一次受约束的 Agent 协作。它不证明合规，不构成法律意见，也不授权资产交易。</p>
       </div>
     </div>
   </section>
@@ -622,7 +622,7 @@
             <li><b>02</b><span>Sentinel 不编地图、不猜辖区，把你带回有据可依的范围。</span></li>
             <li><b>03</b><span>回到跨境范围或单一已审核来源继续。</span></li>
             <li><b>04</b><span>receipt 始终绑定被选择的来源范围。</span></li>
-            <li><b>05</b><span>handoff 不会扩大到未审核地区。</span></li>
+            <li><b>05</b><span>协议包不会扩大到未审核地区。</span></li>
           </ol>
         </div>
       </div>
@@ -648,7 +648,7 @@
       <h2>把合规逻辑写成 Agent 能用的程序。</h2>
       <div class="author">
         <strong>Alex Fan</strong>
-        <p>Cornell Law School · Programmable Compliance Architect。法律与可编程合规的交叉地带，正是 LUO Sentinel 要产品化的那条工作流。</p>
+        <p>Cornell Law School · Programmable Compliance Architect。LUO Sentinel 要产品化的，是 Agent 走向链上执行前的合规控制协议。</p>
         <a href="https://x.com/itsAlexFan" target="_blank" rel="noreferrer">X · @itsAlexFan ↗</a>
       </div>
     </div>
@@ -656,7 +656,7 @@
 
   <footer class="footer">
     <div class="shell">
-      <p class="footer-q">LUO Sentinel 让 Agent 把准备做到位，也让人带着证据确认下一步，速度和安全都不丢。</p>
+      <p class="footer-q">LUO Sentinel 让 Agent 把准备做到位，也让人带着证据确认下一步：这是执行前的合规控制协议，不是法律意见。</p>
     </div>
     <div class="footer-bar">
       <div class="shell">

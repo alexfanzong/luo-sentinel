@@ -47,9 +47,9 @@ fee estimate, and zero transfer; after deployment, the app re-checks the
 deployed runtime code before using it. No key enters the app. Content stays
 off-chain; responsibility is anchored on-chain by the receipt hash.
 
-## 2:45–3:00 — The handoff
+## 2:45–3:00 — The protocol packet
 
-Show the downstream agent handoff, then click `Run bounded downstream agent`.
+Show the downstream agent protocol packet, then click `Run bounded downstream agent`.
 The output is a counsel-preparation checklist generated only from the
 human-approved scope, reviewer objections, evidence hash, and receipt hash. LUO
 Sentinel begins with tokenized treasury distribution and expands to RWA

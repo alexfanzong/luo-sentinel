@@ -21,10 +21,10 @@ Use this checklist before recording the final demo or submitting the project.
   Hong Kong.
 - Confirm the Agent Review Council appears before the human decision step.
 - Confirm scorecards show the deterministic scoring basis for each agent.
-- Confirm a single-jurisdiction receipt preview and handoff only bind the
+- Confirm a single-jurisdiction receipt preview and protocol packet only bind the
   selected source scope.
 - Confirm `Run bounded downstream agent` produces a scoped counsel-preparation
-  checklist from the handoff.
+  checklist from the protocol packet.
 - Confirm the receipt-anchor contract address can be verified before anchoring.
 - Use only a test wallet on Injective EVM Testnet.
 - Confirm every wallet preview shows `0 INJ` transfer value before signing.
@@ -42,9 +42,9 @@ Use this checklist before recording the final demo or submitting the project.
 5. Human gate: a reviewer chooses Hold or prepares a Proceed receipt.
 6. Injective receipt: the app shows target, fee estimate, zero value, and
    runtime-verified contract use before wallet confirmation.
-7. Handoff: the downstream agent receives bounded facts, receipt proof, and
+7. Protocol packet: the downstream agent receives bounded facts, receipt proof, and
    unresolved constraints.
-8. Downstream run: the bounded agent consumes the handoff and produces a
+8. Downstream run: the bounded agent consumes the protocol packet and produces a
    counsel-preparation checklist without expanding scope.
 
 ## Final artifacts
